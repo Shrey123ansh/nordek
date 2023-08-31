@@ -1,3 +1,4 @@
+import { nordek, nordekTestnet } from "./NordekSupport";
 import { connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   braveWallet,
@@ -8,7 +9,7 @@ import {
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { configureChains } from "wagmi";
-import * as chains from "wagmi/chains";
+import * as Chains from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import scaffoldConfig from "~~/scaffold.config";
@@ -19,11 +20,13 @@ const configuredNetwork = getTargetNetwork();
 const { onlyLocalBurnerWallet } = scaffoldConfig;
 
 // We always want to have mainnet enabled (ENS resolution, ETH price, etc). But only once.
-const enabledChains = configuredNetwork.id === 1 ? [configuredNetwork] : [configuredNetwork, chains.mainnet];
+const maybeEnablesChains = [Chains.mainnet, Chains.goerli, nordek, nordekTestnet];
+export const enabledChains = [Chains.foundry, ...maybeEnablesChains];
 
 /**
  * Chains for the app
  */
+
 export const appChains = configureChains(
   enabledChains,
   [
@@ -33,10 +36,8 @@ export const appChains = configureChains(
     publicProvider(),
   ],
   {
-    // We might not need this checkout https://github.com/scaffold-eth/scaffold-eth-2/pull/45#discussion_r1024496359, will test and remove this before merging
-    stallTimeout: 3_000,
     // Sets pollingInterval if using chain's other than local hardhat chain
-    ...(configuredNetwork.id !== chains.hardhat.id
+    ...(configuredNetwork.id !== Chains.hardhat.id
       ? {
           pollingInterval: scaffoldConfig.pollingInterval,
         }
@@ -52,7 +53,7 @@ const wallets = [
   braveWallet(walletsOptions),
   coinbaseWallet({ ...walletsOptions, appName: "scaffold-eth-2" }),
   rainbowWallet(walletsOptions),
-  ...(configuredNetwork.id === chains.hardhat.id || !onlyLocalBurnerWallet
+  ...(configuredNetwork.id === Chains.hardhat.id || !onlyLocalBurnerWallet
     ? [burnerWalletConfig({ chains: [appChains.chains[0]] })]
     : []),
 ];
