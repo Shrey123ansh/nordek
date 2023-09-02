@@ -23,7 +23,7 @@ export const Footer = () => {
                 rel="noreferrer"
                 className="underline underline-offset-2"
               >
-                Shubh Patni
+                Giakaa
               </a>
             </div>
           </div>

@@ -1,13 +1,14 @@
 import Link from "next/link";
 import type { NextPage } from "next";
 import Addliquidity from "~~/components/AddLiquidity";
+import { LiquidityBox } from "~~/components/LiquidityBox";
 
 const Liqudity: NextPage = () => {
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
         <div className="px-5">
-          <Addliquidity></Addliquidity>
+          <LiquidityBox></LiquidityBox>
         </div>
       </div>
     </>
