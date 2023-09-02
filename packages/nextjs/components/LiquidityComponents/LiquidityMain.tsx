@@ -1,6 +1,7 @@
 //import PriceComponent from "./PriceBox";
 import SelectToken from "../swapComponents/SelectToken";
 import LiquidityFooter from "./LiquidityFooter";
+import SlippageDetails from "./SlippageDetails";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
 
 export default function LiquidityMain() {
