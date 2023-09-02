@@ -29,7 +29,7 @@ const Home: NextPage = () => {
         <div className="px-5 flex w-full justify-between">
           {expertToggle ? (
             <>
-              <div className="flex flex-col justify-between p-4">
+              <div className="flex flex-col justify-between p-4 w-[70%]">
                 <div className="m-4 mb-8">
                   <Chart></Chart>
                 </div>

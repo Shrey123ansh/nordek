@@ -3993,6 +3993,7 @@ __metadata:
     react-grid-layout: ^1.3.4
     react-hot-toast: ~2.4.0
     react-resizable: ^3.0.5
+    react-ts-tradingview-widgets: ^1.1.0
     tailwind-merge: ^1.14.0
     tailwindcss: ~3.3.3
     tailwindcss-animate: ^1.0.6
@@ -13723,7 +13724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-select@npm:*, react-select@npm:^5.7.4":
+"react-select@npm:*":
   version: 5.7.4
   resolution: "react-select@npm:5.7.4"
   dependencies:
@@ -13801,6 +13802,16 @@ __metadata:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 75602840106aa9c6545149d6d7ae1502fb7b7abadcce70a6954c4b64a438ff1cd16fc77a0a1e5197cdd72da398f39eb929ea06f9005c45b132ed34e056ebdeb1
+  languageName: node
+  linkType: hard
+
+"react-ts-tradingview-widgets@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "react-ts-tradingview-widgets@npm:1.1.0"
+  peerDependencies:
+    react: ^17.0.2 || ^18.1.0
+    react-dom: ^17.0.2 || ^18.1.0
+  checksum: ad99e5e56df501e171a5f57bd0612975de11b61d51b23b8f02738f1caf326223d565c034fec2e140db5d815947370f59ab140fc5ba9076f41184a916ba594c66
   languageName: node
   linkType: hard
 
@@ -14432,7 +14443,6 @@ __metadata:
     "@types/react-select": ^5.0.1
     husky: ~8.0.3
     lint-staged: ~13.2.2
-    react-select: ^5.7.4
   languageName: unknown
   linkType: soft
 
