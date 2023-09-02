@@ -1,13 +1,11 @@
+import { useState } from "react";
 import Image from "next/image";
 import { Select } from "../Select/Select";
-
-const options = [
-  { address: "0x0", symbol: "USDC 1", icon: "/tokenImages/usdc.png" },
-  { address: "0x0", symbol: "USDC 2", icon: "/tokenImages/usdc.png" },
-  { address: "0x0", symbol: "USDC 3", icon: "/tokenImages/usdc.png" },
-];
+import { tokens } from "~~/data/data";
 
 const SelectToken = () => {
+  const [token, setToken] = useState(tokens.NRK);
+
   return (
     // <select
     //   options={options}
@@ -19,7 +17,7 @@ const SelectToken = () => {
     <div className="flex flex-col mb-4 bg-gray-800 px-4 py-2 rounded-lg text-sm">
       <span className="mb-4">From</span>
       <div className="flex items-center">
-        <Select></Select>
+        <Select setToken={setToken} token={token}></Select>
 
         <input
           type="number"

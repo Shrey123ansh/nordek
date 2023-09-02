@@ -1,17 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 
-const SlippageDetails: React.FC<{ price: number }> = ({ price }) => {
+const SlippageDetails = () => {
+  // Define state for each div
+  const [token0, setToken0] = useState("NRK");
+  const [token0Amount, setToken0Amount] = useState(0);
+  const [token1, setToken1] = useState("NUSDT");
+  const [token1Amount, setToken1Amount] = useState(0);
+  const [shareOfPool, setShareOfPool] = useState(0);
+  const [LPTokens, setLPTokens] = useState(0);
+
   return (
-    <div className="flex flex-col space-y-2 w-full">
-      {/* Price in small on the left */}
-      <div className="flex flex-col">
-        <div className="text-sm font-bold text-purple-600">price</div>
-        <div className="text-white rounded-lg px-2 py-1 text-md font-bold w-full bg-gray-400">{price} BNB</div>
+    <div className="flex flex-col space-y-1">
+      <div className="">
+        <div>
+          1 {token0} = {token1Amount} {token1}{" "}
+        </div>
       </div>
 
-      <div className="flex justify-end items-right space-x-2">
-        <div className="text-sm font-bold text-gray-600">NRK per BNB</div>
+      <div className="">
+        <div>
+          1 {token1} = {token0Amount} {token0}{" "}
+        </div>
       </div>
+
+      <div className="flex justify-between">
+        <span> Share of Pool </span>
+        <span> {shareOfPool} </span>
+      </div>
+
+      <div className="flex justify-between">
+        <span> Lp Tokens </span>
+        <span> {LPTokens} </span>
+      </div>
+      <hr className="" />
     </div>
   );
 };

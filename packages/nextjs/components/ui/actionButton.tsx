@@ -5,7 +5,7 @@ interface ActionButtonProps {
   onClick: () => void;
 }
 
-const ActionButton: React.FC<ActionButton> = ({ text, onClick }) => {
+const ActionButton: React.FC<ActionButtonProps> = ({ text, onClick }) => {
   return (
     <button className="py-1 px-4 border rounded-full" onClick={onClick}>
       {text}
