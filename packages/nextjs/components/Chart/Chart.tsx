@@ -4,6 +4,12 @@ import { Card, LineChart, Title } from "@tremor/react";
 import { renderTimeSince } from "~~/utils/time";
 import { usePollData } from "~~/utils/usePollData";
 
+import dynamic from 'next/dynamic';
+const AdvancedRealTimeChart = dynamic(
+  () => import('react-ts-tradingview-widgets').then(mod => mod.AdvancedRealTimeChart),
+  { ssr: false }
+);
+
 export default function Chart() {
   const user = {
     address: "0x00",
@@ -12,6 +18,10 @@ export default function Chart() {
   // Token address
   //const { user }: { user: StateUser } = Global.useContainer();
   // Data
+const AdvancedRealTimeChart = dynamic(
+  () => import('react-ts-tradingview-widgets').then(mod => mod.AdvancedRealTimeChart),
+  { ssr: false }
+);
 
   const lastChecked = 10;
   const data = [
@@ -49,12 +59,12 @@ export default function Chart() {
   //   );
   const dataFormatter = (number: number) => `${Intl.NumberFormat("us").format(number).toString()}%`;
   return (
-    <Card className="h-72">
+    <Card className="h-full">
       <Title>Token Chart</Title>
 
       {/* updated={`${user.username ? `@${user.username}` : user.address}, ${renderTimeSince(lastChecked)} ago`} */}
 
-      <div className="w-full h-full p-4">
+      {/* <div className="w-full h-full p-4">
         <LineChart
           className="h-full"
           data={data}
@@ -64,7 +74,14 @@ export default function Chart() {
           valueFormatter={dataFormatter}
           yAxisWidth={40}
         />
-      </div>
+      </div> */}
+       <div className="hidden lg:block flex-1 h-full w-full">
+            <AdvancedRealTimeChart
+              symbol={"ETH/USD"}
+              theme="dark"
+              autosize
+            />
+          </div>
     </Card>
   );
 }
