@@ -1,13 +1,13 @@
 //import Card from "../Card";
+import dynamic from "next/dynamic";
 import { Card, LineChart, Title } from "@tremor/react";
 //import { Global, StateUser } from "~~/state/global";
 import { renderTimeSince } from "~~/utils/time";
 import { usePollData } from "~~/utils/usePollData";
 
-import dynamic from 'next/dynamic';
 const AdvancedRealTimeChart = dynamic(
-  () => import('react-ts-tradingview-widgets').then(mod => mod.AdvancedRealTimeChart),
-  { ssr: false }
+  () => import("react-ts-tradingview-widgets").then(mod => mod.AdvancedRealTimeChart),
+  { ssr: false },
 );
 
 export default function Chart() {
@@ -18,10 +18,10 @@ export default function Chart() {
   // Token address
   //const { user }: { user: StateUser } = Global.useContainer();
   // Data
-const AdvancedRealTimeChart = dynamic(
-  () => import('react-ts-tradingview-widgets').then(mod => mod.AdvancedRealTimeChart),
-  { ssr: false }
-);
+  const AdvancedRealTimeChart = dynamic(
+    () => import("react-ts-tradingview-widgets").then(mod => mod.AdvancedRealTimeChart),
+    { ssr: false },
+  );
 
   const lastChecked = 10;
   const data = [
@@ -59,9 +59,7 @@ const AdvancedRealTimeChart = dynamic(
   //   );
   const dataFormatter = (number: number) => `${Intl.NumberFormat("us").format(number).toString()}%`;
   return (
-    <Card className="h-full">
-      <Title>Token Chart</Title>
-
+    <Card className="h-full p-0">
       {/* updated={`${user.username ? `@${user.username}` : user.address}, ${renderTimeSince(lastChecked)} ago`} */}
 
       {/* <div className="w-full h-full p-4">
@@ -75,13 +73,9 @@ const AdvancedRealTimeChart = dynamic(
           yAxisWidth={40}
         />
       </div> */}
-       <div className="hidden lg:block flex-1 h-full w-full">
-            <AdvancedRealTimeChart
-              symbol={"ETH/USD"}
-              theme="dark"
-              autosize
-            />
-          </div>
+      <div className="hidden lg:block flex-1 h-full w-full p-0">
+        <AdvancedRealTimeChart symbol={"ETH/USD"} theme="dark" autosize />
+      </div>
     </Card>
   );
 }

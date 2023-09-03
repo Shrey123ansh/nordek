@@ -1,15 +1,10 @@
 import { useState } from "react";
 import TokenListPopup from "../ui/TokenListPopup";
-
-type token = {
-  name: string;
-  symbol: string;
-  address: string;
-};
+import { tokenType } from "~~/data/data";
 
 interface SelectProps {
-  setToken: React.Dispatch<React.SetStateAction<token>>;
-  token: token;
+  setToken: React.Dispatch<React.SetStateAction<tokenType>>;
+  token: tokenType;
 }
 
 export const Select: React.FC<SelectProps> = ({ setToken, token }) => {
@@ -21,7 +16,10 @@ export const Select: React.FC<SelectProps> = ({ setToken, token }) => {
 
   return (
     <button className="rounded-full bg-white inline-block text-gray-800 text-xs py-1 px-2 " onClick={handlePopup}>
-      <span>{token.name}</span>
+      <span className="flex items-center justify-between space-x-4">
+        {" "}
+        <img src={token.logo} className="w-6 h-6 rounded-full mr-2" /> {token.name}
+      </span>
       <TokenListPopup isOpen={isPopupOpen} onClose={handlePopup} setToken={setToken}></TokenListPopup>
     </button>
   );
