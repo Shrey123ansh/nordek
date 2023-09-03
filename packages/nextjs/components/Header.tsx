@@ -16,7 +16,7 @@ const NavLink = ({ href, children }: { href: string; children: React.ReactNode }
       passHref
       className={`${
         isActive ? "bg-secondary shadow-md" : ""
-      } hover:bg-secondary hover:shadow-md focus:!bg-secondary py-1.5 px-6 text-sm space-x-2 rounded-none m-0`}
+      } hover:bg-secondary hover:shadow-md focus:!bg-secondary py-1.5 px-6 text-sm space-x-2 rounded-none m-0 h-full`}
     >
       {children}
     </Link>
@@ -36,46 +36,19 @@ export const Header = () => {
 
   const navLinks = (
     <>
-      <li>
-        <NavLink href="/">Home</NavLink>
-      </li>
-      <li>
-        <NavLink href="/">Swap</NavLink>
-      </li>
-      <li>
-        <NavLink href="/liquidity">Liquidity</NavLink>
-      </li>
-      <li>
-        <NavLink href="/stake">Stake</NavLink>
-      </li>
+      <NavLink href="/">Home</NavLink>
+
+      <NavLink href="/">Swap</NavLink>
+
+      <NavLink href="/liquidity">Liquidity</NavLink>
+
+      <NavLink href="/stake">Stake</NavLink>
     </>
   );
 
   return (
     <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary p-0">
       <div className="navbar-start w-auto lg:w-1/2 py-0">
-        {/* <div className="lg:hidden dropdown" ref={burgerMenuRef}>
-          <label
-            tabIndex={0}
-            className={`ml-1 ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
-            onClick={() => {
-              setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
-            }}
-          >
-            <Bars3Icon className="h-1/2" />
-          </label>
-          {isDrawerOpen && (
-            <ul
-              tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 w-52"
-              onClick={() => {
-                setIsDrawerOpen(false);
-              }}
-            >
-              {navLinks}
-            </ul>
-          )}
-        </div> */}
         <Link href="/" passHref className="hidden lg:flex items-center space-x-2 ml-4 mr-6">
           <div className="flex relative w-10 h-10">
             <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" />
@@ -84,8 +57,9 @@ export const Header = () => {
             <span className="font-bold leading-tight">Swap</span>
           </div>
         </Link>
-        <ul className="relative h-full hidden lg:flex lg:flex-nowrap menu menu-horizontal space-x-2 p-0">{navLinks}</ul>
+        <div className="">{navLinks}</div>
       </div>
+
       <div className="navbar-end flex-grow mr-4 my-2">
         <RainbowKitCustomConnectButton />
         <FaucetButton />

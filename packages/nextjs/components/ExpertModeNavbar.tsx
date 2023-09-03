@@ -5,14 +5,11 @@ import { ToggleSwitchProps } from "./swapComponents/ToggleSwitchProps";
 import { tokenType, tokens } from "~~/data/data";
 
 const ExpertModeNavbar: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpertToggle }) => {
+  const [chartToken, setChartToken] = useState(tokens.NRK); // State to store the selected currency
   const [token, setToken] = useState(tokens.NRK); // State to store the selected currency
 
-  const handleTokenSelect = (token: React.SetStateAction<tokenType>) => {
-    setToken(token);
-  };
-
   return (
-    <nav className="absolute flex bg-purple-600 py-3 w-full items-center z-10 p-4 top-0 left-0 items-center">
+    <nav className="absolute flex bg-purple-600 py-3 w-full z-10 p-4 top-0 left-0 items-center text-md ">
       <div className="flex items-center">
         <div className="flex space-x-8">
           {/* Padding on the left edge */}
@@ -22,20 +19,22 @@ const ExpertModeNavbar: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpert
           </div>
 
           {/* Element 2 */}
-          <Select setToken={setToken} token={token}></Select>
+          <Select setToken={setChartToken} token={chartToken}></Select>
+
           <span className="font-bold"> - </span>
           {/* Element 3 */}
           <button
             className={`appearance-none ${token.name === "NRK" ? "text-blue-500" : ""}`}
-            onClick={() => handleTokenSelect(tokens.NRK)}
+            onClick={() => setToken(tokens.NRK)}
           >
             NRK
           </button>
+
           <button
-            className={`appearance-none ${token.name === "USD" ? "text-blue-500" : ""}`}
-            onClick={() => handleTokenSelect(tokens.USDC)}
+            className={`appearance-none ${token.name === "USDC" ? "text-blue-500" : ""}`}
+            onClick={() => setToken(tokens.USDC)}
           >
-            USD
+            USDC
           </button>
 
           {/* Element 4 */}

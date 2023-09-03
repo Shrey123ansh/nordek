@@ -38,7 +38,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
             <div
               key={index}
               className="flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-900 text-white cursor-pointer"
-              onClick={setToken(token)}
+              onClick={() => setToken(token)}
             >
               <div className="flex items-center space-x-4 mr-20">
                 <img src={token.logo} className="w-6 h-6 rounded-full" />

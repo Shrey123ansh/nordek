@@ -17,7 +17,7 @@ const SlippageComponent = () => {
 
   return (
     <div className="flex flex-col w-full text-sm">
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-between items-center mb-2 mx-2">
         <div>
           <span className="text-sm">Slippage</span>
 
@@ -27,7 +27,9 @@ const SlippageComponent = () => {
           Edit
         </button>
       </div>
+
       <ActionButton text="Swap" onClick={handleSwap}></ActionButton>
+
       <SettingsPopup isOpen={isPopupOpen} onClose={handlePopup} setSlippageValue={setSlippageValue}></SettingsPopup>
     </div>
   );

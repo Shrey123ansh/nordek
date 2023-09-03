@@ -81,7 +81,7 @@ const trades = [
 function TradeHistory({ trades }) {
   return (
     <div className="border-b-2 bg-purple-100 flex-grow overflow-y-auto">
-      <h2 className=" text-xl font-bold p-2 text-purple-600">Trade History</h2>
+      <h2 className=" text-lg font-bold px-2 py-1 text-purple-600">Trade History</h2>
       <div className="overflow-y-auto scrollbar-hide">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-purple-200">
