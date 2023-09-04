@@ -80,44 +80,49 @@ const trades = [
 }
 function TradeHistory({ trades }) {
   return (
-    <div className="border-b-2 bg-purple-100 flex-grow overflow-y-auto">
-      <h2 className=" text-lg  px-2 py-1 text-purple-600">Trade History</h2>
-      <div className="overflow-y-auto scrollbar-hide">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-purple-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-md font-large text-purple-600  tracking-wider">
-                USD 
-              </th>
-              <th className="px-6 py-3 text-left text-md font-large text-purple-600  tracking-wider">
-                Amount
-              </th>
-              <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">Time</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white ">
-            {/* @ts-ignore */}
-            {trades.map((trade, idx) => (
-              <React.Fragment key={idx}>
-              <tr >
-  <td className="px-6 py-4 whitespace-nowrap text-purple-600">
-    {trade.usdValue}
-  </td>
-  <td className="px-6 py-4 whitespace-nowrap text-purple-600">
-    <div>{trade.currency1.amount} {trade.currency1.token}</div>
-    <div>{trade.currency2.amount} {trade.currency2.token}</div>
-  </td>
-  <td className="px-6 py-4 whitespace-nowrap text-purple-600">
-    {formatTime(trade.time)}
-  </td>
-</tr>
+    <div className="bg-purple-100 flex-grow overflow-y-auto">
+    <h2 className="text-lg p-3 text-purple-600 bg-purple-100">Trade History</h2>
 
-              </React.Fragment>
-            ))}
-          </tbody>
+    <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-purple-200">
+            <tr>
+                <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">
+                    USD 
+                </th>
+                <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">
+                    Amount
+                </th>
+                <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">Time</th>
+            </tr>
+        </thead>
+    </table>
+
+    <div className="overflow-y-auto scrollbar-hide" style={{ maxHeight: '300px' }}> 
+        <table className="min-w-full divide-y divide-gray-200">
+            <tbody className="bg-white">
+                {/* @ts-ignore */}
+                {trades.map((trade, idx) => (
+                    <React.Fragment key={idx}>
+                        <tr>
+                            <td className="px-6 py-4 whitespace-nowrap text-purple-600">
+                                {trade.usdValue}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-purple-600">
+                                <div>{trade.currency1.amount} {trade.currency1.token}</div>
+                                <div>{trade.currency2.amount} {trade.currency2.token}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-purple-600">
+                                {formatTime(trade.time)}
+                            </td>
+                        </tr>
+                    </React.Fragment>
+                ))}
+            </tbody>
         </table>
-      </div>
     </div>
+</div>
+
+
   );
 }
 // @ts-ignore
