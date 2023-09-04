@@ -81,40 +81,37 @@ const trades = [
 function TradeHistory({ trades }) {
   return (
     <div className="border-b-2 bg-purple-100 flex-grow overflow-y-auto">
-      <h2 className=" text-lg font-bold px-2 py-1 text-purple-600">Trade History</h2>
+      <h2 className=" text-lg  px-2 py-1 text-purple-600">Trade History</h2>
       <div className="overflow-y-auto scrollbar-hide">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-purple-200">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-purple-600 uppercase tracking-wider">
-                USD Value
+              <th className="px-6 py-3 text-left text-md font-large text-purple-600  tracking-wider">
+                USD 
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-purple-600 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-md font-large text-purple-600  tracking-wider">
                 Amount
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-purple-600 uppercase tracking-wider">Time</th>
+              <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">Time</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white ">
             {/* @ts-ignore */}
             {trades.map((trade, idx) => (
               <React.Fragment key={idx}>
-                <tr>
-                  <td rowSpan={2} className="px-6 py-4 whitespace-nowrap text-purple-600">
-                    {trade.usdValue}
-                  </td>
-                  <td className="px-6 py-2 whitespace-nowrap text-purple-600">
-                    {trade.currency1.amount} {trade.currency1.token}
-                  </td>
-                  <td rowSpan={2} className="px-6 py-4 whitespace-nowrap text-purple-600">
-                    {formatTime(trade.time)}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-2 whitespace-nowrap text-purple-600">
-                    {trade.currency2.amount} {trade.currency2.token}
-                  </td>
-                </tr>
+              <tr >
+  <td className="px-6 py-4 whitespace-nowrap text-purple-600">
+    {trade.usdValue}
+  </td>
+  <td className="px-6 py-4 whitespace-nowrap text-purple-600">
+    <div>{trade.currency1.amount} {trade.currency1.token}</div>
+    <div>{trade.currency2.amount} {trade.currency2.token}</div>
+  </td>
+  <td className="px-6 py-4 whitespace-nowrap text-purple-600">
+    {formatTime(trade.time)}
+  </td>
+</tr>
+
               </React.Fragment>
             ))}
           </tbody>
