@@ -22,42 +22,38 @@ function ColoredRow({ isBuy, children }: { isBuy: boolean; children: ReactElemen
 {
   /* @ts-ignore */
 }
-function TradeHistory({ trades }: { trades: any }) {
+function TradeHistory({ trades }: any) {
   return (
-    <div className="border-b-2 mb-4 bg-purple-100 h-full">
-      <h2 className="text-xl font-bold p-2 text-purple-600">Trade History</h2>
-      <div className="max-h-full overflow-y-auto scrollbar-hide">
+    <div className="bg-purple-100 flex-grow overflow-y-auto">
+      <h2 className="text-lg p-3 text-purple-600 bg-purple-100">Trade History</h2>
+
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-purple-200">
+          <tr>
+            <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">USD</th>
+            <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">Amount</th>
+            <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">Time</th>
+          </tr>
+        </thead>
+      </table>
+
+      <div className="overflow-y-auto scrollbar-hide" style={{ maxHeight: "300px" }}>
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-purple-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-purple-600 uppercase tracking-wider">
-                USD Value
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-purple-600 uppercase tracking-wider">
-                Amount
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-purple-600 uppercase tracking-wider">Time</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white">
             {/* @ts-ignore */}
             {trades.map((trade, idx) => (
-              <React.Fragment key={trade.hash}>
+              <React.Fragment key={idx}>
                 <tr>
-                  <td rowSpan={2} className="px-6 py-4 whitespace-nowrap text-purple-600">
-                    ${trade.usd}
+                  <td className="px-6 py-4 whitespace-nowrap text-purple-600">{trade.usd}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-purple-600">
+                    <div>
+                      {trade.boughtToken} {trade.boughtTokenAmount}
+                    </div>
+                    <div>
+                      {trade.soldToken} {trade.soldTokenAmount}
+                    </div>
                   </td>
-                  <td className="px-6 py-2 whitespace-nowrap text-purple-600">
-                    {trade.boughtToken} {trade.boughtTokenAmount}
-                  </td>
-                  <td rowSpan={2} className="px-6 py-4 whitespace-nowrap text-purple-600">
-                    {formatTimeAgo(trade.time)}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-2 whitespace-nowrap text-purple-600">
-                    {trade.soldToken} {trade.soldTokenAmount}
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-purple-600">{formatTimeAgo(trade.time)}</td>
                 </tr>
               </React.Fragment>
             ))}
@@ -68,24 +64,6 @@ function TradeHistory({ trades }: { trades: any }) {
   );
 }
 // @ts-ignore
-function formatTime(time) {
-  const now = Date.now();
-
-  // Assuming the provided time is a timestamp in ms
-  const difference = now - time;
-
-  const seconds = difference / 1000;
-  if (seconds < 60) return `${Math.round(seconds)} secs`;
-
-  const minutes = seconds / 60;
-  if (minutes < 60) return `${Math.round(minutes)} mins`;
-
-  const hours = minutes / 60;
-  if (hours < 24) return `${Math.round(hours)} hrs`;
-
-  return new Date(time).toLocaleString();
-}
-
 function formatTimeAgo(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();
@@ -97,16 +75,17 @@ function formatTimeAgo(dateString: string): string {
   if (elapsedMinutes < 1) {
     return "just now";
   } else if (elapsedMinutes < 60) {
-    return `${elapsedMinutes} m`;
+    return `${elapsedMinutes} ${elapsedMinutes === 1 ? "m" : "m"} ago`;
   } else if (elapsedHours < 24) {
     const remainingMinutes = elapsedMinutes % 60;
-    return `${elapsedHours} h ${remainingMinutes} m`;
+    return `${elapsedHours} ${elapsedHours === 1 ? "h" : "h"} ${remainingMinutes} ${
+      remainingMinutes === 1 ? "minute" : "minutes"
+    } ago`;
   } else {
-    return `${elapsedDays} d`;
+    return `${elapsedDays} ${elapsedDays === 1 ? "d" : "d"} ago`;
   }
 }
-
-export default function TradeTable({ trades }: { trades: any }) {
+export default function TradeTable({ trades }: any) {
   //const { eth, currency } = Global.useContainer();
   //   const calculateTradeCost = (cost: number): string => {
   //     // Calculate trade cost
