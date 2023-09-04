@@ -19,70 +19,14 @@ function ColoredRow({ isBuy, children }: { isBuy: boolean; children: ReactElemen
     <TableRow className="bg-sell-30">{children}</TableRow>
   );
 }
-const trades = [
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-];
 {
   /* @ts-ignore */
 }
-function TradeHistory({ trades }) {
+function TradeHistory({ trades }: { trades: any }) {
   return (
-    <div className="border-b-2 bg-purple-100 flex-grow overflow-y-auto">
-      <h2 className=" text-lg font-bold px-2 py-1 text-purple-600">Trade History</h2>
-      <div className="overflow-y-auto scrollbar-hide">
+    <div className="border-b-2 mb-4 bg-purple-100 h-full">
+      <h2 className="text-xl font-bold p-2 text-purple-600">Trade History</h2>
+      <div className="max-h-full overflow-y-auto scrollbar-hide">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-purple-200">
             <tr>
@@ -98,21 +42,21 @@ function TradeHistory({ trades }) {
           <tbody className="bg-white divide-y divide-gray-200">
             {/* @ts-ignore */}
             {trades.map((trade, idx) => (
-              <React.Fragment key={idx}>
+              <React.Fragment key={trade.hash}>
                 <tr>
                   <td rowSpan={2} className="px-6 py-4 whitespace-nowrap text-purple-600">
-                    {trade.usdValue}
+                    ${trade.usd}
                   </td>
                   <td className="px-6 py-2 whitespace-nowrap text-purple-600">
-                    {trade.currency1.amount} {trade.currency1.token}
+                    {trade.boughtToken} {trade.boughtTokenAmount}
                   </td>
                   <td rowSpan={2} className="px-6 py-4 whitespace-nowrap text-purple-600">
-                    {formatTime(trade.time)}
+                    {formatTimeAgo(trade.time)}
                   </td>
                 </tr>
                 <tr>
                   <td className="px-6 py-2 whitespace-nowrap text-purple-600">
-                    {trade.currency2.amount} {trade.currency2.token}
+                    {trade.soldToken} {trade.soldTokenAmount}
                   </td>
                 </tr>
               </React.Fragment>
@@ -142,7 +86,27 @@ function formatTime(time) {
   return new Date(time).toLocaleString();
 }
 
-export default function TradeTable() {
+function formatTimeAgo(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const elapsedMilliseconds = now.getTime() - date.getTime();
+  const elapsedMinutes = Math.floor(elapsedMilliseconds / 60000); // 1 minute = 60000 milliseconds
+  const elapsedHours = Math.floor(elapsedMinutes / 60); // 1 hour = 60 minutes
+  const elapsedDays = Math.floor(elapsedHours / 24); // 1 day = 24 hours
+
+  if (elapsedMinutes < 1) {
+    return "just now";
+  } else if (elapsedMinutes < 60) {
+    return `${elapsedMinutes} m`;
+  } else if (elapsedHours < 24) {
+    const remainingMinutes = elapsedMinutes % 60;
+    return `${elapsedHours} h ${remainingMinutes} m`;
+  } else {
+    return `${elapsedDays} d`;
+  }
+}
+
+export default function TradeTable({ trades }: { trades: any }) {
   //const { eth, currency } = Global.useContainer();
   //   const calculateTradeCost = (cost: number): string => {
   //     // Calculate trade cost

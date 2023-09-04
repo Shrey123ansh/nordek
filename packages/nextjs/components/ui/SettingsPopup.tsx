@@ -30,8 +30,8 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="fixed inset-0 bg-gray-800 opacity-50" onClick={onClose}></div>
-      <div className="relative z-10 bg-gray-800 p-4 rounded shadow-lg ">
+      <div className="fixed inset-0 bg-gradient-to-r from-[#2D124F] to-[#1B013B] opacity-50" onClick={onClose}></div>
+      <div className="relative z-10 bg-gradient-to-r from-[#2D124F] to-[#1B013B] p-4 rounded shadow-lg ">
         <div className="flex justify-center items-center text-center">
           <div className="text-xl text-center font-bold">Settings</div>
 

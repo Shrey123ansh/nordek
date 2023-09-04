@@ -25,12 +25,12 @@ const SlippageDetails = () => {
 
       <div className="flex justify-between">
         <span> Share of Pool </span>
-        <span> {shareOfPool} </span>
+        <span className="font-bold"> {shareOfPool} </span>
       </div>
 
       <div className="flex justify-between">
         <span> Lp Tokens </span>
-        <span> {LPTokens} </span>
+        <span className="font-bold"> {LPTokens} </span>
       </div>
       <hr className="" />
     </div>

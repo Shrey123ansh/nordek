@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import SettingsPopup from "../ui/SettingsPopup";
 import ActionButton from "../ui/actionButton";
-import ConnectWalletButton from "./ConnectWalletButton";
 import SlippageDetails from "./SlippageDetails";
 
 const LiquidityFooter = () => {
@@ -22,9 +21,9 @@ const LiquidityFooter = () => {
         <div>
           <span className="text-sm">Slippage</span>
 
-          <span className="ml-2 font-semibold">{slippageValue}%</span>
+          <span className="ml-2 font-semibold text-secondary">{slippageValue}%</span>
         </div>
-        <button className="ml-2" onClick={handlePopup}>
+        <button className="ml-2 hover:text-secondary" onClick={handlePopup}>
           Edit
         </button>
       </div>

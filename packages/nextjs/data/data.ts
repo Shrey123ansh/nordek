@@ -1,4 +1,4 @@
-export const tokens = {
+export const localTokens = {
   ETH: {
     logo: "https://picsum.photos/200",
     name: "Ethereum",
@@ -38,34 +38,25 @@ export type tokenType = {
   symbol: string;
   address: string;
 };
+export type tradeData = {
+  _id: string;
+  usd: number;
+  boughtToken: string;
+  boughtTokenAmount: number;
+  soldToken: string;
+  soldTokenAmount: number;
+  address: string;
+  holdings: number;
+  time: string;
+  hash: string;
+  isBuy: boolean;
+};
 
-export const trades = [
-  {
-    usd: 100,
-    amount: 5,
-    address: "0x123abc...",
-    time: "2023-08-23 10:30 AM",
-    hash: "0xabcdef...",
-    timestamp: 1679804621,
-    isBuy: true,
-  },
-  {
-    usd: 200,
-    amount: 8,
-    address: "0x456def...",
-    time: "2023-08-23 11:45 AM",
-    hash: "0xghijkl...",
-    timestamp: 1679815550,
-    isBuy: false,
-  },
-  {
-    usd: 50,
-    amount: 2,
-    address: "0x789ghi...",
-    time: "2023-08-23 2:15 PM",
-    hash: "0mnopqr...",
-    timestamp: 1679847123,
-    isBuy: true,
-  },
-  // Add more dummy data objects as needed
-];
+const stakeData = {
+  _id: "1231231",
+  hash: "0xbe4e6dd81a180ee1ef6e95e787a181335f0859058233872132f9146b2cba38a0",
+  stakedAt: 21235123,
+  apy: 5.6,
+  address: "0x36b95B5dAF5EFC083f16AcA6a6b980348B6C15d1",
+  stakedAmount: 54,
+};

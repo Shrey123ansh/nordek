@@ -12,7 +12,7 @@ import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaf
 export const LiquidityBox = () => {
   return (
     <div className={`p-6 border-2 rounded-2xl`}>
-      <div className={`flex flex-col space-y-4 items-center px-16 pt-6 px-20 rounded-xl bg-gray-600`}>
+      <div className={`flex flex-col space-y-4 items-center px-16 pt-6 px-20 rounded-xl bg-base-300`}>
         <div>
           <LiquidityHeader></LiquidityHeader>
           <br />

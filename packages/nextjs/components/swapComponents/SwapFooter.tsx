@@ -2,17 +2,19 @@ import React, { useState } from "react";
 import SettingsPopup from "../ui/SettingsPopup";
 import ActionButton from "../ui/actionButton";
 import ConnectWalletButton from "./ConnectWalletButton";
+import { tokenType } from "~~/data/data";
 
-const SlippageComponent = () => {
+type SwapFooterProps = {
+  handleSwap: () => void;
+};
+
+const SwapFooter = ({ handleSwap }: SwapFooterProps) => {
   const [slippageValue, setSlippageValue] = useState(2); // Initial slippage value (2% in this example)
+
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handlePopup = () => {
     setIsPopupOpen(!isPopupOpen);
-  };
-
-  const handleSwap = () => {
-    console.log("Swapped");
   };
 
   return (
@@ -21,18 +23,23 @@ const SlippageComponent = () => {
         <div>
           <span className="text-sm">Slippage</span>
 
-          <span className="ml-2 font-semibold">{slippageValue}%</span>
+          <span className="ml-2 font-semibold text-secondary">{slippageValue}%</span>
         </div>
-        <button className="ml-2" onClick={handlePopup}>
+        <button className="ml-2 hover:text-secondary" onClick={handlePopup}>
           Edit
         </button>
       </div>
 
-      <ActionButton text="Swap" onClick={handleSwap}></ActionButton>
+      <ActionButton
+        text="Swap"
+        onClick={() => {
+          handleSwap();
+        }}
+      ></ActionButton>
 
       <SettingsPopup isOpen={isPopupOpen} onClose={handlePopup} setSlippageValue={setSlippageValue}></SettingsPopup>
     </div>
   );
 };
 
-export default SlippageComponent;
+export default SwapFooter;

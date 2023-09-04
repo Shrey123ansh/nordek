@@ -1,15 +1,27 @@
 import React, { useState } from "react";
 import { Select } from "./Select/Select";
 import ExpertToggle from "./swapComponents/ExpertModeToggle";
-import { ToggleSwitchProps } from "./swapComponents/ToggleSwitchProps";
-import { tokenType, tokens } from "~~/data/data";
+import { tokenType } from "~~/data/data";
 
-const ExpertModeNavbar: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpertToggle }) => {
-  const [chartToken, setChartToken] = useState(tokens.NRK); // State to store the selected currency
-  const [token, setToken] = useState(tokens.NRK); // State to store the selected currency
+type ToggleSwitchProps = {
+  expertToggle: boolean;
+  setExpertToggle: React.Dispatch<React.SetStateAction<boolean>>;
+  chartToken: tokenType;
+  setChartToken: React.Dispatch<React.SetStateAction<tokenType>>;
+  secondaryChartToken: tokenType;
+  setSecondaryChartToken: React.Dispatch<React.SetStateAction<tokenType>>;
+};
 
+const ExpertModeNavbar: React.FC<ToggleSwitchProps> = ({
+  expertToggle,
+  setExpertToggle,
+  chartToken,
+  setChartToken,
+  secondaryChartToken,
+  setSecondaryChartToken,
+}) => {
   return (
-    <nav className="absolute flex bg-purple-600 py-3 w-full z-10 p-4 top-0 left-0 items-center text-md ">
+    <nav className="absolute flex bg-accent py-3 w-full z-10 p-4 top-0 left-0 items-center text-md ">
       <div className="flex items-center">
         <div className="flex space-x-8">
           {/* Padding on the left edge */}
@@ -24,15 +36,15 @@ const ExpertModeNavbar: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpert
           <span className="font-bold"> - </span>
           {/* Element 3 */}
           <button
-            className={`appearance-none ${token.name === "NRK" ? "text-blue-500" : ""}`}
-            onClick={() => setToken(tokens.NRK)}
+            className={`appearance-none ${secondaryChartToken.name === "NRK" ? "text-blue-500" : ""}`}
+            onClick={() => setSecondaryChartToken(tokens.NRK)}
           >
             NRK
           </button>
 
           <button
-            className={`appearance-none ${token.name === "USDC" ? "text-blue-500" : ""}`}
-            onClick={() => setToken(tokens.USDC)}
+            className={`appearance-none ${secondaryChartToken.name === "USDC" ? "text-blue-500" : ""}`}
+            onClick={() => setSecondaryChartToken(tokens.USDC)}
           >
             USDC
           </button>
