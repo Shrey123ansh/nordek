@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import SettingsPopup from "../ui/SettingsPopup";
 import ActionButton from "../ui/actionButton";
-import ConnectWalletButton from "./ConnectWalletButton";
 import SlippageDetails from "./SlippageDetails";
 
-const LiquidityFooter = () => {
+type LiquidityFooterProps = {
+  handleAddLiquidity: () => void;
+};
+
+const LiquidityFooter = ({ handleAddLiquidity }: LiquidityFooterProps) => {
   const [slippageValue, setSlippageValue] = useState(2); // Initial slippage value (2% in this example)
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handlePopup = () => {
     setIsPopupOpen(!isPopupOpen);
-  };
-
-  const handleAddLiquidity = () => {
-    console.log("Swapped");
   };
 
   return (
@@ -22,16 +21,21 @@ const LiquidityFooter = () => {
         <div>
           <span className="text-sm">Slippage</span>
 
-          <span className="ml-2 font-semibold">{slippageValue}%</span>
+          <span className="ml-2 font-semibold text-secondary">{slippageValue}%</span>
         </div>
-        <button className="ml-2" onClick={handlePopup}>
+        <button className="ml-2 hover:text-secondary" onClick={handlePopup}>
           Edit
         </button>
       </div>
       <SlippageDetails></SlippageDetails>
       <SettingsPopup isOpen={isPopupOpen} onClose={handlePopup} setSlippageValue={setSlippageValue}></SettingsPopup>
       <br />
-      <ActionButton text="Add Liquidity" onClick={handleAddLiquidity}></ActionButton>
+      <ActionButton
+        text="Add Liquidity"
+        onClick={() => {
+          handleAddLiquidity();
+        }}
+      ></ActionButton>
     </div>
   );
 };

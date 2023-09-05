@@ -1,11 +1,16 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Select } from "../Select/Select";
-import { tokens } from "~~/data/data";
+import { tokenType } from "~~/data/data";
 
-const SelectToken = () => {
-  const [token, setToken] = useState(tokens.NRK);
+type SwapFooterProps = {
+  token: tokenType;
+  setToken: React.Dispatch<React.SetStateAction<tokenType>>;
+  tokenAmount: number;
+  setTokenAmount: React.Dispatch<React.SetStateAction<number>>;
+};
 
+const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount }: SwapFooterProps) => {
   return (
     // <select
     //   options={options}
@@ -14,7 +19,7 @@ const SelectToken = () => {
     //     Option: CustomOption,
     //   }}
     // />
-    <div className="flex flex-col mb-4 bg-gray-800 px-4 py-2 rounded-lg text-sm">
+    <div className="flex flex-col mb-4 bg-base-100 px-4 py-2 rounded-lg text-sm">
       <span className="mb-4">From</span>
       <div className="flex items-center">
         <Select setToken={setToken} token={token}></Select>
@@ -22,7 +27,11 @@ const SelectToken = () => {
         <input
           type="number"
           placeholder="0.0"
+          value={tokenAmount?.toString()}
           className="input input-sm input-ghost max-w-md text-right rounded-none leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          onChange={e => {
+            setTokenAmount(Number(e.target.value));
+          }}
         />
       </div>
       <label className="label block w-full text-right">

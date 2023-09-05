@@ -14,7 +14,7 @@ export default function SwapHeader() {
 
   return (
     <div className="flex justify-center w-full">
-      <div className="badge badge-primary badge-outline">Market</div>
+      <div className="badge badge-secondary badge-outline">Market</div>
 
       {/* <button
 onClick={handleOpenPopup}

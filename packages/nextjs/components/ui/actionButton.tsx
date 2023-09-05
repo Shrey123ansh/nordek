@@ -7,7 +7,7 @@ interface ActionButtonProps {
 
 const ActionButton: React.FC<ActionButtonProps> = ({ text, onClick }) => {
   return (
-    <button className="py-1 px-4 border rounded-full" onClick={onClick}>
+    <button className="btn btn-sm btn-outline btn-accent" onClick={onClick}>
       {text}
     </button>
   );
