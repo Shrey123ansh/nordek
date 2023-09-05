@@ -17,6 +17,7 @@ import clientPromise from "~~/lib/mongoDb";
 const Home: NextPage<any> = props => {
   const [expertToggle, setExpertToggle] = useState(false);
   const [trades, setTrades] = useState(props.trades);
+  const [liquidityHistory, setLiquidityHistory] = useState(props.liquidityHistory);
   const [chartToken, setChartToken] = useState(localTokens.NRK);
   const [secondaryChartToken, setSecondaryChartToken] = useState(localTokens.USDC);
 
@@ -48,8 +49,8 @@ const Home: NextPage<any> = props => {
               <div className="flex justify-between p-0 w-[100%]">
                 <Chart></Chart>
                 <div className="flex flex-col h-screen">
-                  <TradeTable trades={trades} />
-                  <TradeTable trades={trades} />
+                  <TradeTable trades={trades} tableHead={"Trade History"} />
+                  <TradeTable trades={liquidityHistory} tableHead={"Liquidity History"} />
                 </div>
               </div>
 
@@ -75,9 +76,11 @@ export async function getServerSideProps() {
     const db = client.db("Norswap");
 
     const trades = await db.collection("trades").find({}).sort({ time: -1 }).limit(10).toArray();
+    const liquidityHistory = await db.collection("liquidityHistory").find({}).sort({ time: -1 }).limit(10).toArray();
     return {
       props: {
         trades: JSON.parse(JSON.stringify(trades)),
+        liquidityHistory: JSON.parse(JSON.stringify(liquidityHistory)),
       },
     };
   } catch (e) {

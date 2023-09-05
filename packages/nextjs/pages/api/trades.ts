@@ -4,7 +4,7 @@ import { connectToDatabase } from "~~/lib/mongoDb";
 import Trades from "~~/models/trades";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  let { db, client } = await connectToDatabase();
+  let { db } = await connectToDatabase();
   switch (req.method) {
     case "POST":
       try {
@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // await newTrade.save();
 
-        const response = await client.db().collection("trades").insertOne(reqBody);
+        const response = await db.collection("trades").insertOne(reqBody);
 
         return NextResponse.json({
           message: `Trade Executed ${response.insertedId}`,

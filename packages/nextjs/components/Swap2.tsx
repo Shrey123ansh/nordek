@@ -17,7 +17,7 @@ export const Swap2: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpertTogg
         }
       >
         {expertToggle ? (
-          <div className="w-full bg-secondary p-2 text-center font-sm"> Market</div>
+          <div className="w-full bg-[#5F29A5] p-2 text-center font-sm"> Market</div>
         ) : (
           <div>
             <SwapHeader></SwapHeader>

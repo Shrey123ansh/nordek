@@ -3,16 +3,16 @@ import SettingsPopup from "../ui/SettingsPopup";
 import ActionButton from "../ui/actionButton";
 import SlippageDetails from "./SlippageDetails";
 
-const LiquidityFooter = () => {
+type LiquidityFooterProps = {
+  handleAddLiquidity: () => void;
+};
+
+const LiquidityFooter = ({ handleAddLiquidity }: LiquidityFooterProps) => {
   const [slippageValue, setSlippageValue] = useState(2); // Initial slippage value (2% in this example)
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handlePopup = () => {
     setIsPopupOpen(!isPopupOpen);
-  };
-
-  const handleAddLiquidity = () => {
-    console.log("Swapped");
   };
 
   return (
@@ -30,7 +30,12 @@ const LiquidityFooter = () => {
       <SlippageDetails></SlippageDetails>
       <SettingsPopup isOpen={isPopupOpen} onClose={handlePopup} setSlippageValue={setSlippageValue}></SettingsPopup>
       <br />
-      <ActionButton text="Add Liquidity" onClick={handleAddLiquidity}></ActionButton>
+      <ActionButton
+        text="Add Liquidity"
+        onClick={() => {
+          handleAddLiquidity();
+        }}
+      ></ActionButton>
     </div>
   );
 };

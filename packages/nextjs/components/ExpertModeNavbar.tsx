@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Select } from "./Select/Select";
 import ExpertToggle from "./swapComponents/ExpertModeToggle";
-import { tokenType } from "~~/data/data";
+import { localTokens, tokenType } from "~~/data/data";
 
 type ToggleSwitchProps = {
   expertToggle: boolean;
@@ -37,14 +37,14 @@ const ExpertModeNavbar: React.FC<ToggleSwitchProps> = ({
           {/* Element 3 */}
           <button
             className={`appearance-none ${secondaryChartToken.name === "NRK" ? "text-blue-500" : ""}`}
-            onClick={() => setSecondaryChartToken(tokens.NRK)}
+            onClick={() => setSecondaryChartToken(localTokens.NRK)}
           >
             NRK
           </button>
 
           <button
             className={`appearance-none ${secondaryChartToken.name === "USDC" ? "text-blue-500" : ""}`}
-            onClick={() => setSecondaryChartToken(tokens.USDC)}
+            onClick={() => setSecondaryChartToken(localTokens.USDC)}
           >
             USDC
           </button>

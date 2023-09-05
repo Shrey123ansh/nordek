@@ -8,7 +8,7 @@ interface TokenListPopupProps {
 }
 
 const getTokenList = async () => {
-  const response = await fetch(process.env.API_URL + "swapSupportedTokenList");
+  const response = await fetch("http://localhost:3000/api/swapSupportedTokenList");
 
   if (!response.ok) {
     // This will activate the closest `error.js` Error Boundary

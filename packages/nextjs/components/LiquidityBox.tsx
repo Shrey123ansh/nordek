@@ -1,13 +1,5 @@
-import { useEffect, useState } from "react";
 import LiquidityHeader from "./LiquidityComponents/LiquidityHeader";
 import LiquidityMain from "./LiquidityComponents/LiquidityMain";
-import ExpertToggle from "./swapComponents/ExpertModeToggle";
-import SwapFooter from "./swapComponents/SwapFooter";
-import SwapMain from "./swapComponents/SwapMain";
-import { parseEther } from "viem";
-import { useAccount } from "wagmi";
-import { tokens } from "~~/data/data.js";
-import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 export const LiquidityBox = () => {
   return (

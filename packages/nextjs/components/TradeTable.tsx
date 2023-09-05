@@ -22,38 +22,43 @@ function ColoredRow({ isBuy, children }: { isBuy: boolean; children: ReactElemen
 {
   /* @ts-ignore */
 }
-function TradeHistory({ trades }: any) {
+function TradeHistory({ trades, tableHead }: any) {
   return (
-    <div className="bg-purple-100 flex-grow overflow-y-auto">
-      <h2 className="text-lg p-3 text-purple-600 bg-purple-100">Trade History</h2>
+    <div className="bg-white flex-grow overflow-y-auto">
+      <div className="text-md p-2 text-white-600 bg-[#5F29A5] text-center">{tableHead}</div>
 
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-purple-200">
-          <tr>
-            <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">USD</th>
-            <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">Amount</th>
-            <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">Time</th>
-          </tr>
-        </thead>
-      </table>
-
-      <div className="overflow-y-auto scrollbar-hide" style={{ maxHeight: "300px" }}>
-        <table className="min-w-full divide-y divide-gray-200">
-          <tbody className="bg-white">
+      <div className="">
+        <table className="min-w-full divide-y divide-gray-200 text-sm px-4">
+          <thead className="bg-white">
+            <tr>
+              <th className="px-5 py-1 text-center text-md text-purple-600 tracking-wider border-b border-[#642EFF] border-t">
+                USD
+              </th>
+              <th className="px-5 py-1 text-center text-md text-purple-600 tracking-wider border-b border-[#642EFF] border-t">
+                Amount
+              </th>
+              <th className="px-5 py-1 text-center text-md text-purple-600 tracking-wider border-b border-[#642EFF] border-t">
+                Time
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white overflow-y-auto scrollbar-hide max-h-96 flex-grow">
             {/* @ts-ignore */}
             {trades.map((trade, idx) => (
               <React.Fragment key={idx}>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-purple-600">{trade.usd}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-purple-600">
+                <tr className="text-center space-x-8 px-4">
+                  <td className="whitespace-nowrap text-purple-600">{trade.usd}</td>
+                  <td className="whitespace-nowrap text-black font-light">
                     <div>
-                      {trade.boughtToken} {trade.boughtTokenAmount}
+                      {trade.boughtTokenAmount} {"NRK"}
                     </div>
                     <div>
-                      {trade.soldToken} {trade.soldTokenAmount}
+                      {trade.soldTokenAmount} {"NUSD"}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-purple-600">{formatTimeAgo(trade.time)}</td>
+                  <td className="whitespace-nowrap text-black font-light text-right text-xs pr-4">
+                    {formatTimeAgo(trade.time)}
+                  </td>
                 </tr>
               </React.Fragment>
             ))}
@@ -75,17 +80,15 @@ function formatTimeAgo(dateString: string): string {
   if (elapsedMinutes < 1) {
     return "just now";
   } else if (elapsedMinutes < 60) {
-    return `${elapsedMinutes} ${elapsedMinutes === 1 ? "m" : "m"} ago`;
+    return `${elapsedMinutes}${elapsedMinutes === 1 ? "m" : "m"} ago`;
   } else if (elapsedHours < 24) {
     const remainingMinutes = elapsedMinutes % 60;
-    return `${elapsedHours} ${elapsedHours === 1 ? "h" : "h"} ${remainingMinutes} ${
-      remainingMinutes === 1 ? "minute" : "minutes"
-    } ago`;
+    return `${elapsedHours}${elapsedHours === 1 ? "h" : "h"} ago`;
   } else {
-    return `${elapsedDays} ${elapsedDays === 1 ? "d" : "d"} ago`;
+    return `${elapsedDays}${elapsedDays === 1 ? "d" : "d"} ago`;
   }
 }
-export default function TradeTable({ trades }: any) {
+export default function TradeTable({ trades, tableHead }: any) {
   //const { eth, currency } = Global.useContainer();
   //   const calculateTradeCost = (cost: number): string => {
   //     // Calculate trade cost
@@ -137,6 +140,6 @@ export default function TradeTable({ trades }: any) {
     //     })}
     //   </TableBody>
     // </Table>
-    <TradeHistory trades={trades} />
+    <TradeHistory trades={trades} tableHead={tableHead} />
   );
 }
