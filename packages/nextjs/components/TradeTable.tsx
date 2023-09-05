@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 //import type { Prisma } from "@prisma/client";
 import { formatDistance } from "date-fns";
+import { formatTimeAgoStr } from "~~/utils/time";
 
 //import type { TradeWithTwitterUser } from "pages/api/stats/trades";
 // import { Currency, Global } from "~~/state/global";
@@ -19,132 +20,58 @@ function ColoredRow({ isBuy, children }: { isBuy: boolean; children: ReactElemen
     <TableRow className="bg-sell-30">{children}</TableRow>
   );
 }
-const trades = [
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-  {
-    usdValue: "$100",
-    currency1: { amount: "0.5", token: "ETH" },
-    currency2: { amount: "150", token: "USDT" },
-    time: Date.now() - 120000,
-  },
-];
 {
   /* @ts-ignore */
 }
-function TradeHistory({ trades }) {
+function TradeHistory({ trades, tableHead }: any) {
   return (
-    <div className="bg-purple-100 flex-grow overflow-y-auto">
-    <h2 className="text-lg p-3 text-purple-600 bg-purple-100">Trade History</h2>
+    <div className="bg-white flex-grow overflow-y-auto">
+      <div className="text-md p-2 text-white-600 bg-[#5F29A5] text-center">{tableHead}</div>
 
-    <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-purple-200">
+      <div className="">
+        <table className="min-w-full divide-y divide-gray-200 text-sm px-4">
+          <thead className="bg-white">
             <tr>
-                <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">
-                    USD 
-                </th>
-                <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">
-                    Amount
-                </th>
-                <th className="px-6 py-3 text-left text-md font-large text-purple-600 tracking-wider">Time</th>
+              <th className="px-5 py-1 text-center text-md text-purple-600 tracking-wider border-b border-[#642EFF] border-t">
+                USD
+              </th>
+              <th className="px-5 py-1 text-center text-md text-purple-600 tracking-wider border-b border-[#642EFF] border-t">
+                Amount
+              </th>
+              <th className="px-5 py-1 text-center text-md text-purple-600 tracking-wider border-b border-[#642EFF] border-t">
+                Time
+              </th>
             </tr>
-        </thead>
-    </table>
-
-    <div className="overflow-y-auto scrollbar-hide" style={{ maxHeight: '300px' }}> 
-        <table className="min-w-full divide-y divide-gray-200">
-            <tbody className="bg-white">
-                {/* @ts-ignore */}
-                {trades.map((trade, idx) => (
-                    <React.Fragment key={idx}>
-                        <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-purple-600">
-                                {trade.usdValue}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-purple-600">
-                                <div>{trade.currency1.amount} {trade.currency1.token}</div>
-                                <div>{trade.currency2.amount} {trade.currency2.token}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-purple-600">
-                                {formatTime(trade.time)}
-                            </td>
-                        </tr>
-                    </React.Fragment>
-                ))}
-            </tbody>
+          </thead>
+          <tbody className="bg-white overflow-y-auto scrollbar-hide max-h-96 flex-grow">
+            {/* @ts-ignore */}
+            {trades.map((trade, idx) => (
+              <React.Fragment key={idx}>
+                <tr className="text-center hover:bg-gray-200">
+                  <td className="mx-2 px-8 whitespace-nowrap text-purple-600">{trade.usd}</td>
+                  <td className="mx-2 px-8 whitespace-nowrap text-black font-light">
+                    <div>
+                      {trade.boughtTokenAmount} {"NRK"}
+                    </div>
+                    <div>
+                      {trade.soldTokenAmount} {"NUSD"}
+                    </div>
+                  </td>
+                  <td className="mx-2 px-8 whitespace-nowrap text-black font-light text-right text-xs pr-4">
+                    {formatTimeAgoStr(trade.time)}
+                  </td>
+                </tr>
+              </React.Fragment>
+            ))}
+          </tbody>
         </table>
+      </div>
     </div>
-</div>
-
-
   );
 }
 // @ts-ignore
-function formatTime(time) {
-  const now = Date.now();
 
-  // Assuming the provided time is a timestamp in ms
-  const difference = now - time;
-
-  const seconds = difference / 1000;
-  if (seconds < 60) return `${Math.round(seconds)} secs`;
-
-  const minutes = seconds / 60;
-  if (minutes < 60) return `${Math.round(minutes)} mins`;
-
-  const hours = minutes / 60;
-  if (hours < 24) return `${Math.round(hours)} hrs`;
-
-  return new Date(time).toLocaleString();
-}
-
-export default function TradeTable() {
+export default function TradeTable({ trades, tableHead }: any) {
   //const { eth, currency } = Global.useContainer();
   //   const calculateTradeCost = (cost: number): string => {
   //     // Calculate trade cost
@@ -196,6 +123,6 @@ export default function TradeTable() {
     //     })}
     //   </TableBody>
     // </Table>
-    <TradeHistory trades={trades} />
+    <TradeHistory trades={trades} tableHead={tableHead} />
   );
 }
