@@ -167,89 +167,79 @@ const Stake: NextPage = (props: any) => {
     eventName: "Staked",
     listener: logs => {
       logs.map(log => {
-        const { user, amount, stakeTime } = log.args;
-        console.log("📡 Staked", user, amount, stakeTime);
+        // TODO save to db
+        const saveStakeToDb = async (newStake: {
+          stakedAt: any;
+          stakedAmount: string;
+          apy: number; //TODO change this to current apy
+          address: any;
+          hash: any;
+          slotId: number;
+        }) => {
+          await axios
+            .post("/api/stakes", newStake)
+            .then(function (response) {
+              console.log(response);
+              console.log("Staked");
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+
+          console.log("Saved to DB");
+        };
+
+        const { user, amount, stakeTime, slotId } = log.args;
+        console.log("📡 Staked", user, amount, stakeTime, slotId);
+
+        if (user && amount && stakeTime && slotId) {
+          const newStake = {
+            stakedAt: stakeTime,
+            stakedAmount: amount,
+            apy: 18, //TODO change this to current apy
+            address: user,
+            hash: log.transactionHash,
+            slotId: Number(slotId) - 1,
+          };
+
+          const isDuplicate = stakes.some(stake => stake.hash === newStake.hash);
+
+          if (!isDuplicate) {
+            // If it's not a duplicate, add the new stake
+            setStakes([...stakes, newStake]);
+            //saveStakeToDb(newStake); // TODO uncomment
+          }
+        }
       });
     },
   });
 
-  const {
-    data: Staked,
-    isLoading: isLoadingEvents,
-    error: errorReadingEvents,
-  } = useScaffoldEventHistory({
-    contractName: "StakingContract",
-    eventName: "Staked",
-    fromBlock: blockNumber ? BigInt(blockNumber) : 0n,
-    filters: { user: address },
-    blockData: true,
-  });
+  // const {
+  //   data: Staked,
+  //   isLoading: isLoadingEvents,
+  //   error: errorReadingEvents,
+  // } = useScaffoldEventHistory({
+  //   contractName: "StakingContract",
+  //   eventName: "Staked",
+  //   fromBlock: blockNumber ? BigInt(blockNumber) : 0n,
+  //   filters: { user: address },
+  //   blockData: true,
+  // });
 
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "Unstaked",
     listener: logs => {
       logs.map(log => {
-        const { user, amount, unstakeTime } = log.args;
-        console.log("📡 Staked", user, amount, unstakeTime);
+        const { user, amount, unstakeTime, slotId } = log.args;
+        console.log("📡 Staked", user, amount, unstakeTime, slotId);
+        if (user && amount && unstakeTime) {
+          const updatedStakes = stakes.filter(stake => stake.slotId !== slotId);
+          setStakes(updatedStakes);
+        }
       });
     },
   });
-
-  const {
-    data: Unstaked,
-    isLoading: isLoadingUnstakedEvents,
-    error: errorReadingUnstakedEvents,
-  } = useScaffoldEventHistory({
-    contractName: "StakingContract",
-    eventName: "Staked",
-    fromBlock: blockNumber ? BigInt(blockNumber) : 0n,
-    filters: { user: address },
-    blockData: true,
-  });
-
-  useEffect(() => {
-    const saveStakeToDb = async (newStake: {
-      stakedAt: any;
-      stakedAmount: string;
-      apy: number; //TODO change this to current apy
-      address: any;
-      hash: any;
-    }) => {
-      await axios
-        .post("/api/stakes", newStake)
-        .then(function (response) {
-          console.log(response);
-          console.log("Staked");
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-
-      console.log("Saved to DB");
-    };
-
-    if (Staked && Staked[0] && Staked[0].args) {
-      const stakeValue = Staked[0].args;
-      const transactionDtls = Staked[0].block;
-      const newStake = {
-        stakedAt: stakeValue.stakeTime,
-        stakedAmount: stakeValue.amount,
-        apy: 18, //TODO change this to current apy
-        address: stakeValue.user,
-        hash: transactionDtls.hash,
-        slotId: Number(stakeValue.slotId) - 1,
-      };
-
-      const isDuplicate = stakes.some(stake => stake.hash === newStake.hash);
-
-      if (!isDuplicate) {
-        // If it's not a duplicate, add the new stake
-        setStakes([...stakes, newStake]);
-        //saveStakeToDb(newStake); // TODO uncomment
-      }
-    }
-  }, [Staked]);
 
   return (
     <>

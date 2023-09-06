@@ -5,7 +5,7 @@ const contracts = {
       chainId: "31337",
       contracts: {
         StakingContract: {
-          address: "0x4826533B4897376654Bb4d4AD88B7faFD0C98528",
+          address: "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
           abi: [
             {
               inputs: [
@@ -136,6 +136,12 @@ const contracts = {
                   internalType: "uint32",
                   name: "unstakeTime",
                   type: "uint32",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "slotId",
+                  type: "uint256",
                 },
               ],
               name: "Unstaked",
@@ -485,7 +491,7 @@ const contracts = {
           ],
         },
         YourContract: {
-          address: "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf",
+          address: "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
           abi: [
             {
               inputs: [

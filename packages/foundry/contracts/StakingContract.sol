@@ -61,7 +61,12 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         uint32 stakeTime,
         uint slotId
     );
-    event Unstaked(address indexed user, uint256 amount, uint32 unstakeTime);
+    event Unstaked(
+        address indexed user,
+        uint256 amount,
+        uint32 unstakeTime,
+        uint slotId
+    );
     event RewardClaimed(
         address indexed user,
         uint256 totalReward,
@@ -144,7 +149,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         (bool success, ) = user.call{value: _amount}("");
         require(success, "Unable to send value or recipient may have reverted");
 
-        emit Unstaked(user, _amount, uint32(block.timestamp));
+        emit Unstaked(user, _amount, uint32(block.timestamp), _slotId);
     }
 
     /**
