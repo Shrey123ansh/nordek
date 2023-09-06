@@ -7,6 +7,7 @@ import "../contracts/ZuniswapV2Factory.sol";
 import "../contracts/ZuniswapV2Router.sol";
 import "../test/mocks/ERC20Mintable.sol";
 import "../contracts/ZuniswapV2Library.sol";
+import "../contracts/StakingContract.sol";
 
 contract DeployScript is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);
@@ -18,6 +19,8 @@ contract DeployScript is ScaffoldETHDeploy {
     ERC20Mintable tokenC;
     ERC20Mintable tokenD;
 
+    StakingContract stakingContract;
+
     function run() external {
         uint256 deployerPrivateKey = setupLocalhostEnv();
         if (deployerPrivateKey == 0) {
@@ -27,85 +30,94 @@ contract DeployScript is ScaffoldETHDeploy {
         }
         vm.startBroadcast(deployerPrivateKey);
 
-        tokenA = new ERC20Mintable("Ethereum", "ETH");
-        tokenB = new ERC20Mintable("Bitcoin", "WBTC");
-        tokenC = new ERC20Mintable("Chainlink", "LINK");
-        tokenD = new ERC20Mintable("USDC", "USDC");
+        // tokenA = new ERC20Mintable("Ethereum", "ETH");
+        // tokenB = new ERC20Mintable("Bitcoin", "WBTC");
+        // tokenC = new ERC20Mintable("Chainlink", "LINK");
+        // tokenD = new ERC20Mintable("USDC", "USDC");
+
+        // console.logString(
+        //     string.concat(
+        //         "Ethereum deployed at: ",
+        //         vm.toString(address(tokenA))
+        //     )
+        // );
+
+        // console.logString(
+        //     string.concat("Bitcoin deployed at: ", vm.toString(address(tokenB)))
+        // );
+        // console.logString(
+        //     string.concat(
+        //         "Chainlink deployed at: ",
+        //         vm.toString(address(tokenC))
+        //     )
+        // );
+        // console.logString(
+        //     string.concat("USDC deployed at: ", vm.toString(address(tokenD)))
+        // );
+
+        // factory = new ZuniswapV2Factory();
+        // console.logString(
+        //     string.concat(
+        //         "factory deployed at: ",
+        //         vm.toString(address(factory))
+        //     )
+        // );
+
+        // tokenA.mint(20 ether, vm.addr(deployerPrivateKey));
+        // tokenB.mint(20 ether, vm.addr(deployerPrivateKey));
+        // tokenC.mint(20 ether, vm.addr(deployerPrivateKey));
+        // tokenD.mint(20 ether, vm.addr(deployerPrivateKey));
+
+        // console.logString("Minted and recevied tokens");
+
+        stakingContract = new StakingContract(18, 10000000000000000, 31536000);
 
         console.logString(
             string.concat(
-                "Ethereum deployed at: ",
-                vm.toString(address(tokenA))
+                "staking contract deployed at: ",
+                vm.toString(address(stakingContract))
             )
         );
 
-        console.logString(
-            string.concat("Bitcoin deployed at: ", vm.toString(address(tokenB)))
-        );
-        console.logString(
-            string.concat(
-                "Chainlink deployed at: ",
-                vm.toString(address(tokenC))
-            )
-        );
-        console.logString(
-            string.concat("USDC deployed at: ", vm.toString(address(tokenD)))
-        );
+        // router = new ZuniswapV2Router(address(factory));
+        // console.logString(
+        //     string.concat("router deployed at: ", vm.toString(address(router)))
+        // );
 
-        factory = new ZuniswapV2Factory();
-        console.logString(
-            string.concat(
-                "factory deployed at: ",
-                vm.toString(address(factory))
-            )
-        );
+        // tokenA.approve(address(router), 10 ether);
+        // tokenB.approve(address(router), 10 ether);
+        // tokenC.approve(address(router), 10 ether);
+        // tokenD.approve(address(router), 10 ether);
 
-        tokenA.mint(20 ether, vm.addr(deployerPrivateKey));
-        tokenB.mint(20 ether, vm.addr(deployerPrivateKey));
-        tokenC.mint(20 ether, vm.addr(deployerPrivateKey));
-        tokenD.mint(20 ether, vm.addr(deployerPrivateKey));
+        // router.addLiquidity(
+        //     address(tokenA),
+        //     address(tokenB),
+        //     1 ether,
+        //     1 ether,
+        //     1 ether,
+        //     1 ether,
+        //     vm.addr(deployerPrivateKey)
+        // );
 
-        console.logString("Minted and recevied tokens");
+        // router.addLiquidity(
+        //     address(tokenB),
+        //     address(tokenC),
+        //     1 ether,
+        //     1 ether,
+        //     1 ether,
+        //     1 ether,
+        //     vm.addr(deployerPrivateKey)
+        // );
 
-        router = new ZuniswapV2Router(address(factory));
-        console.logString(
-            string.concat("router deployed at: ", vm.toString(address(router)))
-        );
-
-        tokenA.approve(address(router), 10 ether);
-        tokenB.approve(address(router), 10 ether);
-        tokenC.approve(address(router), 10 ether);
-        tokenD.approve(address(router), 10 ether);
-
-        router.addLiquidity(
-            address(tokenA),
-            address(tokenB),
-            1 ether,
-            1 ether,
-            1 ether,
-            1 ether,
-            vm.addr(deployerPrivateKey)
-        );
-
-        router.addLiquidity(
-            address(tokenB),
-            address(tokenC),
-            1 ether,
-            1 ether,
-            1 ether,
-            1 ether,
-            vm.addr(deployerPrivateKey)
-        );
-
-        router.addLiquidity(
-            address(tokenC),
-            address(tokenD),
-            1 ether,
-            1 ether,
-            1 ether,
-            1 ether,
-            vm.addr(deployerPrivateKey)
-        );
+        // router.addLiquidity(
+        //     address(tokenC),
+        //     address(tokenD),
+        //     1 ether,
+        //     1 ether,
+        //     1 ether,
+        //     1 ether,
+        //     vm.addr(deployerPrivateKey)
+        // );
 
         YourContract yourContract = new YourContract(
             vm.addr(deployerPrivateKey)
