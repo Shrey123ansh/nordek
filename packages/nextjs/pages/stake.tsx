@@ -3,20 +3,28 @@ import Link from "next/link";
 import axios from "axios";
 import type { NextPage } from "next";
 import { formatEther } from "viem";
-import { useAccount, useBlockNumber, useContractRead } from "wagmi";
+import { useAccount, useBalance, useBlockNumber, useContractRead } from "wagmi";
+import StakeInfoBox from "~~/components/StakingComponents/StakeInfoBox";
 import ActionButton from "~~/components/ui/actionButton";
 import {
   useDeployedContractInfo,
   useScaffoldContractRead,
   useScaffoldContractWrite,
-  useScaffoldEventHistory,
   useScaffoldEventSubscriber,
 } from "~~/hooks/scaffold-eth";
 import clientPromise from "~~/lib/mongoDb";
+import { formatTx } from "~~/utils/formatStuff";
+import { getTargetNetwork } from "~~/utils/scaffold-eth";
 
 const StakeBox = () => {
   const [stakeAmount, setStakeAmount] = useState(0);
   const { address } = useAccount();
+  const [apy, setApy] = useState(0);
+  const { data: balanceData } = useBalance({
+    address,
+    watch: true,
+    chainId: getTargetNetwork().id,
+  });
 
   const { writeAsync, isLoading } = useScaffoldContractWrite({
     contractName: "StakingContract",
@@ -48,17 +56,47 @@ const StakeBox = () => {
     // save data to database
   };
 
+  console.log("NRK BALANCE", balanceData);
+
   return (
-    <div className="p-8 mb-8 flex flex-col space-y-4 items-center rounded-lg bg-base-300">
-      <label htmlFor=""> Enter Stake Amount</label>
-      <input
-        type="number"
-        placeholder="0"
-        className="px-2 py-2 bg-purple-800 rounded-lg text-right appearance-none"
-        value={stakeAmount}
-        onChange={e => setStakeAmount(Number(e.target.value))}
-      />
-      <ActionButton text={"Stake"} onClick={handleStaking}></ActionButton>
+    <div className="w-full flex flex-col p-8 bg-base-100 rounded-lg">
+      <div className="flex w-full justify-between px-2 mb-8">
+        <span> Stake </span>
+        <span> i </span>
+      </div>
+      <div className="py-8 px-6 mb-8 flex items-center justify-between rounded-lg bg-base-200 w-full">
+        <div className="flex">
+          <img src="/icon.svg" alt="Your Logo" className=" h-8 w-8 mr-6" />
+          <label htmlFor="" className="flex flex-col">
+            Amount <span>NRK </span>
+          </label>
+        </div>
+        <input
+          type="number"
+          placeholder="0"
+          className="px-2 py-2 w-full mx-8 rounded-lg text-right appearance-none bg-base-200"
+          value={stakeAmount}
+          onChange={e => setStakeAmount(Number(e.target.value))}
+        />
+        <ActionButton text={"Stake"} onClick={handleStaking}></ActionButton>
+      </div>
+
+      <div className="flex flex-col mt-4 w-full space-y-8 px-2">
+        <div className="flex w-full justify-between">
+          <span>APR</span>
+          <span>{apy}</span>
+        </div>
+        <div className="flex w-full justify-between">
+          <span>NRK in Wallet</span>
+          <span>
+            {balanceData ? parseFloat(balanceData.formatted).toFixed(2) : 0} {balanceData?.symbol}
+          </span>
+        </div>
+        <div className="flex w-full justify-between">
+          <span>Amount Staked</span>
+          <span> {stakeAmount} NRK</span>
+        </div>
+      </div>
     </div>
   );
 };
@@ -84,6 +122,28 @@ const UnStake = ({ unstakeAmount, slotId }: { unstakeAmount: number; slotId: num
     </button>
   );
 };
+
+// const Claim = ({ claimAmount, slotId }: { unstakeAmount: number; slotId: number }) => {
+//   const { writeAsync, isLoading } = useScaffoldContractWrite({
+//     contractName: "StakingContract",
+//     functionName: "unstake",
+//     args: [BigInt(unstakeAmount), BigInt(slotId)],
+//     onBlockConfirmation: txnReceipt => {
+//       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+//     },
+//   });
+
+//   return (
+//     <button
+//       className="btn btn-sm btn-outline btn-accent"
+//       onClick={() => {
+//         writeAsync();
+//       }}
+//     >
+//       Unstake
+//     </button>
+//   );
+// };
 
 const Stake: NextPage = (props: any) => {
   //const [stakeAmount, setStakeAmount] = useState(0);
@@ -142,15 +202,8 @@ const Stake: NextPage = (props: any) => {
     watch: true,
   });
 
-  console.log("USER STAKES", userStakes);
+  const userRewards = userStakes ? userStakes[1] : 0;
 
-  const { data: userTotalRewards, isLoading: isTotalUserRewardsLoading } = useScaffoldContractRead({
-    contractName: "StakingContract",
-    functionName: "getUserRewards",
-    //args: [BigInt(userStakesArr[0] - 1)],
-    args: [BigInt(1)],
-  });
-  console.log("userTotalRewards", userTotalRewards);
   // useScaffoldEventSubscriber({
   //   contractName: "StakingContract",
   //   eventName: "GreetingChange",
@@ -243,29 +296,51 @@ const Stake: NextPage = (props: any) => {
 
   return (
     <>
-      <div className="flex items-center flex-col flex-grow pt-10 justify-center ">
+      <div className="container flex items-center flex-col flex-grow pt-10 justify-center m-auto">
+        <StakeInfoBox></StakeInfoBox>
+        <br />
+        <br />
+        <br />
         <StakeBox></StakeBox>
 
-        <section className="mt-8">
-          <div className="p-8  flex flex-col space-y-2 bg-base-300 rounded-lg">
+        <section className="mt-8 w-full">
+          <div className="p-8  flex flex-col space-y-2 bg-base-100 rounded-lg w-full">
             <h1 className="text-xl text-center mb-4"> Your Staked Positions </h1>
             <div>Min Stake: {minStake ? formatEther(minStake) : ""}</div>
             <div>Frequency: {frequency ? frequency.toString() : ""}</div>
             <div>Your total staked Amount: {userTotalStake ? formatEther(userTotalStake) : ""}</div>
-            <div>Total User Rewards: {userTotalRewards ? formatEther(userTotalRewards) : ""}</div>
-            {stakes.map((stake: any) => {
-              return (
-                <div
-                  className="flex bg-base-100 rounded-lg w-full justify-between space-x-20 p-4 items-center"
-                  key={stake.hash}
-                >
-                  <h1>{formatEther(stake.stakedAmount)}</h1>
-                  <h1>{stake.stakedAt}</h1>
-                  <h1>{stake.apy}</h1>
-                  <UnStake unstakeAmount={stake.stakedAmount} slotId={stake.slotId}></UnStake>
-                </div>
-              );
-            })}
+            <div>Total User Rewards: {userRewards ? formatEther(userRewards) : ""} NRK</div>
+
+            <table className="w-full bg-base-200 shadow-lg rounded-lg overflow-hidden">
+              <thead className="w-full">
+                <tr className="bg-base-200">
+                  <th className="px-4 py-2">ID</th>
+                  <th className="px-4 py-2">Txn Hash</th>
+                  <th className="px-4 py-2">Staked Amount</th>
+                  <th className="px-4 py-2">Rewards</th>
+                  <th className="px-4 py-2">Staked At</th>
+                  <th className="px-4 py-2">Claim/Unstake</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* Sample Data */}
+                {stakes.map((stake: any, idx: any) => {
+                  return (
+                    <tr className="w-full p-4 my-2 items-center justify-center" key={idx}>
+                      <td className="px-4 py-2 text-center">{idx}</td>
+                      <td className="px-4 py-2 text-center">{formatTx(stake.hash)}</td>
+                      <td className="px-4 py-2 text-center">{formatEther(stake.stakedAmount)}</td>
+                      <td className="px-4 py-2 text-center">{stake.apy}</td>
+                      <td className="px-4 py-2 text-center">{stake.stakedAt}</td>
+                      <td className="px-4 py-2 text-center">
+                        <UnStake unstakeAmount={stake.stakedAmount} slotId={stake.slotId}></UnStake>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {/* Add more rows with similar structure */}
+              </tbody>
+            </table>
           </div>
         </section>
       </div>

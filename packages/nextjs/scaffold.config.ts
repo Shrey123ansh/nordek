@@ -1,7 +1,8 @@
+import { nordek } from "./utils/NordekChain";
 import * as chains from "wagmi/chains";
 
 export type ScaffoldConfig = {
-  targetNetwork: chains.Chain;
+  targetNetwork: any;
   pollingInterval: number;
   alchemyApiKey: string;
   walletConnectProjectId: string;
@@ -11,8 +12,8 @@ export type ScaffoldConfig = {
 
 const scaffoldConfig = {
   // The network where your DApp lives in
-  targetNetwork: chains.foundry,
 
+  targetNetwork: chains.foundry,
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect on the local network
   pollingInterval: 30000,
