@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import { expect } from "chai";
 import type { NextPage } from "next";
 import { formatEther } from "viem";
 import { useAccount, useBalance, useBlockNumber, useContractRead } from "wagmi";
@@ -193,6 +194,14 @@ const Stake: NextPage = (props: any) => {
     contractName: "StakingContract",
     functionName: "getUserStakesInfo",
   });
+
+  const { data: userRewardAtSlot, isLoading: isUserRewardAtSlot } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getUserRewards",
+    args: [BigInt(0)],
+  });
+
+  expect(userRewardAtSlot).to.equal("1231");
   console.log("userStakesArray", isUserStakesArray, userStakesArray);
 
   const { data: userStakes, isLoading: isUserStakes } = useScaffoldContractRead({

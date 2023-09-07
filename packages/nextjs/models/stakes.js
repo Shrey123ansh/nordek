@@ -21,6 +21,10 @@ const stakesSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  slotId: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Stakes = mongoose.models.stakes || mongoose.model("stakes", stakesSchema);

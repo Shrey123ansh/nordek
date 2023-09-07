@@ -34,7 +34,7 @@ const StakeInfoBox = () => {
         <h1 className="text-4xl font-bold mb-2">Staking Platform</h1>
         <div className="flex items-center mb-2">
           <span className="text-primary-content text-sm mr-2">Total NRK Staked: </span>
-          <span className="text-sm text-accent">{totalNRKStaked} NRK</span>
+          <span className="text-sm text-accent">{totalNRKStaked ? totalNRKStaked.toString() : 0} NRK</span>
         </div>
         <div className="flex items-center">
           <span className="text-primary-content text-sm mr-2">Total Value Locked:</span>
