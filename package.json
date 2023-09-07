@@ -32,7 +32,10 @@
     "usehooks-ts@^2.7.2": "patch:usehooks-ts@npm:^2.7.2#./.yarn/patches/usehooks-ts-npm-2.7.2-fceffe0e43.patch"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^4.34.1",
+    "@types/chai": "^4",
     "@types/react-select": "^5.0.1",
+    "chai": "^4.3.8",
     "husky": "~8.0.3",
     "lint-staged": "~13.2.2"
   },

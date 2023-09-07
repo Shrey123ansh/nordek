@@ -41,6 +41,9 @@ export default function SwapMain() {
     const res = await fetch("http://localhost:3000/api/trades", {
       method: "POST",
       body: JSON.stringify(tradeData),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     console.log(await res.json);

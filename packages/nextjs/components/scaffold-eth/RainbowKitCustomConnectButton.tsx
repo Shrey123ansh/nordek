@@ -5,6 +5,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { QRCodeSVG } from "qrcode.react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { useDisconnect, useSwitchNetwork } from "wagmi";
+import * as chains from "wagmi/chains";
 import {
   ArrowLeftOnRectangleIcon,
   ArrowTopRightOnSquareIcon,
@@ -17,8 +18,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { Address, Balance, BlockieAvatar } from "~~/components/scaffold-eth";
 import { useAutoConnect, useNetworkColor } from "~~/hooks/scaffold-eth";
-import scaffoldConfig from "~~/scaffold.config";
-import { enabledChains } from "~~/services/web3/wagmiConnectors";
 import { getBlockExplorerAddressLink, getTargetNetwork } from "~~/utils/scaffold-eth";
 
 /**

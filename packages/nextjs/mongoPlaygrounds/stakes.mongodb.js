@@ -21,6 +21,7 @@ db.getCollection("stakes").insertMany([
     apy: 5.6,
     address: "0x36b95B5dAF5EFC083f16AcA6a6b980348B6C15d1",
     stakedAmount: 54,
+    slotId: 0,
   },
 ]);
 
