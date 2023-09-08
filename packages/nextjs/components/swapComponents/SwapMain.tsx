@@ -2,9 +2,11 @@
 import { useState } from "react";
 import SelectToken from "./SelectToken";
 import SwapFooter from "./SwapFooter";
+import axios from "axios";
 import { useAccount } from "wagmi";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import { localTokens, tokenType } from "~~/data/data";
+import { getTokenData } from "~~/utils/coingeckoPrices";
 
 export default function SwapMain() {
   const [token0Amount, setToken0Amount] = useState<number>(0.0);
@@ -13,6 +15,38 @@ export default function SwapMain() {
   // Define states for tokens
   const [token0, setToken0] = useState<tokenType>(localTokens.NRK);
   const [token1, setToken1] = useState<tokenType>(localTokens.USDC);
+
+  const saveStakeToDb = async (newTrade: {
+    usd: number;
+    boughtToken: string;
+    boughtTokenAmount: number;
+    soldToken: string;
+    soldTokenAmount: number;
+    address: string;
+    holdings: number;
+    time: Date;
+    hash: string;
+    isBuy: boolean;
+  }) => {
+    console.log("SAVING TO DB");
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "JWT fefege...",
+    };
+    await axios
+      .post("/api/stakes", newTrade, {
+        headers: headers,
+      })
+      .then(function (response) {
+        console.log(response);
+        console.log("Staked");
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    console.log("Saved to DB");
+  };
 
   const handleSwap = async () => {
     if (token1Amount <= 0 || token0Amount <= 0) {
@@ -26,27 +60,19 @@ export default function SwapMain() {
     }
 
     const tradeData = {
-      usd: 100.1, // get price from API
-      boughtToken: token1.address,
+      usd: 11.1, // get price from API (await getTokenData(token1.name, "usd")).usd
+      boughtToken: token1.name,
       boughtTokenAmount: token1Amount,
-      soldToken: token0.address,
+      soldToken: token0.name,
       soldTokenAmount: token0Amount,
       address: address,
       holdings: 21.1, //get holdings from contract
       time: new Date(),
-      hash: "0xae4e6dd81a180ee1ef6e95e787a1813351fb859058233872132f9146b2cba38a0", //get hash from confirmation
+      hash: "0xae4edaf81a180ee1ef6e95e787a1813351fb859058233872132f9146b2cba38a0", //get hash from confirmation
       isBuy: true, // need to change this
     };
 
-    const res = await fetch("http://localhost:3000/api/trades", {
-      method: "POST",
-      body: JSON.stringify(tradeData),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    console.log(await res.json);
+    saveStakeToDb(tradeData);
 
     // save data to database
     console.log("Swapped");

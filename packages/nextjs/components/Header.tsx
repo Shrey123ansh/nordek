@@ -38,7 +38,7 @@ export const Header = () => {
     <>
       <NavLink href="/">Home</NavLink>
 
-      <NavLink href="/">Swap</NavLink>
+      <NavLink href="/swap">Swap</NavLink>
 
       <NavLink href="/liquidity">Liquidity</NavLink>
 

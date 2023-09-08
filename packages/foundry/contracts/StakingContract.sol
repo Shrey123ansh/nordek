@@ -38,13 +38,13 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
 
     struct Slot {
         uint256 amount;
+        uint256 rewards;
         uint32 startTime;
         uint256 id;
     }
 
     struct SlotStake {
         uint256 counter;
-        uint256 rewards;
         // using 0 base indexing to store the staking slots
         mapping(uint256 => Slot) slotStake;
     }
@@ -74,12 +74,12 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
     );
 
     /**
-    
      * @dev Constructor to set the initial APY.
      * @param _apy The Annual Percentage Yield in divid of 100.
      */
     //  _apy = 18
     // _minimumStake = 100000000000000000000
+    // _frequency = 31536000
     constructor(uint16 _apy, uint256 _minimumStake, uint256 _frequency) {
         apy.push(APY(_apy, uint32(block.timestamp)));
         minimumStake = _minimumStake;
@@ -114,7 +114,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             user,
             msg.value,
             uint32(block.timestamp),
-            stakes[user].counter
+            stakes[user].counter - 1
         );
     }
 
@@ -140,7 +140,10 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         // making the stake completely empty
         stakes[user].slotStake[_slotId].amount = remainingStake;
         stakes[user].slotStake[_slotId].startTime = uint32(block.timestamp);
-        stakes[user].rewards = stakes[user].rewards.add(currentReward);
+        stakes[user].slotStake[_slotId].rewards = stakes[user]
+            .slotStake[_slotId]
+            .rewards
+            .add(currentReward);
 
         require(
             address(this).balance >= _amount,
@@ -163,16 +166,20 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
     ) external nonReentrant {
         address user = msg.sender;
 
-        stakes[user].rewards = stakes[user].rewards.add(
-            calculateRewards(stakes[user], _slotId)
-        ); // Use SafeMath
+        stakes[user].slotStake[_slotId].rewards = stakes[user]
+            .slotStake[_slotId]
+            .rewards
+            .add(calculateRewards(stakes[user], _slotId)); // Use SafeMath
 
         require(
-            stakes[user].rewards >= _rewardAmount,
+            stakes[user].slotStake[_slotId].rewards >= _rewardAmount,
             "Insufficient rewards to claim"
         );
 
-        stakes[user].rewards = stakes[user].rewards.sub(_rewardAmount);
+        stakes[user].slotStake[_slotId].rewards = stakes[user]
+            .slotStake[_slotId]
+            .rewards
+            .sub(_rewardAmount);
         stakes[user].slotStake[_slotId].startTime = uint32(block.timestamp);
 
         require(
@@ -182,6 +189,19 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         (bool success, ) = user.call{value: _rewardAmount}("");
         require(success, "Unable to send value or recipient may have reverted");
 
+        emit RewardClaimed(user, _rewardAmount, uint32(block.timestamp));
+    }
+
+    function claimAllRewards() external {
+        uint256 length = stakes[msg.sender].counter;
+        address user = msg.sender;
+        uint256 _rewardAmount = getTotalRewards();
+        for (uint256 i = 0; i < length; i++) {
+            stakes[user].slotStake[i].rewards = 0;
+            stakes[user].slotStake[i].startTime = uint32(block.timestamp);
+        }
+        (bool success, ) = user.call{value: _rewardAmount}("");
+        require(success, "Unable to send value or recipient may have reverted");
         emit RewardClaimed(user, _rewardAmount, uint32(block.timestamp));
     }
 
@@ -258,11 +278,12 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
     function restake(uint256 _amount, uint256 _slotId) external nonReentrant {
         address user = msg.sender;
 
-        stakes[user].rewards = stakes[user].rewards.add(
-            calculateRewards(stakes[user], _slotId)
-        ); // Use SafeMath
+        stakes[user].slotStake[_slotId].rewards = stakes[user]
+            .slotStake[_slotId]
+            .rewards
+            .add(calculateRewards(stakes[user], _slotId)); // Use SafeMath
         require(
-            stakes[user].rewards >= _amount,
+            stakes[user].slotStake[_slotId].rewards >= _amount,
             "Insufficient rewards to restake"
         );
 
@@ -272,7 +293,10 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
 
         stakes[user].slotStake[_slotId].amount = totalStake;
         stakes[user].slotStake[_slotId].startTime = uint32(block.timestamp);
-        stakes[user].rewards = stakes[user].rewards.sub(_amount);
+        stakes[user].slotStake[_slotId].rewards = stakes[user]
+            .slotStake[_slotId]
+            .rewards
+            .sub(_amount);
 
         emit RewardClaimed(user, _amount, uint32(block.timestamp));
 
@@ -298,26 +322,33 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         }
     }
 
-    function getUserStakesInfo()
-        external
-        view
-        returns (Slot[] memory userStakeSlots)
-    {
-        userStakeSlots = new Slot[](stakes[msg.sender].counter - 1);
-        SlotStake storage userStakes = stakes[msg.sender];
-        for (uint256 i = 0; i < userStakes.counter; i++) {
-            userStakeSlots[i] = userStakes.slotStake[i];
+    function getUserStakesInfo() external view returns (Slot[] memory) {
+        uint256 length = stakes[msg.sender].counter;
+        Slot[] memory userStakeSlots = new Slot[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            userStakeSlots[i] = stakes[msg.sender].slotStake[i];
         }
+        return userStakeSlots;
     }
 
     // /**
     //  * @dev Get the total accumulated rewards for sender.
     //  * @return The total amount of accumulated rewards.
     //  */
-    function getUserRewards(uint256 _slotId) external view returns (uint256) {
+    function getUserRewards(uint256 _slotId) public view returns (uint256) {
         uint256 rewards = calculateRewards(stakes[msg.sender], _slotId).add(
-            stakes[msg.sender].rewards
+            stakes[msg.sender].slotStake[_slotId].rewards
         ); // Use SafeMath
+        return rewards;
+    }
+
+    function getTotalRewards() public view returns (uint256) {
+        uint256 rewards;
+        uint256 length = stakes[msg.sender].counter;
+        for (uint256 i = 0; i < length; i++) {
+            rewards += getUserRewards(i);
+        }
         return rewards;
     }
 

@@ -8,8 +8,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   switch (req.method) {
     case "POST":
       try {
-        const reqBody = JSON.parse(req.body);
+        const reqBody = req.body;
         console.log(reqBody);
+
+        res.setHeader("Content-Type", "application/json");
         // const trade = await Trades.findOne({ hash });
 
         // if (trade) {
@@ -18,13 +20,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // await newTrade.save();
 
-        const response = await db.collection("trades").insertOne(reqBody);
+        Trades.create({ reqBody })
+          .then(data => {
+            console.log(data);
 
-        return NextResponse.json({
-          message: `Trade Executed ${response.insertedId}`,
-          success: true,
-          reqBody,
-        });
+            return res.json({
+              message: `Trade Executed`,
+              success: true,
+              reqBody,
+            });
+          })
+          .catch(e => {
+            return res.json({
+              message: `Failed: ${e}`,
+              success: false,
+              reqBody,
+            });
+          });
       } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }

@@ -9,10 +9,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   switch (req.method) {
     case "POST":
       try {
-        const { reqBody } = JSON.parse(req.body);
+        const reqBody = req.body;
         console.log(reqBody);
         // const trade = await Trades.findOne({ hash });
-
+        res.setHeader("Content-Type", "application/json");
         // if (trade) {
         //   return NextResponse.json({ error: "Trade already exists" }, { status: 400 });
         // }
@@ -36,6 +36,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               reqBody,
             });
           });
+
+        // await db.collection("stakes").insertOne(reqBody);
+        // return NextResponse.json({
+        //   message: `Stake saved`,
+        //   success: true,
+        //   reqBody,
+        // });
       } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }

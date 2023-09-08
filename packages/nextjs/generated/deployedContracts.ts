@@ -5,7 +5,7 @@ const contracts = {
       chainId: "31337",
       contracts: {
         StakingContract: {
-          address: "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
+          address: "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
           abi: [
             {
               inputs: [
@@ -172,6 +172,13 @@ const contracts = {
               type: "function",
             },
             {
+              inputs: [],
+              name: "claimAllRewards",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
               inputs: [
                 {
                   internalType: "uint256",
@@ -192,6 +199,19 @@ const contracts = {
             {
               inputs: [],
               name: "frequency",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "getTotalRewards",
               outputs: [
                 {
                   internalType: "uint256",
@@ -257,6 +277,11 @@ const contracts = {
                       type: "uint256",
                     },
                     {
+                      internalType: "uint256",
+                      name: "rewards",
+                      type: "uint256",
+                    },
+                    {
                       internalType: "uint32",
                       name: "startTime",
                       type: "uint32",
@@ -268,7 +293,7 @@ const contracts = {
                     },
                   ],
                   internalType: "struct StakingContract.Slot[]",
-                  name: "userStakeSlots",
+                  name: "",
                   type: "tuple[]",
                 },
               ],
@@ -431,11 +456,6 @@ const contracts = {
                   name: "counter",
                   type: "uint256",
                 },
-                {
-                  internalType: "uint256",
-                  name: "rewards",
-                  type: "uint256",
-                },
               ],
               stateMutability: "view",
               type: "function",
@@ -491,7 +511,7 @@ const contracts = {
           ],
         },
         YourContract: {
-          address: "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
+          address: "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
           abi: [
             {
               inputs: [

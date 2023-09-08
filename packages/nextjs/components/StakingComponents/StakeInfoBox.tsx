@@ -1,18 +1,56 @@
 import React, { useEffect } from "react";
+import { formatEther } from "viem";
 import { useBalance } from "wagmi";
+import {
+  useDeployedContractInfo,
+  useScaffoldContractRead,
+  useScaffoldContractWrite,
+  useScaffoldEventSubscriber,
+} from "~~/hooks/scaffold-eth";
 import { getTokenData } from "~~/utils/coingeckoPrices";
+import { notification } from "~~/utils/scaffold-eth/notification";
 
 const StakeInfoBox = () => {
   const [totalStaked, setTotalStaked] = React.useState<number>(1);
+  const { data: deployedContract } = useDeployedContractInfo("StakingContract");
   const {
     data: totalNRKStaked,
     isError,
     isLoading,
   } = useBalance({
-    address: "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
+    address: deployedContract?.address,
   });
 
   const [tvl, setTvl] = React.useState<number>(0);
+
+  const { data: userTotalRewards, isLoading: isUserTotalRewards } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getTotalRewards",
+  });
+
+  const { writeAsync, isLoading: isClaimAllLoading } = useScaffoldContractWrite({
+    contractName: "StakingContract",
+    functionName: "claimAllRewards",
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "StakingContract",
+    eventName: "RewardClaimed",
+    listener: logs => {
+      logs.map(log => {
+        const { user, totalReward, timeOfClaim } = log.args;
+        console.log("📡 Claimed", user, totalReward, timeOfClaim);
+        if (user && totalReward && timeOfClaim) {
+          notification.success(<div> claimed {formatEther(totalReward)} </div>);
+        }
+      });
+    },
+  });
+
+  console.log("USER TOTAL REWARDS", userTotalRewards);
 
   useEffect(() => {
     const updateTVL = async () => {
@@ -34,17 +72,26 @@ const StakeInfoBox = () => {
         <h1 className="text-4xl font-bold mb-2">Staking Platform</h1>
         <div className="flex items-center mb-2">
           <span className="text-primary-content text-sm mr-2">Total NRK Staked: </span>
-          <span className="text-sm text-accent">{totalNRKStaked ? totalNRKStaked.toString() : 0} NRK</span>
+          <span className="text-sm text-accent">{totalNRKStaked ? totalNRKStaked.formatted.toString() : 0} NRK</span>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center mb-2">
           <span className="text-primary-content text-sm mr-2">Total Value Locked:</span>
           <span className="text-sm text-accent">${tvl}</span>
+        </div>
+        <div className="flex items-center">
+          <span className="text-primary-content text-sm mr-2">Your Total Rewards:</span>
+          <span className="text-sm text-accent">{userTotalRewards ? userTotalRewards.toString() : 0} NRK</span>
         </div>
       </div>
 
       {/* Buttons on the Right */}
       <div className="flex flex-col space-y-4 items-center">
-        <button className="bg-gradient-to-r from-[#5B10B9] to-[#79C5E7] text-white font-bold py-2 px-8 rounded-full mr-2">
+        <button
+          className="bg-gradient-to-r from-[#5B10B9] to-[#79C5E7] text-white font-bold py-2 px-8 rounded-full mr-2"
+          onClick={() => {
+            writeAsync();
+          }}
+        >
           Claim All
         </button>
         <button className="text-white font-bold py-2 px-8 rounded-full hover:bg-gradient-to-r from-[#5B10B9] to-[#79C5E7]">

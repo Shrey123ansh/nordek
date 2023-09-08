@@ -36,6 +36,13 @@ const StakeBox = () => {
     },
   });
 
+  const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getUserTotalStakes",
+  });
+
+  console.log("User Total Stakes", userTotalStakes);
+
   const handleStaking = async () => {
     if (stakeAmount <= 0) {
       console.log("can't be lt 0");
@@ -174,36 +181,6 @@ const Stake: NextPage = (props: any) => {
     functionName: "getUserTotalStakes",
   });
 
-  const {
-    data,
-    isError,
-    isLoading,
-    isSuccess,
-    refetch: refetchProjects,
-  } = useContractRead({
-    address: deployedContract?.address,
-    abi: deployedContract?.abi,
-    functionName: "getUserTotalStakes",
-    watch: true,
-    onSuccess(data) {
-      console.log(data);
-    },
-  });
-
-  const { data: userStakesArray, isLoading: isUserStakesArray } = useScaffoldContractRead({
-    contractName: "StakingContract",
-    functionName: "getUserStakesInfo",
-  });
-
-  const { data: userRewardAtSlot, isLoading: isUserRewardAtSlot } = useScaffoldContractRead({
-    contractName: "StakingContract",
-    functionName: "getUserRewards",
-    args: [BigInt(0)],
-  });
-
-  expect(userRewardAtSlot).to.equal("1231");
-  console.log("userStakesArray", isUserStakesArray, userStakesArray);
-
   const { data: userStakes, isLoading: isUserStakes } = useScaffoldContractRead({
     contractName: "StakingContract",
     functionName: "stakes",
@@ -211,7 +188,12 @@ const Stake: NextPage = (props: any) => {
     watch: true,
   });
 
-  const userRewards = userStakes ? userStakes[1] : 0;
+  const { data: userRewards, isLoading: isUserTotalRewards } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getTotalRewards",
+  });
+
+  console.log("USER TOTAL REWARDS", userRewards);
 
   // useScaffoldEventSubscriber({
   //   contractName: "StakingContract",
@@ -224,32 +206,40 @@ const Stake: NextPage = (props: any) => {
   //   },
   // });
 
+  const saveStakeToDb = async (newStake: {
+    stakedAt: number;
+    stakedAmount: number;
+    apy: number;
+    address: string;
+    hash: string;
+    slotId: number;
+  }) => {
+    console.log("SAVING TO DB");
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "JWT fefege...",
+    };
+    await axios
+      .post("/api/stakes", newStake, {
+        headers: headers,
+      })
+      .then(function (response) {
+        console.log(response);
+        console.log("Staked");
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    console.log("Saved to DB");
+  };
+
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "Staked",
     listener: logs => {
       logs.map(log => {
         // TODO save to db
-        const saveStakeToDb = async (newStake: {
-          stakedAt: any;
-          stakedAmount: string;
-          apy: number; //TODO change this to current apy
-          address: any;
-          hash: any;
-          slotId: number;
-        }) => {
-          await axios
-            .post("/api/stakes", newStake)
-            .then(function (response) {
-              console.log(response);
-              console.log("Staked");
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-
-          console.log("Saved to DB");
-        };
 
         const { user, amount, stakeTime, slotId } = log.args;
         console.log("📡 Staked", user, amount, stakeTime, slotId);
@@ -257,10 +247,10 @@ const Stake: NextPage = (props: any) => {
         if (user && amount && stakeTime && slotId) {
           const newStake = {
             stakedAt: stakeTime,
-            stakedAmount: amount,
+            stakedAmount: Number(amount),
             apy: 18, //TODO change this to current apy
             address: user,
-            hash: log.transactionHash,
+            hash: log.transactionHash ? log.transactionHash?.toString() : "",
             slotId: Number(slotId) - 1,
           };
 
@@ -268,7 +258,12 @@ const Stake: NextPage = (props: any) => {
 
           if (!isDuplicate) {
             // If it's not a duplicate, add the new stake
+            console.log(newStake);
+            saveStakeToDb(newStake);
+            console.log("RAN SAVE TO DB FUNC");
             setStakes([...stakes, newStake]);
+            console.log("UPDATED REACT STATE");
+
             //saveStakeToDb(newStake); // TODO uncomment
           }
         }

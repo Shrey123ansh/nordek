@@ -17,6 +17,7 @@ export const getTokenData = async (token: string, currency: string) => {
   });
 
   const priceData = tokenData[token];
+  console.log("Get token data", priceData);
 
   let { usd, usd_market_cap, usd_24h_vol, usd_24h_change, last_updated_at } = priceData;
 

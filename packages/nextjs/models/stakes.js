@@ -6,7 +6,7 @@ const stakesSchema = new mongoose.Schema({
     required: true,
   },
   stakedAt: {
-    type: Date,
+    type: Number,
     required: true,
   },
   apy: {
