@@ -59,7 +59,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         address indexed user,
         uint256 amount,
         uint32 stakeTime,
-        uint slotId
+        uint256 slotId
     );
     event Unstaked(
         address indexed user,
@@ -108,14 +108,10 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         stakes[user].slotStake[stakes[user].counter].startTime = uint32(
             block.timestamp
         );
-        stakes[user].slotStake[stakes[user].counter].id = stakes[user].counter;
+        uint256 counterVal = stakes[user].counter;
+        stakes[user].slotStake[stakes[user].counter].id = counterVal;
         stakes[user].counter++;
-        emit Staked(
-            user,
-            msg.value,
-            uint32(block.timestamp),
-            stakes[user].counter - 1
-        );
+        emit Staked(user, msg.value, uint32(block.timestamp), counterVal);
     }
 
     /**
@@ -350,6 +346,10 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             rewards += getUserRewards(i);
         }
         return rewards;
+    }
+
+    function getCurrentApy() external view returns (uint256) {
+        return apy[apy.length - 1].value;
     }
 
     // /**

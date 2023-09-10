@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { expect } from "chai";
@@ -20,7 +20,7 @@ import { getTargetNetwork } from "~~/utils/scaffold-eth";
 const StakeBox = () => {
   const [stakeAmount, setStakeAmount] = useState(0);
   const { address } = useAccount();
-  const [apy, setApy] = useState(0);
+
   const { data: balanceData } = useBalance({
     address,
     watch: true,
@@ -39,9 +39,13 @@ const StakeBox = () => {
   const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
     contractName: "StakingContract",
     functionName: "getUserTotalStakes",
+    account: address,
   });
 
-  console.log("User Total Stakes", userTotalStakes);
+  const { data: apy, isLoading: isApyLoading } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getCurrentApy",
+  });
 
   const handleStaking = async () => {
     if (stakeAmount <= 0) {
@@ -63,8 +67,6 @@ const StakeBox = () => {
 
     // save data to database
   };
-
-  console.log("NRK BALANCE", balanceData);
 
   return (
     <div className="w-full flex flex-col p-8 bg-base-100 rounded-lg">
@@ -92,17 +94,17 @@ const StakeBox = () => {
       <div className="flex flex-col mt-4 w-full space-y-8 px-2">
         <div className="flex w-full justify-between">
           <span>APR</span>
-          <span>{apy}</span>
+          <span>{apy ? apy.toString() : ""}</span>
         </div>
         <div className="flex w-full justify-between">
           <span>NRK in Wallet</span>
           <span>
-            {balanceData ? parseFloat(balanceData.formatted).toFixed(2) : 0} {balanceData?.symbol}
+            {balanceData ? parseFloat(balanceData.formatted).toFixed(2) : ""} {balanceData?.symbol}
           </span>
         </div>
         <div className="flex w-full justify-between">
           <span>Amount Staked</span>
-          <span> {stakeAmount} NRK</span>
+          <span> {userTotalStakes ? formatEther(userTotalStakes) : ""} NRK</span>
         </div>
       </div>
     </div>
@@ -153,18 +155,154 @@ const UnStake = ({ unstakeAmount, slotId }: { unstakeAmount: number; slotId: num
 //   );
 // };
 
+const ClaimPopup = ({ isOpen, onClose, slotId }: { isOpen: boolean; onClose: () => void; slotId: bigint }) => {
+  const [amount, setAmount] = useState("0");
+  const [selectedPercentage, setSelectedPercentage] = useState(0);
+  const { address } = useAccount();
+
+  const { data: userSlotStake, isLoading: isGetUserSlotStake } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getUserStake",
+    account: address,
+    args: [slotId],
+  });
+
+  const { data: userSlotReward, isLoading: isGetUserSlotReward } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getUserRewards",
+    account: address,
+    args: [slotId],
+  });
+  //const userSlotStake = userSlotStakeDtls? userSlotStakeDtls[0]
+  console.log("Slot Details", userSlotStake, userSlotReward);
+
+  const handlePercentageClick = (percentage: number) => {
+    setSelectedPercentage(percentage);
+    // Calculate the amount based on the selected percentage and total balance
+    // Replace the following line with your own logic
+    const calculatedAmount = (BigInt(percentage) * (userSlotReward ? userSlotReward : BigInt(0))) / BigInt(100);
+    setAmount(`${calculatedAmount}`);
+  };
+
+  const { writeAsync: restake, isRestakeLoading } = useScaffoldContractWrite({
+    contractName: "StakingContract",
+    functionName: "restake",
+    args: [BigInt(amount), slotId],
+    account: address,
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
+
+  const { writeAsync: claim, isClaimLoading } = useScaffoldContractWrite({
+    contractName: "StakingContract",
+    functionName: "claimRewards",
+    args: [BigInt(amount), slotId],
+    account: address,
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
+
+  const handleClaim = () => {
+    // Perform the "Claim" action here
+    console.log("Claiming", amount);
+    claim();
+    onClose();
+  };
+
+  const handleRestake = () => {
+    // Perform the "Restake" action here
+    console.log("Restaking", amount);
+    restake();
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 bg-gray-800">
+      <div className="bg-base-200 p-4 rounded-md shadow-md">
+        <div className="text-center mb-4 flex justify-center items-center text-center">
+          <h2 className="text-lg font-semibold">Claim or Restake</h2>
+          <button className="relative top-0 right-0 m-2 p-2 text-white-600 hover:text-gray-400" onClick={onClose}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="flex flex-col">
+          <span>Your Stake: {userSlotStake ? formatEther(userSlotStake[0]) : ""} NRK</span>
+          <span>Your Rewards: {userSlotReward ? formatEther(userSlotReward) : ""} NRK</span>
+        </div>
+
+        <input
+          type="text"
+          placeholder="Enter amount"
+          className="w-full p-2 border border-gray-300 rounded-md mb-4 text-black"
+          value={amount}
+          onChange={e => setAmount(e.target.value)}
+        />
+        <div className="flex justify-between mb-4">
+          <button
+            className={`flex-1 border border-gray-300 p-2 rounded-md ${selectedPercentage === 25 ? "bg-blue-200" : ""}`}
+            onClick={() => handlePercentageClick(25)}
+          >
+            25%
+          </button>
+          <button
+            className={`flex-1 border border-gray-300 p-2 rounded-md ${selectedPercentage === 50 ? "bg-blue-200" : ""}`}
+            onClick={() => handlePercentageClick(50)}
+          >
+            50%
+          </button>
+          <button
+            className={`flex-1 border border-gray-300 p-2 rounded-md ${selectedPercentage === 75 ? "bg-blue-200" : ""}`}
+            onClick={() => handlePercentageClick(75)}
+          >
+            75%
+          </button>
+          <button
+            className={`flex-1 border border-gray-300 p-2 rounded-md ${
+              selectedPercentage === 100 ? "bg-blue-200" : ""
+            }`}
+            onClick={() => handlePercentageClick(100)}
+          >
+            100%
+          </button>
+        </div>
+        <div className="flex justify-between">
+          <button className="flex-1 bg-blue-500 text-white p-2 rounded-md mr-2" onClick={handleClaim}>
+            Claim
+          </button>
+          <button className="flex-1 bg-green-500 text-white p-2 rounded-md" onClick={handleRestake}>
+            Restake
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Stake: NextPage = (props: any) => {
   //const [stakeAmount, setStakeAmount] = useState(0);
   const [stakes, setStakes] = useState(props.stakes);
   const { address } = useAccount();
-  const { data: deployedContract } = useDeployedContractInfo("StakingContract");
-  const { data: blockNumber, isError: blockError, isLoading: blockLoading } = useBlockNumber();
-  //const handleStaking = () => {};
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // const { data: apy, isLoading: isApyLoading } = useScaffoldContractRead({
-  //   contractName: "StakingContract",
-  //   functionName: "apy",
-  // });
+  const handlePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
+
+  const openClaimPopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
 
   const { data: minStake, isLoading: isMinStake } = useScaffoldContractRead({
     contractName: "StakingContract",
@@ -179,32 +317,13 @@ const Stake: NextPage = (props: any) => {
   const { data: userTotalStake, isLoading: isUserTotalStake } = useScaffoldContractRead({
     contractName: "StakingContract",
     functionName: "getUserTotalStakes",
-  });
-
-  const { data: userStakes, isLoading: isUserStakes } = useScaffoldContractRead({
-    contractName: "StakingContract",
-    functionName: "stakes",
-    args: [address],
-    watch: true,
+    account: address,
   });
 
   const { data: userRewards, isLoading: isUserTotalRewards } = useScaffoldContractRead({
     contractName: "StakingContract",
     functionName: "getTotalRewards",
   });
-
-  console.log("USER TOTAL REWARDS", userRewards);
-
-  // useScaffoldEventSubscriber({
-  //   contractName: "StakingContract",
-  //   eventName: "GreetingChange",
-  //   listener: logs => {
-  //     logs.map(log => {
-  //       const { greetingSetter, value, premium, newGreeting } = log.args;
-  //       console.log("📡 GreetingChange event", greetingSetter, value, premium, newGreeting);
-  //     });
-  //   },
-  // });
 
   const saveStakeToDb = async (newStake: {
     stakedAt: number;
@@ -219,17 +338,15 @@ const Stake: NextPage = (props: any) => {
       "Content-Type": "application/json",
       Authorization: "JWT fefege...",
     };
-    await axios
-      .post("/api/stakes", newStake, {
+    try {
+      const response = await axios.post("/api/stakes", newStake, {
         headers: headers,
-      })
-      .then(function (response) {
-        console.log(response);
-        console.log("Staked");
-      })
-      .catch(function (error) {
-        console.log(error);
       });
+      console.log(response);
+      console.log("Staked");
+    } catch (error) {
+      console.log(error);
+    }
 
     console.log("Saved to DB");
   };
@@ -258,30 +375,30 @@ const Stake: NextPage = (props: any) => {
 
           if (!isDuplicate) {
             // If it's not a duplicate, add the new stake
-            console.log(newStake);
+            console.log("Saving to DB");
             saveStakeToDb(newStake);
-            console.log("RAN SAVE TO DB FUNC");
+            console.log("setting state");
             setStakes([...stakes, newStake]);
-            console.log("UPDATED REACT STATE");
-
-            //saveStakeToDb(newStake); // TODO uncomment
           }
         }
       });
     },
   });
 
-  // const {
-  //   data: Staked,
-  //   isLoading: isLoadingEvents,
-  //   error: errorReadingEvents,
-  // } = useScaffoldEventHistory({
-  //   contractName: "StakingContract",
-  //   eventName: "Staked",
-  //   fromBlock: blockNumber ? BigInt(blockNumber) : 0n,
-  //   filters: { user: address },
-  //   blockData: true,
-  // });
+  const removeStakeInDb = async (hash: { hash: string }) => {
+    console.log("REMOVING FROM DB");
+    await axios
+      .delete(`/api/stakes/${hash}`)
+      .then(function (response) {
+        console.log(response);
+        console.log("Removed");
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    console.log("Removed from DB");
+  };
 
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
@@ -293,6 +410,7 @@ const Stake: NextPage = (props: any) => {
         if (user && amount && unstakeTime) {
           const updatedStakes = stakes.filter(stake => stake.slotId !== slotId);
           setStakes(updatedStakes);
+          //removeStakeInDb();
         }
       });
     },
@@ -311,7 +429,7 @@ const Stake: NextPage = (props: any) => {
           <div className="p-8  flex flex-col space-y-2 bg-base-100 rounded-lg w-full">
             <h1 className="text-xl text-center mb-4"> Your Staked Positions </h1>
             <div>Min Stake: {minStake ? formatEther(minStake) : ""}</div>
-            <div>Frequency: {frequency ? frequency.toString() : ""}</div>
+            <div>Frequency: {frequency ? Number(frequency) / 86400 : ""} Days</div>
             <div>Your total staked Amount: {userTotalStake ? formatEther(userTotalStake) : ""}</div>
             <div>Total User Rewards: {userRewards ? formatEther(userRewards) : ""} NRK</div>
 
@@ -337,7 +455,9 @@ const Stake: NextPage = (props: any) => {
                       <td className="px-4 py-2 text-center">{stake.apy}</td>
                       <td className="px-4 py-2 text-center">{stake.stakedAt}</td>
                       <td className="px-4 py-2 text-center">
+                        <ActionButton text="Claim" onClick={() => openClaimPopup()}></ActionButton>
                         <UnStake unstakeAmount={stake.stakedAmount} slotId={stake.slotId}></UnStake>
+                        <ClaimPopup isOpen={isPopupOpen} onClose={handlePopup} slotId={stake.slotId}></ClaimPopup>
                       </td>
                     </tr>
                   );

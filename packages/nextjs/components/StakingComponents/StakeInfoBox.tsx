@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { formatEther } from "viem";
-import { useBalance } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import {
   useDeployedContractInfo,
   useScaffoldContractRead,
@@ -11,7 +11,7 @@ import { getTokenData } from "~~/utils/coingeckoPrices";
 import { notification } from "~~/utils/scaffold-eth/notification";
 
 const StakeInfoBox = () => {
-  const [totalStaked, setTotalStaked] = React.useState<number>(1);
+  const { address } = useAccount();
   const { data: deployedContract } = useDeployedContractInfo("StakingContract");
   const {
     data: totalNRKStaked,
@@ -26,6 +26,7 @@ const StakeInfoBox = () => {
   const { data: userTotalRewards, isLoading: isUserTotalRewards } = useScaffoldContractRead({
     contractName: "StakingContract",
     functionName: "getTotalRewards",
+    account: address,
   });
 
   const { writeAsync, isLoading: isClaimAllLoading } = useScaffoldContractWrite({
@@ -55,10 +56,12 @@ const StakeInfoBox = () => {
   useEffect(() => {
     const updateTVL = async () => {
       const NRKTokendata = await getTokenData("nordek", "usd");
-      setTvl(NRKTokendata.usd * totalStaked);
+      const totalStakedNrk = Number(totalNRKStaked?.formatted);
+      const tvlVal = NRKTokendata.usd * totalStakedNrk;
+      setTvl(tvlVal);
     };
     updateTVL();
-  }, [totalStaked]);
+  }, [totalNRKStaked]);
 
   return (
     <div className="flex items-center justify-between p-8 py-12 rounded-lg w-[100%] bg-base-100">
@@ -80,7 +83,7 @@ const StakeInfoBox = () => {
         </div>
         <div className="flex items-center">
           <span className="text-primary-content text-sm mr-2">Your Total Rewards:</span>
-          <span className="text-sm text-accent">{userTotalRewards ? userTotalRewards.toString() : 0} NRK</span>
+          <span className="text-sm text-accent">{userTotalRewards ? formatEther(userTotalRewards) : 0} NRK</span>
         </div>
       </div>
 

@@ -8,46 +8,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   switch (req.method) {
     case "POST":
-      try {
-        const reqBody = req.body;
-        console.log(reqBody);
-        // const trade = await Trades.findOne({ hash });
-        res.setHeader("Content-Type", "application/json");
-        // if (trade) {
-        //   return NextResponse.json({ error: "Trade already exists" }, { status: 400 });
-        // }
+      const reqBody = req.body;
+      console.log(reqBody);
 
-        // await newTrade.save();
+      Stakes.create(reqBody).then(data => {
+        console.log(data);
+        res.json({
+          message: `Amount Staked`,
+          success: true,
+          reqBody,
+        });
+      });
 
-        Stakes.create({ reqBody })
-          .then(data => {
-            console.log(data);
+    // const newStake = new Stakes(reqBody);
+    // const savedStake = await newStake.save();
+    // console.log("savedStake", savedStake);
 
-            return res.json({
-              message: `Amount Staked`,
-              success: true,
-              reqBody,
-            });
-          })
-          .catch(e => {
-            return res.json({
-              message: `Failed: ${e}`,
-              success: false,
-              reqBody,
-            });
-          });
-
-        // await db.collection("stakes").insertOne(reqBody);
-        // return NextResponse.json({
-        //   message: `Stake saved`,
-        //   success: true,
-        //   reqBody,
-        // });
-      } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-      }
     default:
-      const tokenList = await db.collection("stakes").find().toArray();
-      res.status(200).json({ tokenList });
+      const stakes = await db.collection("stakes").find().toArray();
+      res.status(200).json({ stakes });
   }
 }

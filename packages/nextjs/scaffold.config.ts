@@ -2,7 +2,7 @@ import { nordek } from "./utils/NordekChain";
 import * as chains from "wagmi/chains";
 
 export type ScaffoldConfig = {
-  targetNetwork: any;
+  targetNetwork: chains.Chain;
   pollingInterval: number;
   alchemyApiKey: string;
   walletConnectProjectId: string;

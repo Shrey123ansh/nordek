@@ -1,6 +1,7 @@
 [profile.default]
 src = 'contracts'
 out = 'out'
+auto_detect_solc = true
 libs = ['lib']
 fs_permissions = [{ access = "read-write", path = "./"}]
 

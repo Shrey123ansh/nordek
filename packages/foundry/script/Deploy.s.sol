@@ -3,21 +3,15 @@ pragma solidity ^0.8.19;
 
 import "../contracts/YourContract.sol";
 import "./DeployHelpers.s.sol";
-import "../contracts/ZuniswapV2Factory.sol";
-import "../contracts/ZuniswapV2Router.sol";
-import "../test/mocks/ERC20Mintable.sol";
-import "../contracts/ZuniswapV2Library.sol";
 import "../contracts/StakingContract.sol";
 
 contract DeployScript is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);
-    ZuniswapV2Factory factory;
-    ZuniswapV2Router router;
 
-    ERC20Mintable tokenA;
-    ERC20Mintable tokenB;
-    ERC20Mintable tokenC;
-    ERC20Mintable tokenD;
+    // ERC20Mintable tokenA;
+    // ERC20Mintable tokenB;
+    // ERC20Mintable tokenC;
+    // ERC20Mintable tokenD;
 
     StakingContract stakingContract;
 

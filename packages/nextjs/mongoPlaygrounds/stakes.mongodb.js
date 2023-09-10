@@ -15,18 +15,18 @@ use("Norswap");
 // Insert a few documents into the sales collection.
 db.getCollection("stakes").insertMany([
   {
-    hash: "0xce1e6dd81a180ee1ef6e95e787a181335f0859058233872132f9146b2cba38a0",
+    hash: "0xce1e6dd81a18gee1ef6e95e787a181335f0859058233872132f9146b2cba38a0",
     stakedAt: 21235123,
     apy: 5.6,
     address: "0x36b95B5dAF5EFC083f16AcA6a6b980348B6C15d1",
     stakedAmount: 540000000000000,
-    slotId: 0,
+    slotId: 1,
   },
 ]);
 
 // Run a find command to view items sold on April 4th, 2014.
 const Nordek = db.getCollection("stakes").find({
-  hash: "0xce1e6dd81a180ee1ef6e95e787a181335f0859058233872132f9146b2cba38a0",
+  hash: "0xce1e6dd81a18gee1ef6e95e787a181335f0859058233872132f9146b2cba38a0",
 });
 
 // Print a message to the output window.
