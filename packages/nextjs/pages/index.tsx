@@ -9,7 +9,7 @@ import Joinus from "~~/components/landingcomps/joinus";
 const Home: NextPage = () => {
   return (
     <>
-      <div className="flex  flex-col w-full">
+      <div className="flex flex-col w-full">
         <Hero />
 
         <Features />

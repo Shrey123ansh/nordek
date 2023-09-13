@@ -2,12 +2,13 @@ import { nordek } from "./utils/NordekChain";
 import * as chains from "wagmi/chains";
 
 export type ScaffoldConfig = {
-  targetNetwork: chains.Chain;
+  targetNetwork: chains.Chain | typeof chains.foundry;
   pollingInterval: number;
   alchemyApiKey: string;
   walletConnectProjectId: string;
   onlyLocalBurnerWallet: boolean;
   walletAutoConnect: boolean;
+  setTargetNetwork: (network: chains.Chain) => void;
 };
 
 const scaffoldConfig = {
@@ -39,6 +40,11 @@ const scaffoldConfig = {
    * 2. If user is not connected to any wallet:  On reload, connect to burner wallet if burnerWallet.enabled is true && burnerWallet.onlyLocal is false
    */
   walletAutoConnect: true,
+
+  setTargetNetwork: (network: chains.Chain) => {
+    scaffoldConfig.targetNetwork = network;
+    // You can add logic to handle network changes here if needed.
+  },
 } satisfies ScaffoldConfig;
 
 export default scaffoldConfig;

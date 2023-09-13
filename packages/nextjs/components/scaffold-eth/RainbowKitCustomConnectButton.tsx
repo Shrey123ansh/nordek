@@ -19,6 +19,7 @@ import {
 import { Address, Balance, BlockieAvatar } from "~~/components/scaffold-eth";
 import { useAutoConnect, useNetworkColor } from "~~/hooks/scaffold-eth";
 import { getBlockExplorerAddressLink, getTargetNetwork } from "~~/utils/scaffold-eth";
+import scaffoldConfig from "~~/scaffold.config";
 
 /**
  *
@@ -49,6 +50,10 @@ export const RainbowKitCustomConnectButton = () => {
   const { disconnect } = useDisconnect();
   const { switchNetwork } = useSwitchNetwork();
   const [addressCopied, setAddressCopied] = useState(false);
+
+  const changeNetwork = () =>{
+    openChainModal();
+  }
 
   return (
     <ConnectButton.Custom>
@@ -132,6 +137,10 @@ export const RainbowKitCustomConnectButton = () => {
   );
 };
 
+
+function openChainModal() {
+  throw new Error("Function not implemented.");
+}
 // return (
 //   // <ConnectButton.Custom>
 //   //   {({ account, chain, openConnectModal, mounted }) => {

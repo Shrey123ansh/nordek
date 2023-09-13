@@ -59,27 +59,45 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         address indexed user,
         uint256 amount,
         uint32 stakeTime,
-        uint256 slotId
+        uint slotId
     );
+    event ReStaked(address indexed user, uint256 amount, uint32 stakeTime);
     event Unstaked(
         address indexed user,
         uint256 amount,
         uint32 unstakeTime,
-        uint slotId
+        uint256 slotid
+    );
+    event UnstakedTokens(
+        address indexed user,
+        uint256 amount,
+        uint32 unstakeTime
+    );
+    event UnstakedAllTokens(
+        address indexed user,
+        uint256 totalAmount,
+        uint256 rewards,
+        uint32 unstakeTime
     );
     event RewardClaimed(
         address indexed user,
         uint256 totalReward,
         uint32 timeOfClaim
     );
+    event AmountMigrated(
+        uint256 amount,
+        address newAddress,
+        uint32 migrationTime
+    );
 
-    /**
-     * @dev Constructor to set the initial APY.
-     * @param _apy The Annual Percentage Yield in divid of 100.
-     */
+    event MinimumStakeUpdated(uint256 minimumStake, uint32 timeStamp);
+    event FrequencyUpdated(uint256 frequency, uint32 timeStamp);
+    event ApyUpdated(uint256 apy, uint32 timeStamp);
+
     //  _apy = 18
     // _minimumStake = 100000000000000000000
     // _frequency = 31536000
+    // uint16 _apy, uint256 _minimumStake, uint256 _frequency
     constructor(uint16 _apy, uint256 _minimumStake, uint256 _frequency) {
         apy.push(APY(_apy, uint32(block.timestamp)));
         minimumStake = _minimumStake;
@@ -108,10 +126,10 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         stakes[user].slotStake[stakes[user].counter].startTime = uint32(
             block.timestamp
         );
-        uint256 counterVal = stakes[user].counter;
-        stakes[user].slotStake[stakes[user].counter].id = counterVal;
+        uint currentSlot = stakes[user].counter;
+        stakes[user].slotStake[stakes[user].counter].id = currentSlot;
         stakes[user].counter++;
-        emit Staked(user, msg.value, uint32(block.timestamp), counterVal);
+        emit Staked(user, msg.value, uint32(block.timestamp), currentSlot);
     }
 
     /**
@@ -119,7 +137,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
      * @param _amount The amount of tokens to be unstaked.
      * @notice Unstaked tokens and rewards will be transferred to the user's address.
      */
-    function unstake(uint256 _amount, uint256 _slotId) external nonReentrant {
+    function unstake(uint256 _amount, uint256 _slotId) public nonReentrant {
         require(!pause, "Please wait until the staking is unpaused");
 
         address user = msg.sender;
@@ -145,10 +163,66 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             address(this).balance >= _amount,
             "Contract insufficient balance"
         );
+        emit Unstaked(user, _amount, uint32(block.timestamp), _slotId);
         (bool success, ) = user.call{value: _amount}("");
         require(success, "Unable to send value or recipient may have reverted");
+    }
 
-        emit Unstaked(user, _amount, uint32(block.timestamp), _slotId);
+    function unstakeAll() external {
+        require(!pause, "Please wait until the staking is unpaused");
+        address user = msg.sender;
+        uint256 rewards = getTotalRewards();
+        uint256 stakedAmount = getUserTotalStakes();
+
+        for (uint256 i = 0; i < stakes[user].counter; i++) {
+            delete stakes[user].slotStake[i];
+        }
+        stakes[user].counter = 0;
+        require(
+            address(this).balance >= stakedAmount,
+            "Contract insufficient balance"
+        );
+        emit UnstakedAllTokens(
+            user,
+            stakedAmount,
+            rewards,
+            uint32(block.timestamp)
+        );
+        (bool success, ) = user.call{value: stakedAmount + rewards}("");
+        require(success, "Failed to send rewards and staked amount");
+    }
+
+    function unstake(uint256 amount) external {
+        require(!pause, "Please wait until the staking is unpaused");
+        address user = msg.sender;
+        require(
+            amount <= getUserTotalStakes(),
+            "invalid unstaking amount specified"
+        );
+        SlotStake storage position = stakes[user];
+        for (uint256 i = 0; i < position.counter; i++) {
+            uint256 _amount = position.slotStake[i].amount;
+            uint256 rewards = calculateRewards(position, i);
+            position.slotStake[i].startTime = uint32(block.timestamp);
+            position.slotStake[i].rewards = stakes[user]
+                .slotStake[i]
+                .rewards
+                .add(rewards);
+            if (_amount > amount) {
+                position.slotStake[i].amount = _amount.sub(amount);
+                break;
+            } else {
+                position.slotStake[i].amount = 0;
+                amount = amount.sub(_amount);
+            }
+        }
+        require(
+            address(this).balance >= amount,
+            "Contract insufficient balance"
+        );
+        emit UnstakedTokens(user, amount, uint32(block.timestamp));
+        (bool success, ) = user.call{value: amount}("");
+        require(success, "Failed to send rewards and staked amount");
     }
 
     /**
@@ -161,6 +235,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         uint256 _slotId
     ) external nonReentrant {
         address user = msg.sender;
+        require(_rewardAmount > 0, "invalid amount");
 
         stakes[user].slotStake[_slotId].rewards = stakes[user]
             .slotStake[_slotId]
@@ -182,10 +257,9 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             address(this).balance >= _rewardAmount,
             "Contract insufficient balance"
         );
+        emit RewardClaimed(user, _rewardAmount, uint32(block.timestamp));
         (bool success, ) = user.call{value: _rewardAmount}("");
         require(success, "Unable to send value or recipient may have reverted");
-
-        emit RewardClaimed(user, _rewardAmount, uint32(block.timestamp));
     }
 
     function claimAllRewards() external {
@@ -196,9 +270,9 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             stakes[user].slotStake[i].rewards = 0;
             stakes[user].slotStake[i].startTime = uint32(block.timestamp);
         }
+        emit RewardClaimed(user, _rewardAmount, uint32(block.timestamp));
         (bool success, ) = user.call{value: _rewardAmount}("");
         require(success, "Unable to send value or recipient may have reverted");
-        emit RewardClaimed(user, _rewardAmount, uint32(block.timestamp));
     }
 
     /**
@@ -210,20 +284,22 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         SlotStake storage _stake,
         uint256 _slotId
     ) internal view returns (uint256) {
-        uint256 index;
+        uint256 index = 0;
 
-        uint256 rewards;
+        uint256 rewards = 0;
 
         uint32 startTime = _stake.slotStake[_slotId].startTime;
 
         uint256 initialAmount = _stake.slotStake[_slotId].amount;
 
+        uint256 length = apy.length;
+
         // example apy changing format
         // 18 -> 16 -> 14 -> 20(current)
         // here we have to find at which point user staked his assets
 
-        if (apy.length > 1) {
-            for (uint256 i = 0; i < apy.length; i++) {
+        if (length > 1) {
+            for (uint256 i = 0; i < length; i++) {
                 if (startTime <= apy[i].changeTime) {
                     index = i;
                     break;
@@ -234,14 +310,14 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             if (index == 0) {
                 // calculate reward with current apy value
                 return
-                    initialAmount.mul(apy[apy.length - 1].value).mul(
+                    initialAmount.mul(apy[length - 1].value).mul(
                         block.timestamp - startTime
                     ) / (10000 * frequency);
             }
             // 18-> (staking point of user) -> 16
             // this means user staked before apy updation
             else {
-                for (uint256 i = index; i < apy.length; i++) {
+                for (uint256 i = index; i < length; i++) {
                     uint256 _value = initialAmount.mul(apy[i - 1].value).mul(
                         apy[i].changeTime - startTime
                     ) / (10000 * frequency);
@@ -250,7 +326,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
                     startTime = apy[i].changeTime;
                 }
                 rewards +=
-                    initialAmount.mul(apy[apy.length - 1].value).mul(
+                    initialAmount.mul(apy[length - 1].value).mul(
                         block.timestamp - startTime
                     ) /
                     (10000 * frequency);
@@ -296,7 +372,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
 
         emit RewardClaimed(user, _amount, uint32(block.timestamp));
 
-        emit Staked(user, _amount, uint32(block.timestamp), _slotId);
+        emit ReStaked(user, _amount, uint32(block.timestamp));
     }
 
     // /**
@@ -311,7 +387,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         return (userStake.amount, userStake.startTime);
     }
 
-    function getUserTotalStakes() external view returns (uint256 amount) {
+    function getUserTotalStakes() public view returns (uint256 amount) {
         SlotStake storage userSlotStakes = stakes[msg.sender];
         for (uint256 i = 0; i < userSlotStakes.counter; i++) {
             amount += userSlotStakes.slotStake[i].amount;
@@ -368,14 +444,17 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
     //  */
     function setAPY(uint16 _newAPY) external onlyOwner {
         apy.push(APY(_newAPY, uint32(block.timestamp)));
+        emit ApyUpdated(_newAPY, uint32(block.timestamp));
     }
 
     function setMinimumStake(uint256 _newMinimumStake) external onlyOwner {
         minimumStake = _newMinimumStake;
+        emit MinimumStakeUpdated(_newMinimumStake, uint32(block.timestamp));
     }
 
     function setFrequency(uint256 _frequency) external onlyOwner {
         frequency = _frequency;
+        emit FrequencyUpdated(_frequency, uint32(block.timestamp));
     }
 
     // // Receive Function
@@ -397,6 +476,9 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             address(this).balance >= amount,
             "Contract insufficient balance"
         );
+        require(amount > 0, "invalid amount");
+        require(newAddress != address(0), "invalid address");
+        emit AmountMigrated(amount, newAddress, uint32(block.timestamp));
         (bool success, ) = newAddress.call{value: amount}("");
         require(success, "Unable to send value or recipient may have reverted");
     }

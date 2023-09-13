@@ -33,12 +33,94 @@ const contracts = {
               inputs: [
                 {
                   indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "address",
+                  name: "newAddress",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "migrationTime",
+                  type: "uint32",
+                },
+              ],
+              name: "AmountMigrated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "apy",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "ApyUpdated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "frequency",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "FrequencyUpdated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
                   internalType: "uint8",
                   name: "version",
                   type: "uint8",
                 },
               ],
               name: "Initialized",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "minimumStake",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "MinimumStakeUpdated",
               type: "event",
             },
             {
@@ -58,6 +140,31 @@ const contracts = {
                 },
               ],
               name: "OwnershipTransferred",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "stakeTime",
+                  type: "uint32",
+                },
+              ],
+              name: "ReStaked",
               type: "event",
             },
             {
@@ -140,11 +247,67 @@ const contracts = {
                 {
                   indexed: false,
                   internalType: "uint256",
-                  name: "slotId",
+                  name: "slotid",
                   type: "uint256",
                 },
               ],
               name: "Unstaked",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "totalAmount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewards",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "unstakeTime",
+                  type: "uint32",
+                },
+              ],
+              name: "UnstakedAllTokens",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "unstakeTime",
+                  type: "uint32",
+                },
+              ],
+              name: "UnstakedTokens",
               type: "event",
             },
             {
@@ -490,6 +653,19 @@ const contracts = {
               inputs: [
                 {
                   internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "unstake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
                   name: "_amount",
                   type: "uint256",
                 },
@@ -500,6 +676,13 @@ const contracts = {
                 },
               ],
               name: "unstake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "unstakeAll",
               outputs: [],
               stateMutability: "nonpayable",
               type: "function",
@@ -674,7 +857,7 @@ const contracts = {
       chainId: "31337",
       contracts: {
         StakingContract: {
-          address: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
+          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
           abi: [
             {
               inputs: [
@@ -702,12 +885,94 @@ const contracts = {
               inputs: [
                 {
                   indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "address",
+                  name: "newAddress",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "migrationTime",
+                  type: "uint32",
+                },
+              ],
+              name: "AmountMigrated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "apy",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "ApyUpdated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "frequency",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "FrequencyUpdated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
                   internalType: "uint8",
                   name: "version",
                   type: "uint8",
                 },
               ],
               name: "Initialized",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "minimumStake",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "MinimumStakeUpdated",
               type: "event",
             },
             {
@@ -727,6 +992,31 @@ const contracts = {
                 },
               ],
               name: "OwnershipTransferred",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "stakeTime",
+                  type: "uint32",
+                },
+              ],
+              name: "ReStaked",
               type: "event",
             },
             {
@@ -809,11 +1099,67 @@ const contracts = {
                 {
                   indexed: false,
                   internalType: "uint256",
-                  name: "slotId",
+                  name: "slotid",
                   type: "uint256",
                 },
               ],
               name: "Unstaked",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "totalAmount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewards",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "unstakeTime",
+                  type: "uint32",
+                },
+              ],
+              name: "UnstakedAllTokens",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "unstakeTime",
+                  type: "uint32",
+                },
+              ],
+              name: "UnstakedTokens",
               type: "event",
             },
             {
@@ -1159,6 +1505,19 @@ const contracts = {
               inputs: [
                 {
                   internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "unstake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
                   name: "_amount",
                   type: "uint256",
                 },
@@ -1169,6 +1528,13 @@ const contracts = {
                 },
               ],
               name: "unstake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "unstakeAll",
               outputs: [],
               stateMutability: "nonpayable",
               type: "function",
@@ -1193,7 +1559,7 @@ const contracts = {
           ],
         },
         YourContract: {
-          address: "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
+          address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
           abi: [
             {
               inputs: [

@@ -35,12 +35,12 @@
     "@tanstack/eslint-plugin-query": "^4.34.1",
     "@types/chai": "^4",
     "@types/react-select": "^5.0.1",
-    "chai": "^4.3.8",
     "husky": "~8.0.3",
     "lint-staged": "~13.2.2"
   },
   "packageManager": "yarn@3.2.3",
   "dependencies": {
+    "@next/font": "^13.4.19",
     "axios": "^1.5.0",
     "coingecko-api-v3": "^0.0.29",
     "mongoose": "^7.5.0"
