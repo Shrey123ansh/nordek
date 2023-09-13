@@ -11,6 +11,7 @@ import { StakeInfo } from "~~/components/StakingComponents/StakeInfo";
 import StakeInfoBox from "~~/components/StakingComponents/StakeInfoBox";
 import { StakesTable } from "~~/components/StakingComponents/StakesTable";
 import ActionButton from "~~/components/ui/actionButton";
+import StakeHeader from "~~/components/StakingComponents/StakeHeader";
 import {
   useDeployedContractInfo,
   useScaffoldContractRead,
@@ -316,6 +317,7 @@ const Stake: NextPage = () => {
     <>
       <div className="container flex items-center flex-col flex-grow pt-10 justify-center m-auto font-inter">
         {/* <StakeInfoBox></StakeInfoBox> */}
+        <StakeHeader/>
         <StakeInfo></StakeInfo>
         <StakeBox></StakeBox>
         <StakesTable></StakesTable>
