@@ -6,15 +6,19 @@ import axios from "axios";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { ClaimButton, RestakeButton } from "~~/components/StakingComponents/StakeButtons";
-import { useDeployedContractInfo, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
+
+import { ClaimButton } from "~~/components/StakingComponents/StakeButtons";
+import { useScaffoldEventSubscriber, useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+import { RestakeButton } from "~~/components/StakingComponents/StakeButtons";
+
 import { formatTx } from "~~/utils/formatStuff";
 import { notification } from "~~/utils/scaffold-eth";
 import { timeAgoUnix } from "~~/utils/time";
 
+
+
 async function getStakes(address: string) {
   const apiUrl = `api/stakes?address=${address}`;
-
   try {
     const response = await axios.get(apiUrl);
     console.log(response);
@@ -33,6 +37,7 @@ export const StakesTable = () => {
     address: string;
     hash: string;
     slotId: number;
+    rewards: number
   };
   const { address } = useAccount();
   const [isClaim, setIsClaim] = useState(true);
@@ -42,6 +47,7 @@ export const StakesTable = () => {
   const [stakes, setStakes] = useState<stakesType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract");
+
 
   useEffect(() => {
     const callGetStakes = async () => {
@@ -80,6 +86,9 @@ export const StakesTable = () => {
 
     callGetStakes();
   }, [address]);
+
+
+
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -131,7 +140,7 @@ export const StakesTable = () => {
         console.log("📡 Staked", user, amount, stakeTime, slotId);
         console.log(stakes);
         if (user && amount && stakeTime) {
-          const newStake = {
+          const newStake: stakesType = {
             stakedAt: stakeTime,
             stakedAmount: Number(amount),
             apy: 18, //TODO change this to current apy
@@ -304,7 +313,7 @@ export const StakesTable = () => {
                       <td className="px-4 py-2 text-center">{formatEther(stake.stakedAmount)}</td>
                       <td className="px-4 py-2 text-center">{formatTx(stake.hash)}</td>
                       <td className="px-4 py-2 text-center">{timeAgoUnix(stake.stakedAt)}</td>
-                      <td className="px-4 py-2 text-center">{stake.apy}</td>
+                      <td className="px-4 py-2 text-center">{stake.rewards}</td>
 
                       <td className="px-4 py-2 text-center flex justify-center space-x-4">
                         {/* <ActionButton text="Claim" onClick={() => openClaimPopup()}></ActionButton> */}
