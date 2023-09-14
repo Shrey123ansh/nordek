@@ -25,7 +25,7 @@ export const ClaimPopup = ({
     args: [slotId],
   });
   //const userSlotStake = userSlotStakeDtls? userSlotStakeDtls[0]
-  console.log("Slot Details", userSlotReward);
+
   const slotReward = userSlotReward ? userSlotReward : BigInt(0);
 
   function setStakeAmountMax() {
