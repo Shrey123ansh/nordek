@@ -6,14 +6,15 @@ import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { ClaimButton, UnstakeButton } from "~~/components/StakingComponents/StakeButtons";
-import { useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
-import stakes from "~~/pages/api/stakes";
+import { useScaffoldEventSubscriber, useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { formatTx } from "~~/utils/formatStuff";
 import { timeAgoUnix } from "~~/utils/time";
+import { readContract } from '@wagmi/core'
+
+
 
 async function getStakes(address: string) {
   const apiUrl = `api/stakes?address=${address}`;
-
   try {
     const response = await axios.get(apiUrl);
     console.log(response);
@@ -32,6 +33,7 @@ export const StakesTable = () => {
     address: string;
     hash: string;
     slotId: number;
+    rewards: number
   };
   const { address } = useAccount();
   const [isClaim, setIsClaim] = useState(true);
@@ -41,11 +43,31 @@ export const StakesTable = () => {
   const [stakes, setStakes] = useState<stakesType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract")
+
   useEffect(() => {
     const callGetStakes = async () => {
-      const data = await getStakes(address || "");
+      const data: stakesType[] = await getStakes(address || "");
       console.log("Loaded Data", data);
       if (data) {
+        for (let i = 0; i < data.length; i++) {
+          try {
+            console.log(i)
+            const rewards = await readContract({
+              address: deployedContractInfo?.address!,
+              abi: deployedContractInfo?.abi!,
+              functionName: 'getUserRewards',
+              args: [BigInt(data[i].slotId)],
+              chainId: 31337,
+              account: address
+            })
+
+            console.log('rewards', rewards)
+            data[i].rewards = Number(rewards)
+
+          } catch { }
+        }
+
         setStakes(data);
         setStakesLoading(false);
       } else {
@@ -55,6 +77,8 @@ export const StakesTable = () => {
 
     callGetStakes();
   }, [address]);
+
+
 
   const startIndex = (currentPage - 1) * 5;
   const endIndex = startIndex + 5;
@@ -107,7 +131,7 @@ export const StakesTable = () => {
         console.log("📡 Staked", user, amount, stakeTime, slotId);
 
         if (user && amount && stakeTime) {
-          const newStake = {
+          const newStake: stakesType = {
             stakedAt: stakeTime,
             stakedAmount: Number(amount),
             apy: 18, //TODO change this to current apy
@@ -203,7 +227,7 @@ export const StakesTable = () => {
                       <td className="px-4 py-2 text-center">{formatEther(stake.stakedAmount)}</td>
                       <td className="px-4 py-2 text-center">{formatTx(stake.hash)}</td>
                       <td className="px-4 py-2 text-center">{timeAgoUnix(stake.stakedAt)}</td>
-                      <td className="px-4 py-2 text-center">{stake.apy}</td>
+                      <td className="px-4 py-2 text-center">{stake.rewards}</td>
 
                       <td className="px-4 py-2 text-center flex justify-center space-x-4">
                         {/* <ActionButton text="Claim" onClick={() => openClaimPopup()}></ActionButton> */}
