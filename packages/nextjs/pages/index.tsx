@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { NextPage } from "next";
 import Discover from "~~/components/landingcomps/discover";
 import Features from "~~/components/landingcomps/features";

@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import { ClaimPopup } from "./ClaimPopup";
 import GradientComponent from "./GradientContainer";
+import { readContract } from "@wagmi/core";
 import axios from "axios";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { ClaimButton, UnstakeButton } from "~~/components/StakingComponents/StakeButtons";
+
+import { ClaimButton } from "~~/components/StakingComponents/StakeButtons";
 import { useScaffoldEventSubscriber, useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+import { RestakeButton } from "~~/components/StakingComponents/StakeButtons";
+
 import { formatTx } from "~~/utils/formatStuff";
+import { notification } from "~~/utils/scaffold-eth";
 import { timeAgoUnix } from "~~/utils/time";
-import { readContract } from '@wagmi/core'
 
 
 
@@ -42,36 +46,41 @@ export const StakesTable = () => {
   const [stakesLoading, setStakesLoading] = useState(true);
   const [stakes, setStakes] = useState<stakesType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract");
 
-  const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract")
 
   useEffect(() => {
     const callGetStakes = async () => {
-      const data: stakesType[] = await getStakes(address || "");
-      console.log("Loaded Data", data);
-      if (data) {
-        for (let i = 0; i < data.length; i++) {
-          try {
-            console.log(i)
-            const rewards = await readContract({
-              address: deployedContractInfo?.address!,
-              abi: deployedContractInfo?.abi!,
-              functionName: 'getUserRewards',
-              args: [BigInt(data[i].slotId)],
-              chainId: 31337,
-              account: address
-            })
+      try {
+        const data = await getStakes(address || "");
+        console.log("Loaded Data", data);
 
-            console.log('rewards', rewards)
-            data[i].rewards = Number(rewards)
+        if (data) {
+          for (let i = 0; i < data.length; i++) {
+            try {
+              console.log(i);
+              const rewards = await readContract({
+                address: deployedContractInfo?.address!,
+                abi: deployedContractInfo?.abi!,
+                functionName: "getUserRewards",
+                args: [BigInt(i)],
+                chainId: 31337,
+                account: address,
+              });
+              console.log("rewards", rewards);
+              data[i].apy = formatEther(rewards);
+            } catch (e) {
+              console.log("changing rewards failed");
+            }
+          }
 
-          } catch { }
+          setStakes(data);
+          setStakesLoading(false);
+        } else {
+          setStakesLoading(false);
         }
-
-        setStakes(data);
-        setStakesLoading(false);
-      } else {
-        setStakesLoading(false);
+      } catch (e) {
+        console.log("getting data failed", e);
       }
     };
 
@@ -80,11 +89,6 @@ export const StakesTable = () => {
 
 
 
-  const startIndex = (currentPage - 1) * 5;
-  const endIndex = startIndex + 5;
-
-  // Slice the data to show only items for the current page
-  const paginatedData = stakes.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -102,7 +106,6 @@ export const StakesTable = () => {
     hash: string;
     slotId: number;
   }) => {
-    console.log("SAVING TO DB");
     const headers = {
       "Content-Type": "application/json",
       Authorization: "JWT fefege...",
@@ -120,6 +123,12 @@ export const StakesTable = () => {
     console.log("Saved to DB");
   };
 
+  const startIndex = (currentPage - 1) * 5;
+  const endIndex = startIndex + 5;
+
+  // Slice the data to show only items for the current page
+  const paginatedData = stakes.slice(startIndex, endIndex);
+  console.log("Stakes after slicing", stakes);
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "Staked",
@@ -129,7 +138,7 @@ export const StakesTable = () => {
 
         const { user, amount, stakeTime, slotId } = log.args;
         console.log("📡 Staked", user, amount, stakeTime, slotId);
-
+        console.log(stakes);
         if (user && amount && stakeTime) {
           const newStake: stakesType = {
             stakedAt: stakeTime,
@@ -147,7 +156,7 @@ export const StakesTable = () => {
             // If it's not a duplicate, add the new stake
             console.log("Saving to DB");
             saveStakeToDb(newStake);
-            console.log("setting state");
+
             setStakes([...stakes, newStake]);
           }
         }
@@ -170,17 +179,91 @@ export const StakesTable = () => {
     console.log("Removed from DB");
   };
 
+  // const { data: apy, isLoading: isApyLoading } = useScaffoldContractRead({
+  //   contractName: "StakingContract",
+  //   functionName: "getCurrentApy",
+  // });
+
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
-    eventName: "Unstaked",
+    eventName: "UnstakedTokens",
     listener: logs => {
       logs.map(log => {
-        const { user, amount, unstakeTime, slotId } = log.args;
-        console.log("📡 Staked", user, amount, unstakeTime, slotId);
+        const { user, amount, unstakeTime } = log.args;
+        console.log("📡 Unstaked", user, amount, unstakeTime);
         if (user && amount && unstakeTime) {
-          const updatedStakes = stakes.filter(stake => stake.slotId !== slotId);
-          setStakes(updatedStakes);
+          const hash = log.transactionHash ? log.transactionHash?.toString() : "";
+          // const updatedStakes = stakes.filter(stake => stake.slotId !== slotId);
+          // setStakes(updatedStakes);
           //removeStakeInDb();
+        }
+      });
+    },
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "StakingContract",
+    eventName: "RewardClaimed",
+    listener: logs => {
+      logs.map(log => {
+        const { user, totalReward, timeOfClaim } = log.args;
+        console.log("📡 Claimed", user, totalReward, timeOfClaim);
+        if (user && totalReward && timeOfClaim) {
+          notification.success(<div> claimed {formatEther(totalReward)} </div>);
+        }
+      });
+    },
+  });
+
+  const updateRestakedDB = async (newStake: {
+    rewardsLeft: number;
+    newStakedAmount: number;
+    newStakedAt: number;
+    hash: string;
+    addr: string;
+    slotId: number;
+  }) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "JWT fefege...",
+    };
+    try {
+      const response = axios.put("/api/stakes", newStake, {
+        headers: headers,
+      });
+
+      console.log(response);
+      console.log("Restaked");
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log("Saved to DB");
+  };
+
+  useScaffoldEventSubscriber({
+    contractName: "StakingContract",
+    eventName: "ReStaked",
+    listener: logs => {
+      logs.map(log => {
+        const { user, amount, stakeTime, slotId, rewardsLeft } = log.args;
+        console.log("📡 Restaked", user, amount, stakeTime, slotId, rewardsLeft);
+
+        console.log("RESTAKED", user && stakeTime);
+        if (user && stakeTime) {
+          const updatedStake = {
+            rewardsLeft: Number(rewardsLeft),
+            newStakedAmount: Number(amount),
+            newStakedAt: Number(stakeTime),
+            hash: log.transactionHash ? log.transactionHash?.toString() : "",
+            addr: user,
+            slotId: Number(slotId),
+          };
+
+          console.log("Updating restaked db");
+          updateRestakedDB(updatedStake);
+
+          notification.success(<div> Restaked {formatEther(amount)} </div>);
         }
       });
     },
@@ -193,16 +276,19 @@ export const StakesTable = () => {
           <div className="flex justify-between mb-4">
             <h1 className="text-2xl font-bold text-left"> Your Staked Positions </h1>
             <div className="flex space-x-4">
-              <ClaimButton addStyle={""}></ClaimButton>
+              <ClaimButton></ClaimButton>
 
-              <UnstakeButton addStyle={""}>
-                <span> Restake All</span>
-              </UnstakeButton>
+              <RestakeButton></RestakeButton>
             </div>
           </div>
 
           {stakesLoading ? (
-            <div>Loading</div>
+            <div className="justify-center">
+              <button type="button" className="bg-base-200 rounded-2xl" disabled>
+                <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg>
+                Processing...
+              </button>
+            </div>
           ) : (
             <table className="w-full bg-base-200 shadow-lg rounded-lg overflow-hidden">
               <thead className="w-full">

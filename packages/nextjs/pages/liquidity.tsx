@@ -1,6 +1,4 @@
-import Link from "next/link";
 import type { NextPage } from "next";
-import Addliquidity from "~~/components/AddLiquidity";
 import { LiquidityBox } from "~~/components/LiquidityBox";
 
 const Liqudity: NextPage = () => {

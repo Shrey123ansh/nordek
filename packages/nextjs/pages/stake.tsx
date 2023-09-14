@@ -1,27 +1,15 @@
-import { SetStateAction, useEffect, useState } from "react";
-import Link from "next/link";
-import axios from "axios";
-import { expect } from "chai";
+import { useState } from "react";
 import type { NextPage } from "next";
-import { formatEther } from "viem";
-import { useAccount, useBalance, useBlockNumber, useContractRead } from "wagmi";
+import { formatEther, parseEther } from "viem";
+import { useAccount, useBalance } from "wagmi";
 import GradientComponent from "~~/components/StakingComponents/GradientContainer";
-import { ClaimButton, UnstakeButton } from "~~/components/StakingComponents/StakeButtons";
+import StakeHeader from "~~/components/StakingComponents/StakeHeader";
 import { StakeInfo } from "~~/components/StakingComponents/StakeInfo";
-import StakeInfoBox from "~~/components/StakingComponents/StakeInfoBox";
 import { StakesTable } from "~~/components/StakingComponents/StakesTable";
 import ActionButton from "~~/components/ui/actionButton";
-import StakeHeader from "~~/components/StakingComponents/StakeHeader";
-import {
-  useDeployedContractInfo,
-  useScaffoldContractRead,
-  useScaffoldContractWrite,
-  useScaffoldEventSubscriber,
-} from "~~/hooks/scaffold-eth";
-import clientPromise from "~~/lib/mongoDb";
+import { useScaffoldContractRead, useScaffoldContractWrite, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 //import { connectToDatabase } from "~~/lib/mongoDb";
-import { formatTx } from "~~/utils/formatStuff";
-import { getTargetNetwork } from "~~/utils/scaffold-eth";
+import { getTargetNetwork, notification } from "~~/utils/scaffold-eth";
 
 const StakeBox = () => {
   const [stakeAmount, setStakeAmount] = useState(0);
@@ -34,25 +22,42 @@ const StakeBox = () => {
     chainId: getTargetNetwork().id,
   });
 
+  const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getUserTotalStakes",
+    account: address,
+  });
+
   const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(2) : "";
 
+  const userStakes = userTotalStakes ? formatEther(userTotalStakes) : "0";
+
   function setStakeAmountMax() {
-    setStakeAmount(Number(balance));
+    if (isStaking) {
+      setStakeAmount(Number(balance));
+    } else {
+      setStakeAmount(Number(userStakes));
+    }
   }
 
-  const { writeAsync, isLoading } = useScaffoldContractWrite({
+  const { writeAsync: stake, isStakeLoading } = useScaffoldContractWrite({
     contractName: "StakingContract",
     functionName: "stake",
+    account: address,
     value: `${stakeAmount}`,
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
   });
 
-  const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
+  const { writeAsync: unstake, isUnstakeLoading } = useScaffoldContractWrite({
     contractName: "StakingContract",
-    functionName: "getUserTotalStakes",
+    functionName: "unstake",
     account: address,
+    args: [parseEther(stakeAmount.toString())],
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
   });
 
   const { data: apy, isLoading: isApyLoading } = useScaffoldContractRead({
@@ -71,8 +76,11 @@ const StakeBox = () => {
       return;
     }
 
-    await writeAsync();
-
+    if (isStaking) {
+      await stake();
+    } else {
+      await unstake();
+    }
     // const res = await fetch("http://localhost:3000/api/stakes", {
     //   method: "POST",
     //   body: JSON.stringify(stakeData),
@@ -100,12 +108,10 @@ const StakeBox = () => {
   const statsH1Class = "flex w-full justify-between space-x-12";
 
   const handleStakeButtonClick = () => {
-    if (isStaking) {
-      handleStaking();
-    } else {
-    }
+    handleStaking();
   };
 
+  const textColor = "bg-gradient-to-r from-white to-[#F991CC] text-transparent bg-clip-text";
   return (
     <section className="flex justify-between w-full mt-8">
       <div className="w-[40%] mr-8">
@@ -121,33 +127,33 @@ const StakeBox = () => {
             <h1 className="text-xl font-semibold">Standard</h1>
             <h1 className={statsH1Class}>
               {" "}
-              <span>Min Stake</span> <span>{minStake ? formatEther(minStake) : ""}</span>
+              <span className={textColor}>Min Stake</span>{" "}
+              <span className={textColor}>{minStake ? formatEther(minStake) : ""}</span>
             </h1>
             <h1 className={statsH1Class}>
               {" "}
-              <span>Frequency</span> <span>{frequency ? Number(frequency) / 86400 : ""} Days</span>
+              <span className={textColor}>Frequency</span>{" "}
+              <span className={textColor}>{frequency ? Number(frequency) / 86400 : ""} Days</span>
             </h1>
             <h1 className={statsH1Class}>
-              <span>Current Apy</span>
-              <span>{apy ? apy.toString() : ""}</span>
+              <span className={textColor}>Current Apy</span>
+              <span className={textColor}>{apy ? apy.toString() : ""}</span>
             </h1>
 
             <h1 className="text-xl font-semibold">Your Position</h1>
 
             <h1 className={statsH1Class}>
-              <span>Your Staked Amount</span>
-              <span> {userTotalStakes ? formatEther(userTotalStakes) : ""} NRK</span>
+              <span className={textColor}>Your Staked Amount</span>
+              <span className={textColor}> {userStakes} NRK</span>
             </h1>
 
             <h1 className={statsH1Class}>
-              <span>Your Rewards</span>
-              <span> {userRewards ? formatEther(userRewards) : ""} NRK </span>
+              <span className={textColor}>Your Rewards</span>
+              <span className={textColor}> {userRewards ? formatEther(userRewards) : ""} NRK </span>
             </h1>
             <h1 className={statsH1Class}>
-              <span>NRK in Wallet</span>
-              <span>
-                {balance} {balanceData?.symbol}
-              </span>
+              <span className={textColor}>NRK in Wallet</span>
+              <span className={textColor}>{balance} NRK</span>
             </h1>
           </div>
         </GradientComponent>
@@ -315,9 +321,9 @@ const Stake: NextPage = () => {
 
   return (
     <>
-      <div className="container flex items-center flex-col flex-grow pt-10 justify-center m-auto font-inter">
+      <div className="w-[80%] flex items-center flex-col flex-grow pt-10 justify-center m-auto font-inter">
         {/* <StakeInfoBox></StakeInfoBox> */}
-        <StakeHeader/>
+        <StakeHeader />
         <StakeInfo></StakeInfo>
         <StakeBox></StakeBox>
         <StakesTable></StakesTable>

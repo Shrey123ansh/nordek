@@ -4,6 +4,7 @@ import { formatEther } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import { useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { getTokenData } from "~~/utils/coingeckoPrices";
+import { formatNumberWithKMB } from "~~/utils/usd";
 
 export const StakeInfo = () => {
   const { address } = useAccount();
@@ -50,11 +51,11 @@ export const StakeInfo = () => {
   const data = [
     {
       text: "Total NRK Staked",
-      data: Number(totalNRKStaked?.formatted),
+      data: formatNumberWithKMB(Number(totalNRKStaked?.formatted)),
     },
     {
       text: "Total Value",
-      data: tvl,
+      data: `$ ${tvl.toFixed(2)}`,
     },
     {
       text: "Total Rewards Earned",
@@ -66,13 +67,14 @@ export const StakeInfo = () => {
     },
     {
       text: "Rewards",
-      data: formatEther(userRewards),
+      data: `${formatEther(userRewards)} NRK`,
     },
     {
       text: "Restake",
-      data: formatEther(userTotalStakes),
+      data: `${formatEther(userTotalStakes)} NRK`,
     },
   ];
+  const textColor = "bg-gradient-to-r from-white to-[#F991CC] text-transparent bg-clip-text";
   return (
     <section className="mt-8 w-full">
       <GradientComponent>
@@ -81,8 +83,8 @@ export const StakeInfo = () => {
           {data.map((info, idx) => {
             return (
               <div className="w-full flex justify-between" key={idx}>
-                <h1>{info.text}</h1>
-                <h1>{info.data?.toString()}</h1>
+                <h1 className={textColor}>{info.text}</h1>
+                <h1 className={textColor}>{info.data?.toString()}</h1>
               </div>
             );
           })}

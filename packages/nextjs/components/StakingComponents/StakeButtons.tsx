@@ -1,25 +1,42 @@
 import React from "react";
+import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
-type ButtonProps = {
-  children: React.ReactNode;
-  addStyle: string;
-};
+export const ClaimButton = () => {
+  const { writeAsync, isLoading } = useScaffoldContractWrite({
+    contractName: "StakingContract",
+    functionName: "claimAllRewards",
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
 
-export const ClaimButton = ({ addStyle = "" }: { addStyle: string }) => {
   return (
     <button
-      className={addStyle + "bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] font-bold text-white py-0 px-8 rounded-lg"}
+      className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] font-bold text-white py-0 px-8 rounded-lg"
+      onClick={() => writeAsync()}
     >
       Claim All
     </button>
   );
 };
 
-export const UnstakeButton: React.FC<ButtonProps> = ({ children, addStyle = "" }) => {
+export const RestakeButton = () => {
+  const { writeAsync, isLoading } = useScaffoldContractWrite({
+    contractName: "StakingContract",
+    functionName: "restake",
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
+
   return (
-    <div className={addStyle + "rounded-lg bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] p-0.5"}>
-      <button type="button" className="px-8 py-2 border-1 rounded-lg font-bold bg-gray-800">
-        {children}
+    <div className="rounded-lg bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] p-0.5">
+      <button
+        type="button"
+        className="px-8 py-2 border-1 rounded-lg font-bold bg-gray-800"
+        onClick={() => writeAsync()}
+      >
+        Restake All
       </button>
     </div>
   );

@@ -61,7 +61,13 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         uint32 stakeTime,
         uint256 slotId
     );
-    event ReStaked(address indexed user, uint256 amount, uint32 stakeTime);
+    event ReStaked(
+        address indexed user,
+        uint256 amount,
+        uint32 stakeTime,
+        uint256 slotId,
+        uint256 rewardsLeft
+    );
     event Unstaked(
         address indexed user,
         uint256 amount,
@@ -73,7 +79,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         uint256 amount,
         uint32 unstakeTime,
         uint256 _slotId,
-        uint256 rewardLeft
+        uint256 rewardsLeft
     );
     event UnstakedAllTokens(
         address indexed user,
@@ -82,6 +88,14 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         uint32 unstakeTime
     );
     event RewardClaimed(
+        address indexed user,
+        uint256 totalReward,
+        uint32 timeOfClaim,
+        uint256 slotId,
+        uint256 rewardsLeft
+    );
+
+    event AllRewardClaimed(
         address indexed user,
         uint256 totalReward,
         uint32 timeOfClaim
@@ -214,22 +228,23 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             uint256 rewards = calculateRewards(position, i);
             totalRewards = totalRewards.add(rewards);
             position.slotStake[i].startTime = uint32(block.timestamp);
-            position.slotStake[i].rewards = stakes[user]
-                .slotStake[i]
-                .rewards
-                .add(rewards);
+            // position.slotStake[i].rewards = stakes[user]
+            //     .slotStake[i]
+            //     .rewards
+            //     .add(rewards);
             if (_amount > amount) {
                 position.slotStake[i].amount = _amount.sub(amount);
                 break;
             } else {
-                position.slotStake[i].amount = 0;
+                delete position.slotStake[i];
                 amount = amount.sub(_amount);
             }
         }
         require(
-            address(this).balance >= amount,
+            address(this).balance >= amount + totalRewards,
             "Contract insufficient balance"
         );
+        // use , amount -> token + rewards, timestamp, last slot, total rewards
         emit UnstakedTokens(
             user,
             amount,
@@ -237,7 +252,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             i,
             totalRewards
         );
-        (bool success, ) = user.call{value: amount}("");
+        (bool success, ) = user.call{value: amount + totalRewards}("");
         require(success, "Failed to send rewards and staked amount");
     }
 
@@ -273,7 +288,13 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             address(this).balance >= _rewardAmount,
             "Contract insufficient balance"
         );
-        emit RewardClaimed(user, _rewardAmount, uint32(block.timestamp));
+        emit RewardClaimed(
+            user,
+            _rewardAmount,
+            uint32(block.timestamp),
+            _slotId,
+            stakes[user].slotStake[_slotId].rewards
+        );
         (bool success, ) = user.call{value: _rewardAmount}("");
         require(success, "Unable to send value or recipient may have reverted");
     }
@@ -286,7 +307,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             stakes[user].slotStake[i].rewards = 0;
             stakes[user].slotStake[i].startTime = uint32(block.timestamp);
         }
-        emit RewardClaimed(user, _rewardAmount, uint32(block.timestamp));
+        emit AllRewardClaimed(user, _rewardAmount, uint32(block.timestamp));
         (bool success, ) = user.call{value: _rewardAmount}("");
         require(success, "Unable to send value or recipient may have reverted");
     }
@@ -386,9 +407,13 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             .rewards
             .sub(_amount);
 
-        emit RewardClaimed(user, _amount, uint32(block.timestamp));
-
-        emit ReStaked(user, _amount, uint32(block.timestamp));
+        emit ReStaked(
+            user,
+            totalStake,
+            uint32(block.timestamp),
+            _slotId,
+            stakes[user].slotStake[_slotId].rewards
+        );
     }
 
     // /**
