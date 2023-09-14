@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Use the $set operator to update the specified fields
       const updateDoc = {
         $set: {
-          // rewards: rewardsLeft,
+          apy: rewardsLeft,
           stakedAmount: newStakedAmount,
           stakedAt: newStakedAt,
           hash: hash,

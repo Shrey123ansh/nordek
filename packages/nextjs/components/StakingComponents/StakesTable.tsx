@@ -45,29 +45,37 @@ export const StakesTable = () => {
 
   useEffect(() => {
     const callGetStakes = async () => {
-      const data = await getStakes(address || "");
-      console.log("Loaded Data", data);
-      if (data) {
-        setStakes(data);
-        setStakesLoading(false);
-      } else {
-        setStakesLoading(false);
-      }
+      try {
+        const data = await getStakes(address || "");
+        console.log("Loaded Data", data);
 
-      // for (let i = 0; i < data.length; i++) {
-      //   try {
-      //     const rewards = await readContract({
-      //       address: deployedContractInfo?.address!,
-      //       abi: deployedContractInfo?.abi!,
-      //       functionName: "getUserRewards",
-      //       args: [BigInt(0)],
-      //       chainId: 31337,
-      //       account: address,
-      //     });
-      //     console.log("rewards", rewards);
-      //     data[i].rewards = Number(rewards) / 10 ** 18;
-      //   } catch {}
-      // }
+        if (data) {
+          for (let i = 0; i < data.length; i++) {
+            try {
+              console.log(i);
+              const rewards = await readContract({
+                address: deployedContractInfo?.address!,
+                abi: deployedContractInfo?.abi!,
+                functionName: "getUserRewards",
+                args: [BigInt(i)],
+                chainId: 31337,
+                account: address,
+              });
+              console.log("rewards", rewards);
+              data[i].apy = formatEther(rewards);
+            } catch (e) {
+              console.log("changing rewards failed");
+            }
+          }
+
+          setStakes(data);
+          setStakesLoading(false);
+        } else {
+          setStakesLoading(false);
+        }
+      } catch (e) {
+        console.log("getting data failed", e);
+      }
     };
 
     callGetStakes();
@@ -232,17 +240,20 @@ export const StakesTable = () => {
         const { user, amount, stakeTime, slotId, rewardsLeft } = log.args;
         console.log("📡 Restaked", user, amount, stakeTime, slotId, rewardsLeft);
 
-        if (user && amount && stakeTime && address) {
+        console.log("RESTAKED", user && stakeTime);
+        if (user && stakeTime) {
           const updatedStake = {
             rewardsLeft: Number(rewardsLeft),
             newStakedAmount: Number(amount),
             newStakedAt: Number(stakeTime),
             hash: log.transactionHash ? log.transactionHash?.toString() : "",
-            addr: address,
+            addr: user,
             slotId: Number(slotId),
           };
 
+          console.log("Updating restaked db");
           updateRestakedDB(updatedStake);
+
           notification.success(<div> Restaked {formatEther(amount)} </div>);
         }
       });

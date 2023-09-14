@@ -153,9 +153,7 @@ const StakeBox = () => {
             </h1>
             <h1 className={statsH1Class}>
               <span className={textColor}>NRK in Wallet</span>
-              <span className={textColor}>
-                {balance} {balanceData?.symbol}
-              </span>
+              <span className={textColor}>{balance} NRK</span>
             </h1>
           </div>
         </GradientComponent>
