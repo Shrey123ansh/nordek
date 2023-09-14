@@ -1,25 +1,12 @@
-import { SetStateAction, useEffect, useState } from "react";
-import Link from "next/link";
-import axios from "axios";
-import { expect } from "chai";
+import { useState } from "react";
 import type { NextPage } from "next";
-import { formatEther } from "viem";
-import { useAccount, useBalance, useBlockNumber, useContractRead } from "wagmi";
+import { formatEther, parseEther } from "viem";
+import { useAccount, useBalance } from "wagmi";
 import GradientComponent from "~~/components/StakingComponents/GradientContainer";
-import { ClaimButton, UnstakeButton } from "~~/components/StakingComponents/StakeButtons";
 import { StakeInfo } from "~~/components/StakingComponents/StakeInfo";
-import StakeInfoBox from "~~/components/StakingComponents/StakeInfoBox";
 import { StakesTable } from "~~/components/StakingComponents/StakesTable";
-import ActionButton from "~~/components/ui/actionButton";
-import {
-  useDeployedContractInfo,
-  useScaffoldContractRead,
-  useScaffoldContractWrite,
-  useScaffoldEventSubscriber,
-} from "~~/hooks/scaffold-eth";
-import clientPromise from "~~/lib/mongoDb";
+import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 //import { connectToDatabase } from "~~/lib/mongoDb";
-import { formatTx } from "~~/utils/formatStuff";
 import { getTargetNetwork } from "~~/utils/scaffold-eth";
 
 const StakeBox = () => {
@@ -33,25 +20,42 @@ const StakeBox = () => {
     chainId: getTargetNetwork().id,
   });
 
+  const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getUserTotalStakes",
+    account: address,
+  });
+
   const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(2) : "";
 
+  const userStakes = userTotalStakes ? formatEther(userTotalStakes) : "0";
+
   function setStakeAmountMax() {
-    setStakeAmount(Number(balance));
+    if (isStaking) {
+      setStakeAmount(Number(balance));
+    } else {
+      setStakeAmount(Number(userStakes));
+    }
   }
 
-  const { writeAsync, isLoading } = useScaffoldContractWrite({
+  const { writeAsync: stake, isStakeLoading } = useScaffoldContractWrite({
     contractName: "StakingContract",
     functionName: "stake",
+    account: address,
     value: `${stakeAmount}`,
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
   });
 
-  const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
+  const { writeAsync: unstake, isUnstakeLoading } = useScaffoldContractWrite({
     contractName: "StakingContract",
-    functionName: "getUserTotalStakes",
+    functionName: "unstake",
     account: address,
+    args: [parseEther(stakeAmount.toString())],
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
   });
 
   const { data: apy, isLoading: isApyLoading } = useScaffoldContractRead({
@@ -70,8 +74,11 @@ const StakeBox = () => {
       return;
     }
 
-    await writeAsync();
-
+    if (isStaking) {
+      await stake();
+    } else {
+      await unstake();
+    }
     // const res = await fetch("http://localhost:3000/api/stakes", {
     //   method: "POST",
     //   body: JSON.stringify(stakeData),
@@ -99,10 +106,7 @@ const StakeBox = () => {
   const statsH1Class = "flex w-full justify-between space-x-12";
 
   const handleStakeButtonClick = () => {
-    if (isStaking) {
-      handleStaking();
-    } else {
-    }
+    handleStaking();
   };
 
   return (
@@ -135,7 +139,7 @@ const StakeBox = () => {
 
             <h1 className={statsH1Class}>
               <span>Your Staked Amount</span>
-              <span> {userTotalStakes ? formatEther(userTotalStakes) : ""} NRK</span>
+              <span> {userStakes} NRK</span>
             </h1>
 
             <h1 className={statsH1Class}>

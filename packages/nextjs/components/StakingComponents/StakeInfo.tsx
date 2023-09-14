@@ -50,11 +50,11 @@ export const StakeInfo = () => {
   const data = [
     {
       text: "Total NRK Staked",
-      data: Number(totalNRKStaked?.formatted),
+      data: Number(totalNRKStaked?.formatted).toFixed(2),
     },
     {
       text: "Total Value",
-      data: tvl,
+      data: `$ ${tvl.toFixed(2)}`,
     },
     {
       text: "Total Rewards Earned",
@@ -70,7 +70,7 @@ export const StakeInfo = () => {
     },
     {
       text: "Restake",
-      data: formatEther(userTotalStakes),
+      data: `${formatEther(userTotalStakes)} NRK`,
     },
   ];
   return (

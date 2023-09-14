@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { connectToDatabase } from "~~/lib/mongoDb";
+import clientPromise from "~~/lib/mongoDb";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  let { db } = await connectToDatabase();
+  const client = await clientPromise;
+  const db = client.db("Norswap");
 
   const swapSupportedTokenList = await db.collection("swapSupportedTokenList").find({}).sort({ symbol: -1 }).toArray();
 

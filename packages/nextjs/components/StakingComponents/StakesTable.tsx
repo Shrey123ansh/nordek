@@ -5,7 +5,7 @@ import axios from "axios";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { ClaimButton, UnstakeButton } from "~~/components/StakingComponents/StakeButtons";
+import { ClaimButton, RestakeButton } from "~~/components/StakingComponents/StakeButtons";
 import { useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 import stakes from "~~/pages/api/stakes";
 import { formatTx } from "~~/utils/formatStuff";
@@ -123,7 +123,7 @@ export const StakesTable = () => {
             // If it's not a duplicate, add the new stake
             console.log("Saving to DB");
             saveStakeToDb(newStake);
-            console.log("setting state");
+            console.log(stakes);
             setStakes([...stakes, newStake]);
           }
         }
@@ -169,16 +169,19 @@ export const StakesTable = () => {
           <div className="flex justify-between mb-4">
             <h1 className="text-2xl font-bold text-left"> Your Staked Positions </h1>
             <div className="flex space-x-4">
-              <ClaimButton addStyle={""}></ClaimButton>
+              <ClaimButton></ClaimButton>
 
-              <UnstakeButton addStyle={""}>
-                <span> Restake All</span>
-              </UnstakeButton>
+              <RestakeButton></RestakeButton>
             </div>
           </div>
 
           {stakesLoading ? (
-            <div>Loading</div>
+            <div className="justify-center">
+              <button type="button" className="bg-base-200 rounded-2xl" disabled>
+                <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg>
+                Processing...
+              </button>
+            </div>
           ) : (
             <table className="w-full bg-base-200 shadow-lg rounded-lg overflow-hidden">
               <thead className="w-full">

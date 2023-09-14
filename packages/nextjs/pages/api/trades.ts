@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { NextApiRequest, NextApiResponse } from "next";
-import { connectToDatabase } from "~~/lib/mongoDb";
+import clientPromise from "~~/lib/mongoDb";
 import Trades from "~~/models/trades";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  let { db } = await connectToDatabase();
+  const client = await clientPromise;
+  const db = client.db("Norswap");
   switch (req.method) {
     case "POST":
       try {
