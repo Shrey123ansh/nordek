@@ -61,7 +61,13 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         uint32 stakeTime,
         uint slotId
     );
-    event ReStaked(address indexed user, uint256 amount, uint32 stakeTime);
+    event ReStaked(
+        address indexed user,
+        uint256 amount,
+        uint32 stakeTime,
+        uint256 slotId,
+        uint256 rewardsLeft
+    );
     event Unstaked(
         address indexed user,
         uint256 amount,
@@ -370,9 +376,13 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             .rewards
             .sub(_amount);
 
-        emit RewardClaimed(user, _amount, uint32(block.timestamp));
-
-        emit ReStaked(user, _amount, uint32(block.timestamp));
+        emit ReStaked(
+            user,
+            totalStake,
+            uint32(block.timestamp),
+            _slotId,
+            stakes[user].slotStake[_slotId].rewards
+        );
     }
 
     // /**

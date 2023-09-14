@@ -29,6 +29,8 @@ export function timeAgoUnix(unixTimestamp: number) {
     return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
   } else if (minutes > 0) {
     return `${minutes}m${minutes !== 1 ? "s" : ""} ago`;
+  } else {
+    return "just now";
   }
 }
 

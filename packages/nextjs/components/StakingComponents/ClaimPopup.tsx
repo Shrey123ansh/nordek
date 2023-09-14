@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Claim, Restake } from "./ClaimRestake";
 import GradientComponent from "./GradientContainer";
-import { formatEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
@@ -16,17 +15,8 @@ export const ClaimPopup = ({
   slotId: bigint;
   isClaim: boolean;
 }) => {
-  console.log("SLOT ID", slotId);
-  const [amount, setAmount] = useState("0");
-  const [selectedPercentage, setSelectedPercentage] = useState(0);
+  const [amount, setAmount] = useState(BigInt(0));
   const { address } = useAccount();
-
-  const { data: userSlotStake, isLoading: isGetUserSlotStake } = useScaffoldContractRead({
-    contractName: "StakingContract",
-    functionName: "getUserStake",
-    account: address,
-    args: [slotId],
-  });
 
   const { data: userSlotReward, isLoading: isGetUserSlotReward } = useScaffoldContractRead({
     contractName: "StakingContract",
@@ -35,44 +25,43 @@ export const ClaimPopup = ({
     args: [slotId],
   });
   //const userSlotStake = userSlotStakeDtls? userSlotStakeDtls[0]
-  console.log("Slot Details", userSlotStake, userSlotReward);
+  console.log("Slot Details", userSlotReward);
+  const slotReward = userSlotReward ? userSlotReward : BigInt(0);
 
-  const handlePercentageClick = (percentage: number) => {
-    setSelectedPercentage(percentage);
-    // Calculate the amount based on the selected percentage and total balance
-    // Replace the following line with your own logic
-    const calculatedAmount = (BigInt(percentage) * (userSlotReward ? userSlotReward : BigInt(0))) / BigInt(100);
-    setAmount(`${calculatedAmount}`);
-  };
+  function setStakeAmountMax() {
+    setAmount(slotReward);
+  }
 
-  const { writeAsync: restake, isRestakeLoading } = useScaffoldContractWrite({
+  const { writeAsync: claimRewards, isClaimRewardsLoading } = useScaffoldContractWrite({
     contractName: "StakingContract",
-    functionName: "restake",
-    args: [BigInt(amount), slotId],
+    functionName: "claimRewards",
     account: address,
+    args: [amount, BigInt(slotId)],
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
   });
 
-  const handleRestake = () => {
-    // Perform the "Restake" action here
-    console.log("Restaking", amount);
-    restake();
-    onClose();
-  };
-
+  const { writeAsync: restakeRewards, isRestakeRewardsLoading } = useScaffoldContractWrite({
+    contractName: "StakingContract",
+    functionName: "restake",
+    account: address,
+    args: [amount, BigInt(slotId)],
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
   if (!isOpen) return null;
 
-  const textColor = "bg-gradient-to-r from-white to-[#AD00FF] text-transparent bg-clip-text";
+  const textColor = "bg-gradient-to-r from-white to-[#F991CC] text-transparent bg-clip-text mx-4";
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 bg-gray-800">
       <GradientComponent>
-        <div className="relative bg-base-200 p-4 rounded-md shadow-md">
+        <div className="relative bg-gradient-to-r from-[#141525] to-[#140B1E] p-4 rounded-md shadow-md">
           <div className="text-center mb-4 flex justify-between items-center text-center">
-            <h2 className="text-lg font-semibold">{isClaim ? "Claim" : "Restake"}</h2>
-            <button className="relative top-0 right-0 text-white-600 hover:text-gray-400" onClick={onClose}>
+            <h2 className="text-lg font-semibold mr-8 ">{isClaim ? "Claim Rewards" : "Restake Rewards"}</h2>
+            <button className="relative top-0 right-0 text-white-600 hover:text-gray-400 ml-8" onClick={onClose}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -84,14 +73,22 @@ export const ClaimPopup = ({
               </svg>
             </button>
           </div>
-
-          <input
-            type="text"
-            placeholder="Enter amount"
-            className="w-full p-2 border border-snow-300 rounded-md mb-4 text-white bg-transparent"
-            value={amount}
-            onChange={e => setAmount(e.target.value)}
-          />
+          <div className="flex w-full justify-center text-center mb-8">
+            <input
+              type="text"
+              placeholder="Enter amount"
+              className="w-full p-2 border border-snow-300 rounded-md text-white bg-transparent"
+              value={formatEther(amount)}
+              onChange={e => setAmount(Number(e.target.value))}
+            />
+            <button
+              type="button"
+              className="h-8 bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white rounded-full px-4"
+              onClick={setStakeAmountMax}
+            >
+              Max
+            </button>
+          </div>
 
           <div className="flex flex-col space-y-4 mb-8">
             <h1 className="flex justify-between ">
@@ -101,21 +98,35 @@ export const ClaimPopup = ({
             {isClaim ? (
               <h1 className="flex justify-between text-gradient-to-r from-[#4F56FF] to-[#9D09E3]">
                 <span className={textColor}>Rewards</span>{" "}
-                <span className={textColor}>{userSlotReward ? formatEther(userSlotReward) : ""} NRK</span>
+                <span className={textColor}>{formatEther(slotReward)} NRK</span>
               </h1>
             ) : (
               <h1 className="flex justify-between text-gradient-to-r from-[#4F56FF] to-[#9D09E3]">
                 <span className={textColor}>Stake</span>{" "}
-                <span className={textColor}>{userSlotStake ? formatEther(userSlotStake[0]) : ""} NRK</span>
+                <span className={textColor}>{formatEther(slotReward)} NRK</span>
               </h1>
             )}
           </div>
 
           <div className="flex justify-between">
             {isClaim ? (
-              <Claim ClaimAmount={Number(amount)} slotId={Number(slotId)}></Claim>
+              <button
+                className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-2 px-8 rounded-full w-full"
+                onClick={() => {
+                  claimRewards();
+                }}
+              >
+                Claim
+              </button>
             ) : (
-              <Restake RestakeAmount={Number(amount)} slotId={Number(slotId)}></Restake>
+              <button
+                className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-2 px-8 rounded-full w-full"
+                onClick={() => {
+                  restakeRewards();
+                }}
+              >
+                Restake
+              </button>
             )}
           </div>
         </div>

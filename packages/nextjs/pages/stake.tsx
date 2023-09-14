@@ -3,11 +3,13 @@ import type { NextPage } from "next";
 import { formatEther, parseEther } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import GradientComponent from "~~/components/StakingComponents/GradientContainer";
+import StakeHeader from "~~/components/StakingComponents/StakeHeader";
 import { StakeInfo } from "~~/components/StakingComponents/StakeInfo";
 import { StakesTable } from "~~/components/StakingComponents/StakesTable";
-import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import ActionButton from "~~/components/ui/actionButton";
+import { useScaffoldContractRead, useScaffoldContractWrite, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 //import { connectToDatabase } from "~~/lib/mongoDb";
-import { getTargetNetwork } from "~~/utils/scaffold-eth";
+import { getTargetNetwork, notification } from "~~/utils/scaffold-eth";
 
 const StakeBox = () => {
   const [stakeAmount, setStakeAmount] = useState(0);
@@ -109,6 +111,7 @@ const StakeBox = () => {
     handleStaking();
   };
 
+  const textColor = "bg-gradient-to-r from-white to-[#F991CC] text-transparent bg-clip-text";
   return (
     <section className="flex justify-between w-full mt-8">
       <div className="w-[40%] mr-8">
@@ -124,31 +127,33 @@ const StakeBox = () => {
             <h1 className="text-xl font-semibold">Standard</h1>
             <h1 className={statsH1Class}>
               {" "}
-              <span>Min Stake</span> <span>{minStake ? formatEther(minStake) : ""}</span>
+              <span className={textColor}>Min Stake</span>{" "}
+              <span className={textColor}>{minStake ? formatEther(minStake) : ""}</span>
             </h1>
             <h1 className={statsH1Class}>
               {" "}
-              <span>Frequency</span> <span>{frequency ? Number(frequency) / 86400 : ""} Days</span>
+              <span className={textColor}>Frequency</span>{" "}
+              <span className={textColor}>{frequency ? Number(frequency) / 86400 : ""} Days</span>
             </h1>
             <h1 className={statsH1Class}>
-              <span>Current Apy</span>
-              <span>{apy ? apy.toString() : ""}</span>
+              <span className={textColor}>Current Apy</span>
+              <span className={textColor}>{apy ? apy.toString() : ""}</span>
             </h1>
 
             <h1 className="text-xl font-semibold">Your Position</h1>
 
             <h1 className={statsH1Class}>
-              <span>Your Staked Amount</span>
-              <span> {userStakes} NRK</span>
+              <span className={textColor}>Your Staked Amount</span>
+              <span className={textColor}> {userStakes} NRK</span>
             </h1>
 
             <h1 className={statsH1Class}>
-              <span>Your Rewards</span>
-              <span> {userRewards ? formatEther(userRewards) : ""} NRK </span>
+              <span className={textColor}>Your Rewards</span>
+              <span className={textColor}> {userRewards ? formatEther(userRewards) : ""} NRK </span>
             </h1>
             <h1 className={statsH1Class}>
-              <span>NRK in Wallet</span>
-              <span>
+              <span className={textColor}>NRK in Wallet</span>
+              <span className={textColor}>
                 {balance} {balanceData?.symbol}
               </span>
             </h1>
@@ -318,8 +323,9 @@ const Stake: NextPage = () => {
 
   return (
     <>
-      <div className="container flex items-center flex-col flex-grow pt-10 justify-center m-auto font-inter">
+      <div className="w-[80%] flex items-center flex-col flex-grow pt-10 justify-center m-auto font-inter">
         {/* <StakeInfoBox></StakeInfoBox> */}
+        <StakeHeader />
         <StakeInfo></StakeInfo>
         <StakeBox></StakeBox>
         <StakesTable></StakesTable>

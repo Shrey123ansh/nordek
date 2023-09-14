@@ -163,6 +163,18 @@ const contracts = {
                   name: "stakeTime",
                   type: "uint32",
                 },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "slotId",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewardsLeft",
+                  type: "uint256",
+                },
               ],
               name: "ReStaked",
               type: "event",
@@ -857,7 +869,7 @@ const contracts = {
       chainId: "31337",
       contracts: {
         StakingContract: {
-          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
           abi: [
             {
               inputs: [
@@ -1014,6 +1026,18 @@ const contracts = {
                   internalType: "uint32",
                   name: "stakeTime",
                   type: "uint32",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "slotId",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewardsLeft",
+                  type: "uint256",
                 },
               ],
               name: "ReStaked",
@@ -1559,7 +1583,7 @@ const contracts = {
           ],
         },
         YourContract: {
-          address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+          address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
           abi: [
             {
               inputs: [

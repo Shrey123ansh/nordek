@@ -12,32 +12,58 @@
 // Select the database to use.
 use("Norswap");
 
-// Insert a few documents into the sales collection.
-db.getCollection("stakes").insertMany([
-  {
-    hash: "0xce1e6dd81a18gee1ef6e95e787a181335f0859058233872132f9146b2cba38a0",
-    stakedAt: 21235123,
-    apy: 5.6,
-    address: "0x36b95B5dAF5EFC083f16AcA6a6b980348B6C15d1",
-    stakedAmount: 540000000000000,
-    slotId: 1,
+const { addr, slotId, newStakedAmount, newStakedAt, rewardsLeft, hash } = {
+  newStakedAt: 1694172033,
+  rewardsLeft: 800000000000000000,
+  newStakedAmount: 123000000000000000,
+  addr: "0x36b95B5dAF5EFC083f16AcA6a6b980348B6C15d1",
+  hash: "0xaa8b988d0f762feaad705ab962fa7c377e1aef60d0606b5bcb2e53fead9b33c2",
+  slotId: 0,
+};
+
+// Use the addr and slotId to identify the document to update
+const filter = { addr, slotId };
+
+// Use the $set operator to update the specified fields
+const updateDoc = {
+  $set: {
+    // rewards: rewardsLeft,
+    stakedAmount: newStakedAmount,
+    stakedAt: newStakedAt,
+    hash: hash,
+    // apy: apy,
   },
-]);
+};
 
-// Run a find command to view items sold on April 4th, 2014.
-const Nordek = db.getCollection("stakes").find({
-  hash: "0xce1e6dd81a18gee1ef6e95e787a181335f0859058233872132f9146b2cba38a0",
-});
+const result = db.getCollection("stakes").updateOne(filter, updateDoc);
+console.log("RESULT", result);
 
-// Print a message to the output window.
-console.log(`${Nordek} data.`);
+// Insert a few documents into the sales collection.
+// db.getCollection("stakes").insertMany([
+//   {
+//     hash: "0xce1e6dd81a18gee1ef6e95e787a181335f0859058233872132f9146b2cba38a0",
+//     stakedAt: 21235123,
+//     apy: 5.6,
+//     address: "0x36b95B5dAF5EFC083f16AcA6a6b980348B6C15d1",
+//     stakedAmount: 540000000000000,
+//     slotId: 1,
+//   },
+// ]);
 
-// Here we run an aggregation and open a cursor to the results.
-// Use '.toArray()' to exhaust the cursor to return the whole result set.
-// You can use '.hasNext()/.next()' to iterate through the cursor page by page.
-db.getCollection("stakes").aggregate([
-  // Find all of the sales that occurred in 2014.
-  // { $match: { logo: "https://picsum.photos/200" } },
-  // Group the total sales for each product.
-  //{ $group: { _id: "$item", totalSaleAmount: { $sum: { $multiply: ["$price", "$quantity"] } } } },
-]);
+// // Run a find command to view items sold on April 4th, 2014.
+// const Nordek = db.getCollection("stakes").find({
+//   hash: "0xce1e6dd81a18gee1ef6e95e787a181335f0859058233872132f9146b2cba38a0",
+// });
+
+// // Print a message to the output window.
+// console.log(`${Nordek} data.`);
+
+// // Here we run an aggregation and open a cursor to the results.
+// // Use '.toArray()' to exhaust the cursor to return the whole result set.
+// // You can use '.hasNext()/.next()' to iterate through the cursor page by page.
+// db.getCollection("stakes").aggregate([
+//   // Find all of the sales that occurred in 2014.
+//   // { $match: { logo: "https://picsum.photos/200" } },
+//   // Group the total sales for each product.
+//   //{ $group: { _id: "$item", totalSaleAmount: { $sum: { $multiply: ["$price", "$quantity"] } } } },
+// ]);

@@ -36,21 +36,6 @@ const StakeInfoBox = () => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
   });
-
-  useScaffoldEventSubscriber({
-    contractName: "StakingContract",
-    eventName: "RewardClaimed",
-    listener: logs => {
-      logs.map(log => {
-        const { user, totalReward, timeOfClaim } = log.args;
-        console.log("📡 Claimed", user, totalReward, timeOfClaim);
-        if (user && totalReward && timeOfClaim) {
-          notification.success(<div> claimed {formatEther(totalReward)} </div>);
-        }
-      });
-    },
-  });
-
   console.log("USER TOTAL REWARDS", userTotalRewards);
 
   useEffect(() => {
