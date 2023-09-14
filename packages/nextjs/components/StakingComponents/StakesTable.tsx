@@ -192,20 +192,6 @@ export const StakesTable = () => {
     },
   });
 
-  useScaffoldEventSubscriber({
-    contractName: "StakingContract",
-    eventName: "RewardClaimed",
-    listener: logs => {
-      logs.map(log => {
-        const { user, totalReward, timeOfClaim } = log.args;
-        console.log("📡 Claimed", user, totalReward, timeOfClaim);
-        if (user && totalReward && timeOfClaim) {
-          notification.success(<div> claimed {formatEther(totalReward)} </div>);
-        }
-      });
-    },
-  });
-
   const updateRestakedDB = async (newStake: {
     rewardsLeft: number;
     newStakedAmount: number;
@@ -231,6 +217,49 @@ export const StakesTable = () => {
 
     console.log("Saved to DB");
   };
+
+  const updateClaimDB = async (newStake: { rewardsLeft: number; addr: string; slotId: number }) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "JWT fefege...",
+    };
+    try {
+      const response = axios.put("/api/claimed", newStake, {
+        headers: headers,
+      });
+
+      console.log(response);
+      console.log("Claimed");
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log("Saved to DB");
+  };
+
+  useScaffoldEventSubscriber({
+    contractName: "StakingContract",
+    eventName: "RewardClaimed",
+    listener: logs => {
+      logs.map(log => {
+        const { user, totalReward, timeOfClaim, slotId, rewardsLeft } = log.args;
+        console.log("📡 Claimed", user, totalReward, timeOfClaim, slotId, rewardsLeft);
+
+        if (user && timeOfClaim && totalReward != undefined) {
+          const updatedStake = {
+            rewardsLeft: Number(rewardsLeft),
+            addr: user,
+            slotId: Number(slotId),
+          };
+
+          console.log("Updating claimed db");
+          updateClaimDB(updatedStake);
+
+          notification.success(<div> Claimed {formatEther(totalReward)} </div>);
+        }
+      });
+    },
+  });
 
   useScaffoldEventSubscriber({
     contractName: "StakingContract",

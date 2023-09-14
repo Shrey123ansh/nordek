@@ -32,6 +32,31 @@ const contracts = {
               anonymous: false,
               inputs: [
                 {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "totalReward",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeOfClaim",
+                  type: "uint32",
+                },
+              ],
+              name: "AllRewardClaimed",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
                   indexed: false,
                   internalType: "uint256",
                   name: "amount",
@@ -200,6 +225,18 @@ const contracts = {
                   name: "timeOfClaim",
                   type: "uint32",
                 },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "slotId",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewardsLeft",
+                  type: "uint256",
+                },
               ],
               name: "RewardClaimed",
               type: "event",
@@ -317,6 +354,18 @@ const contracts = {
                   internalType: "uint32",
                   name: "unstakeTime",
                   type: "uint32",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "_slotId",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewardLeft",
+                  type: "uint256",
                 },
               ],
               name: "UnstakedTokens",
@@ -869,7 +918,7 @@ const contracts = {
       chainId: "31337",
       contracts: {
         StakingContract: {
-          address: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
+          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
           abi: [
             {
               inputs: [
@@ -891,6 +940,31 @@ const contracts = {
               ],
               stateMutability: "nonpayable",
               type: "constructor",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "totalReward",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeOfClaim",
+                  type: "uint32",
+                },
+              ],
+              name: "AllRewardClaimed",
+              type: "event",
             },
             {
               anonymous: false,
@@ -1064,6 +1138,18 @@ const contracts = {
                   name: "timeOfClaim",
                   type: "uint32",
                 },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "slotId",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewardsLeft",
+                  type: "uint256",
+                },
               ],
               name: "RewardClaimed",
               type: "event",
@@ -1181,6 +1267,18 @@ const contracts = {
                   internalType: "uint32",
                   name: "unstakeTime",
                   type: "uint32",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "_slotId",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewardLeft",
+                  type: "uint256",
                 },
               ],
               name: "UnstakedTokens",
@@ -1583,7 +1681,7 @@ const contracts = {
           ],
         },
         YourContract: {
-          address: "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
+          address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
           abi: [
             {
               inputs: [
