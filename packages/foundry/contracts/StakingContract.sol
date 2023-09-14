@@ -59,7 +59,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         address indexed user,
         uint256 amount,
         uint32 stakeTime,
-        uint slotId
+        uint256 slotId
     );
     event ReStaked(
         address indexed user,
@@ -79,7 +79,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         uint256 amount,
         uint32 unstakeTime,
         uint256 _slotId,
-        uint256 rewardLeft
+        uint256 rewardsLeft
     );
     event UnstakedAllTokens(
         address indexed user,
@@ -142,10 +142,15 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         stakes[user].slotStake[stakes[user].counter].startTime = uint32(
             block.timestamp
         );
-        uint currentSlot = stakes[user].counter;
-        stakes[user].slotStake[stakes[user].counter].id = currentSlot;
+        stakes[user].slotStake[stakes[user].counter].id = stakes[user].counter;
+
         stakes[user].counter++;
-        emit Staked(user, msg.value, uint32(block.timestamp), currentSlot);
+        emit Staked(
+            user,
+            msg.value,
+            uint32(block.timestamp),
+            stakes[user].counter - 1
+        );
     }
 
     /**
@@ -223,22 +228,23 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             uint256 rewards = calculateRewards(position, i);
             totalRewards = totalRewards.add(rewards);
             position.slotStake[i].startTime = uint32(block.timestamp);
-            position.slotStake[i].rewards = stakes[user]
-                .slotStake[i]
-                .rewards
-                .add(rewards);
+            // position.slotStake[i].rewards = stakes[user]
+            //     .slotStake[i]
+            //     .rewards
+            //     .add(rewards);
             if (_amount > amount) {
                 position.slotStake[i].amount = _amount.sub(amount);
                 break;
             } else {
-                position.slotStake[i].amount = 0;
+                delete position.slotStake[i];
                 amount = amount.sub(_amount);
             }
         }
         require(
-            address(this).balance >= amount,
+            address(this).balance >= amount + totalRewards,
             "Contract insufficient balance"
         );
+        // use , amount -> token + rewards, timestamp, last slot, total rewards
         emit UnstakedTokens(
             user,
             amount,
@@ -246,7 +252,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             i,
             totalRewards
         );
-        (bool success, ) = user.call{value: amount}("");
+        (bool success, ) = user.call{value: amount + totalRewards}("");
         require(success, "Failed to send rewards and staked amount");
     }
 
