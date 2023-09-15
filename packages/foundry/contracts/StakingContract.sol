@@ -68,6 +68,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         uint256 slotId,
         uint256 rewardsLeft
     );
+
     event Unstaked(
         address indexed user,
         uint256 amount,
@@ -189,7 +190,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         require(success, "Unable to send value or recipient may have reverted");
     }
 
-    function unstakeAll() external {
+    function unstakeAll() external nonReentrant {
         require(!pause, "Please wait until the staking is unpaused");
         address user = msg.sender;
         uint256 rewards = getTotalRewards();
@@ -213,7 +214,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         require(success, "Failed to send rewards and staked amount");
     }
 
-    function unstake(uint256 amount) external {
+    function unstake(uint256 amount) external nonReentrant {
         require(!pause, "Please wait until the staking is unpaused");
         address user = msg.sender;
         require(
@@ -265,6 +266,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         uint256 _rewardAmount,
         uint256 _slotId
     ) external nonReentrant {
+        require(!pause, "Please wait until the staking is unpaused");
         address user = msg.sender;
         require(_rewardAmount > 0, "invalid amount");
 
@@ -299,7 +301,8 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         require(success, "Unable to send value or recipient may have reverted");
     }
 
-    function claimAllRewards() external {
+    function claimAllRewards() external nonReentrant {
+        require(!pause, "Please wait until the staking is unpaused");
         uint256 length = stakes[msg.sender].counter;
         address user = msg.sender;
         uint256 _rewardAmount = getTotalRewards();
@@ -380,11 +383,12 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         }
     }
 
-    // /**
-    //  * @dev Restake a specific amount of rewards and update stake.
-    //  * @param _amount The amount of rewards to be restaked.
-    //  */
+    /**
+     * @dev Restake a specific amount of rewards and update stake.
+     * @param _amount The amount of rewards to be restaked.
+     */
     function restake(uint256 _amount, uint256 _slotId) external nonReentrant {
+        require(!pause, "Please wait until the staking is unpaused");
         address user = msg.sender;
 
         stakes[user].slotStake[_slotId].rewards = stakes[user]
@@ -416,11 +420,56 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         );
     }
 
-    // /**
-    //  * @dev Get the staked amount and start time for sender.
-    //  * @return amount The amount of tokens staked.
-    //  * @return startTime The timestamp when staking occurred.
-    //  */
+    function restake(uint256 amount) external nonReentrant {
+        require(!pause, "Please wait until the staking is unpaused");
+        address user = msg.sender;
+
+        uint256 totalRewards = getTotalRewards();
+        require(
+            amount <= totalRewards,
+            "invalid amount specified for restaking"
+        );
+        SlotStake storage position = stakes[user];
+        uint256 i = 0;
+        for (i = 0; i < position.counter; i++) {
+            uint256 rewardsPerSlot = position.slotStake[i].rewards.add(
+                calculateRewards(stakes[user], i)
+            );
+            position.slotStake[i].rewards = rewardsPerSlot;
+            position.slotStake[i].startTime = uint32(block.timestamp);
+            // break condition where amount specified to restake is smaller than rewards in particular slot
+            if (position.slotStake[i].rewards > amount) {
+                position.slotStake[i].amount = position.slotStake[i].amount.add(
+                    amount
+                );
+                position.slotStake[i].rewards = stakes[user]
+                    .slotStake[i]
+                    .rewards
+                    .sub(amount);
+                break;
+            } else {
+                position.slotStake[i].amount = position.slotStake[i].amount.add(
+                    rewardsPerSlot
+                );
+                position.slotStake[i].rewards = 0;
+                amount = amount.sub(rewardsPerSlot);
+            }
+        }
+
+        emit ReStaked(
+            user,
+            amount,
+            uint32(block.timestamp),
+            i,
+            position.slotStake[i].rewards
+        );
+    }
+
+    /**
+     * @dev Get the staked amount and start time for sender.
+     * @return amount The amount of tokens staked.
+     * @return startTime The timestamp when staking occurred.
+     */
     function getUserStake(
         uint256 _slotId
     ) external view returns (uint256 amount, uint32 startTime) {
@@ -445,10 +494,10 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         return userStakeSlots;
     }
 
-    // /**
-    //  * @dev Get the total accumulated rewards for sender.
-    //  * @return The total amount of accumulated rewards.
-    //  */
+    /**
+     * @dev Get the total accumulated rewards for sender.
+     * @return The total amount of accumulated rewards.
+     */
     function getUserRewards(uint256 _slotId) public view returns (uint256) {
         uint256 rewards = calculateRewards(stakes[msg.sender], _slotId).add(
             stakes[msg.sender].slotStake[_slotId].rewards
@@ -469,20 +518,20 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         return apy[apy.length - 1].value;
     }
 
-    // /**
-    //  * @dev Update the staking pause status.
-    //  * @param _pause The new staking pause status.
-    //  * @notice This function can only be called by the contract owner.
-    //  */
+    /**
+     * @dev Update the staking pause status.
+     * @param _pause The new staking pause status.
+     * @notice This function can only be called by the contract owner.
+     */
     function updateStakingPause(bool _pause) external onlyOwner {
         pause = _pause;
     }
 
-    // /**
-    //  * @dev Set the APY (Annual Percentage Yield).
-    //  * @param _newAPY The new APY value.
-    //  * @notice This function can only be called by the contract owner.
-    //  */
+    /**
+     * @dev Set the APY (Annual Percentage Yield).
+     * @param _newAPY The new APY value.
+     * @notice This function can only be called by the contract owner.
+     */
     function setAPY(uint16 _newAPY) external onlyOwner {
         apy.push(APY(_newAPY, uint32(block.timestamp)));
         emit ApyUpdated(_newAPY, uint32(block.timestamp));
@@ -498,17 +547,16 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         emit FrequencyUpdated(_frequency, uint32(block.timestamp));
     }
 
-    // // Receive Function
     receive() external payable {
         // Sending deposited currency to the contract address
     }
 
-    // /**
-    //  * @dev Migrate funds to a new contract address.
-    //  * @param amount The amount of funds to migrate.
-    //  * @param newAddress The address of the new contract to receive the funds.
-    //  * @notice This function is non-reentrant and can only be called by the contract owner.
-    //  */
+    /**
+     * @dev Migrate funds to a new contract address.
+     * @param amount The amount of funds to migrate.
+     * @param newAddress The address of the new contract to receive the funds.
+     * @notice This function is non-reentrant and can only be called by the contract owner.
+     */
     function migration(
         uint256 amount,
         address newAddress
