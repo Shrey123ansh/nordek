@@ -35,7 +35,7 @@ export const StakeInfo = () => {
     const updateTVL = async () => {
       const NRKTokendata = await getTokenData("nordek", "usd");
       if (NRKTokendata) {
-        const tvlVal = NRKTokendata.usd * Number(userStakes);
+        const tvlVal = NRKTokendata?.usd * Number(userStakes);
         setTvl(tvlVal);
       } else {
         setTvl(0);

@@ -50,8 +50,8 @@ export const StakesTable = () => {
   const [stakes, setStakes] = useState<stakesType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract");
-  const [newStake, setNewStake] = useState<stakesType>()
-  const [dbUpdated, setDBUpdated] = useState<any>()
+  const [newStake, setNewStake] = useState<stakesType>();
+  const [dbUpdated, setDBUpdated] = useState<any>();
 
   const callGetStakes = async () => {
     try {
@@ -124,11 +124,8 @@ export const StakesTable = () => {
     // if (newStake?.slotId == 0) {
     // }
 
-    setStakes([...stakes, newStake])
-
-
-
-  }, [newStake])
+    setStakes([...stakes, newStake]);
+  }, [newStake]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -147,40 +144,17 @@ export const StakesTable = () => {
   const paginatedData = stakes.slice(startIndex, endIndex);
   // console.log("Stakes after slicing", stakes);
 
-  const saveStakeToDb = async (newStake: {
-    stakedAt: number;
-    stakedAmount: number;
-    address: string;
-    hash: string;
-    slotId: number;
-  }) => {
-    console.log("saving")
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "JWT fefege...",
-    };
-    try {
-      const response = await axios.post("/api/stakes", newStake, {
-        headers: headers,
-      });
-
-    } catch (error) {
-      console.log(error);
-    }
-    console.log("Saved to DB");
-  };
-
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "Staked",
-    listener: (logs) => {
-
-      logs.map((log) => {
+    listener: logs => {
+      logs.map(log => {
         // TODO save to db
 
         const { user, amount, stakeTime, slotId } = log.args;
         console.log("📡 Staked", user, amount, stakeTime, slotId);
-        if (user && amount && stakeTime) {
+
+        if (user && amount != undefined && stakeTime != undefined) {
           const newStake: stakesType = {
             stakedAt: stakeTime,
             stakedAmount: Number(amount),
@@ -189,17 +163,11 @@ export const StakesTable = () => {
             slotId: Number(slotId),
           };
 
-          const isDuplicate = stakes.some(stake => stake.hash === newStake.hash);
+          console.log("Saving to DB from event");
+          saveStakeToDb(newStake);
 
-          console.log("isDuplicate", isDuplicate, stakes.length);
-          if (!isDuplicate || stakes.length == 0) {
-            // If it's not a duplicate, add the new stake
-            console.log("Saving to DB from event");
-            saveStakeToDb(newStake);
-
-            setNewStake(newStake)
-            // setStakes([...stakes, newStake]);
-          }
+          setNewStake(newStake);
+          // setStakes([...stakes, newStake]);
         }
       });
     },
@@ -215,7 +183,7 @@ export const StakesTable = () => {
         console.log("IF VALUE", user && amount != undefined && _slotId != undefined && rewardsLeft != undefined);
         if (user && amount != undefined && _slotId != undefined && rewardsLeft != undefined) {
           const topSlotId = stakes[0].slotId;
-          let slotsToDel = [];
+          const slotsToDel = [];
           let slotToUpdate = undefined;
           if (rewardsLeft === BigInt(0)) {
             // del topSlotId to _slotId
@@ -460,14 +428,14 @@ export const StakesTable = () => {
                       className="w-full p-4 my-2 items-center justify-center border border-white bg-[#11101A]"
                       key={stake.hash}
                     >
-                      <td className="px-4 py-2 text-center">{stake.slotId}</td>
-                      <td className="px-4 py-2 text-center">{formatEther(stake.stakedAmount)}</td>
+                      <td className="px-4 py-2 text-center">{stake?.slotId}</td>
+                      <td className="px-4 py-2 text-center">{formatEther(stake?.stakedAmount || "")}</td>
                       <td className="px-4 py-2 text-center">
-                        <TransactionHash hash={stake.hash}></TransactionHash>
+                        <TransactionHash hash={stake?.hash}></TransactionHash>
                       </td>
                       {/* <td className="px-4 py-2 text-center"><a href=""></a>{formatTx(stake.hash)}</td> */}
-                      <td className="px-4 py-2 text-center">{timeAgoUnix(stake.stakedAt)}</td>
-                      <td className="px-4 py-2 text-center">{stake.rewards}</td>
+                      <td className="px-4 py-2 text-center">{timeAgoUnix(stake?.stakedAt)}</td>
+                      <td className="px-4 py-2 text-center">{stake?.rewards}</td>
 
                       <td className="px-4 py-2 text-center flex justify-center space-x-4">
                         {/* <ActionButton text="Claim" onClick={() => openClaimPopup()}></ActionButton> */}
