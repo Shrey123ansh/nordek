@@ -40,7 +40,7 @@ export const StakesTable = () => {
     address: string;
     hash: string;
     slotId: number;
-    rewards?: number;
+    rewards?: string;
   };
   const { address } = useAccount();
   const [isClaim, setIsClaim] = useState(true);
@@ -50,6 +50,43 @@ export const StakesTable = () => {
   const [stakes, setStakes] = useState<stakesType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract");
+  const [newStake, setNewStake] = useState<stakesType>()
+  const [dbUpdated, setDBUpdated] = useState<any>()
+
+  const callGetStakes = async () => {
+    try {
+      const data = await getStakes(address || "");
+      console.log("Loaded Data", data);
+
+      if (data) {
+        for (let i = 0; i < data.length; i++) {
+          try {
+            const rewards = await readContract({
+              address: deployedContractInfo?.address!,
+              abi: deployedContractInfo?.abi!,
+              functionName: "getUserRewards",
+              args: [BigInt(data[i].slotId)],
+              account: address,
+            });
+
+            data[i].rewards = formatEther(rewards);
+          } catch (e) {
+            console.log("changing rewards failed");
+          }
+        }
+
+        setStakes(data);
+        setStakesLoading(false);
+      } else {
+        setStakesLoading(false);
+      }
+    } catch (e) {
+      console.log("getting data failed", e);
+    }
+  };
+  useEffect(() => {
+    callGetStakes();
+  }, [address, dbUpdated]);
 
   const getAllSlotsInfo = async () => {
     const slotsInfo = await readContract({
@@ -63,39 +100,35 @@ export const StakesTable = () => {
   };
 
   useEffect(() => {
-    const callGetStakes = async () => {
-      try {
-        const data = await getStakes(address || "");
+    // const lastStakeRewards = async () => {
+    //   console.log("updating")
+    //   try {
+    //     const data = stakes
+    //     const rewards = await readContract({
+    //       address: deployedContractInfo?.address!,
+    //       abi: deployedContractInfo?.abi!,
+    //       functionName: "getUserRewards",
+    //       args: [BigInt(newStake?.slotId! - 1)],
+    //       account: address,
+    //     });
+    //     data[newStake?.slotId! - 1].rewards = formatEther(rewards)
+    //     data.push(newStake!)
+    //     console.log(data)
+    //     setStakes(data);
+    //   } catch { }
+    // }
+    // if (newStake != undefined && newStake.slotId != 0) {
+    //   console.log("updating the previous value")
+    //   lastStakeRewards()
+    // }
+    // if (newStake?.slotId == 0) {
+    // }
 
-        if (data) {
-          for (let i = 0; i < data.length; i++) {
-            try {
-              const rewards = await readContract({
-                address: deployedContractInfo?.address!,
-                abi: deployedContractInfo?.abi!,
-                functionName: "getUserRewards",
-                args: [BigInt(data[i].slotId)],
-                account: address,
-              });
+    setStakes([...stakes, newStake])
 
-              data[i].rewards = formatEther(rewards);
-            } catch (e) {
-              console.log("changing rewards failed");
-            }
-          }
 
-          setStakes(data);
-          setStakesLoading(false);
-        } else {
-          setStakesLoading(false);
-        }
-      } catch (e) {
-        console.log("getting data failed", e);
-      }
-    };
 
-    callGetStakes();
-  }, [address]);
+  }, [newStake])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -112,17 +145,41 @@ export const StakesTable = () => {
 
   // Slice the data to show only items for the current page
   const paginatedData = stakes.slice(startIndex, endIndex);
+  // console.log("Stakes after slicing", stakes);
+
+  const saveStakeToDb = async (newStake: {
+    stakedAt: number;
+    stakedAmount: number;
+    address: string;
+    hash: string;
+    slotId: number;
+  }) => {
+    console.log("saving")
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "JWT fefege...",
+    };
+    try {
+      const response = await axios.post("/api/stakes", newStake, {
+        headers: headers,
+      });
+
+    } catch (error) {
+      console.log(error);
+    }
+    console.log("Saved to DB");
+  };
 
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "Staked",
-    listener: logs => {
-      logs.map(log => {
+    listener: (logs) => {
+
+      logs.map((log) => {
         // TODO save to db
 
         const { user, amount, stakeTime, slotId } = log.args;
         console.log("📡 Staked", user, amount, stakeTime, slotId);
-        console.log(stakes);
         if (user && amount && stakeTime) {
           const newStake: stakesType = {
             stakedAt: stakeTime,
@@ -137,10 +194,11 @@ export const StakesTable = () => {
           console.log("isDuplicate", isDuplicate, stakes.length);
           if (!isDuplicate || stakes.length == 0) {
             // If it's not a duplicate, add the new stake
-            console.log("Saving to DB");
+            console.log("Saving to DB from event");
             saveStakeToDb(newStake);
 
-            setStakes([...stakes, newStake]);
+            setNewStake(newStake)
+            // setStakes([...stakes, newStake]);
           }
         }
       });
