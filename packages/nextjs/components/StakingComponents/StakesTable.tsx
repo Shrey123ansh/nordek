@@ -316,6 +316,38 @@ export const StakesTable = () => {
     },
   });
 
+  useScaffoldEventSubscriber({
+    contractName: "StakingContract",
+    eventName: "RestakedAll",
+    listener: logs => {
+      logs.map(log => {
+        const { user, restakedAmount, timeStamp } = log.args;
+        console.log("📡 Restaked", user, restakedAmount, timeStamp);
+
+        if (user && timeStamp && restakedAmount != undefined) {
+          // const updatedStake = {
+          //   newStakedAmount: Number(amount),
+          //   newStakedAt: Number(stakeTime),
+          //   hash: log.transactionHash ? log.transactionHash?.toString() : "",
+          //   addr: user,
+          //   slotId: Number(slotId),
+          // };
+
+          // console.log("Updating restaked db");
+          // updateRestakedDB(updatedStake);
+
+          const updates = {
+            totalRestakes: Number(restakedAmount),
+          };
+
+          updateUserData(user, updates);
+
+          notification.success(<div> Restaked {formatEther(restakedAmount)} </div>);
+        }
+      });
+    },
+  });
+
   return (
     <section className="mt-8 w-full">
       <GradientComponent>

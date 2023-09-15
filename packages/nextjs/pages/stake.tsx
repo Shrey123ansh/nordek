@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { NextPage } from "next";
+import { format } from "path";
 import { formatEther, parseEther } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import GradientComponent from "~~/components/StakingComponents/GradientContainer";
@@ -29,15 +30,11 @@ const StakeBox = () => {
     account: address,
   });
 
-  //const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(2) : "";
-
-  const userStakes = userTotalStakes ? formatEther(userTotalStakes) : "0";
-
   function setStakeAmountMax() {
     if (isStaking) {
-      setStakeAmount(Number(balance?.toFixed(3)));
+      setStakeAmount(Number(balance?.toFixed(4)));
     } else {
-      setStakeAmount(Number(userStakes));
+      setStakeAmount(Number(userTotalStakes));
     }
   }
 
@@ -72,7 +69,6 @@ const StakeBox = () => {
 
   function handleUnstaking() {
     if (parseEther(stakeAmount.toString()) === userTotalStakes) {
-      console.log("CALLED UNSTAKE ALL");
       unstakeAll();
     } else {
       unstake();
@@ -152,14 +148,14 @@ const StakeBox = () => {
             </h1>
             <h1 className={statsH1Class}>
               <span className={textColor}>Current Apy</span>
-              <span className={textColor}>{apy ? apy.toString() : ""}</span>
+              <span className={textColor}>{apy ? apy.toString() : ""}%</span>
             </h1>
 
             <h1 className="text-xl font-semibold">Your Position</h1>
 
             <h1 className={statsH1Class}>
               <span className={textColor}>Your Staked Amount</span>
-              <span className={textColor}> {userStakes} NRK</span>
+              <span className={textColor}> {userTotalStakes ? formatEther(userTotalStakes) : ""} NRK</span>
             </h1>
 
             <h1 className={statsH1Class}>

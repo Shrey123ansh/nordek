@@ -208,6 +208,31 @@ const contracts = {
               anonymous: false,
               inputs: [
                 {
+                  indexed: false,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "restakedAmount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "RestakedAll",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
                   indexed: true,
                   internalType: "address",
                   name: "user",
@@ -297,6 +322,12 @@ const contracts = {
                   indexed: false,
                   internalType: "uint256",
                   name: "slotid",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewards",
                   type: "uint256",
                 },
               ],
@@ -628,6 +659,26 @@ const contracts = {
                 },
               ],
               name: "restake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "restake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "restakeAll",
               outputs: [],
               stateMutability: "nonpayable",
               type: "function",
@@ -918,7 +969,7 @@ const contracts = {
       chainId: "31337",
       contracts: {
         StakingContract: {
-          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
           abi: [
             {
               inputs: [
@@ -1121,6 +1172,31 @@ const contracts = {
               anonymous: false,
               inputs: [
                 {
+                  indexed: false,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "restakedAmount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "RestakedAll",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
                   indexed: true,
                   internalType: "address",
                   name: "user",
@@ -1210,6 +1286,12 @@ const contracts = {
                   indexed: false,
                   internalType: "uint256",
                   name: "slotid",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewards",
                   type: "uint256",
                 },
               ],
@@ -1548,6 +1630,26 @@ const contracts = {
             {
               inputs: [
                 {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "restake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "restakeAll",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
                   internalType: "uint16",
                   name: "_newAPY",
                   type: "uint16",
@@ -1681,7 +1783,7 @@ const contracts = {
           ],
         },
         YourContract: {
-          address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+          address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
           abi: [
             {
               inputs: [

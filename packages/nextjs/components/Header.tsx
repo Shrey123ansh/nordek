@@ -50,11 +50,11 @@ export const Header = () => {
     <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary p-0">
       <div className="navbar-start w-auto lg:w-1/2 py-0">
         <Link href="/" passHref className="hidden lg:flex items-center space-x-2 ml-4 mr-6">
-          <div className="flex relative w-10 h-10">
-            <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" />
+          <div className="flex relative w-8 h-10">
+            <Image alt="SE2 logo" className="cursor-pointer" fill src="/icon.svg" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold leading-tight">Swap</span>
+            <span className="font-bold ">NORSWAP</span>
           </div>
         </Link>
         <div className="">{navLinks}</div>

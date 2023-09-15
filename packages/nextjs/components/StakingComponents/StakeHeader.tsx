@@ -42,7 +42,7 @@ const StakeHeader: React.FC = () => {
           }}
         >
           <div className="flex flex-col p-[1rem] lg:p-[3rem] justify-between items-center rounded-[15px] ">
-            <div className="text-[20px] md:text-[50px] lg:text-[60px] xl:text-[80px] font-[600]">$2.1B</div>
+            <div className="text-[20px] md:text-[50px] lg:text-[60px] xl:text-[80px] font-[600]">2.1B</div>
             <div className="text-[15px] md:text-[18px] lg:text-[21px] xl:text-[24px] text-center">Total NRK Supply</div>
           </div>
         </div>

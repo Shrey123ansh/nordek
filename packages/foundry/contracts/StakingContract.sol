@@ -107,6 +107,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         address newAddress,
         uint32 migrationTime
     );
+    event RestakedAll(address user, uint256 restakedAmount, uint32 timeStamp);
 
     event MinimumStakeUpdated(uint256 minimumStake, uint32 timeStamp);
     event FrequencyUpdated(uint256 frequency, uint32 timeStamp);
@@ -520,10 +521,12 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
 
         SlotStake storage position = stakes[user];
         uint256 i = 0;
+        uint256 totalAmountRestaked = 0;
         for (i = 0; i < position.counter; i++) {
             uint256 rewardsPerSlot = position.slotStake[i].rewards.add(
                 calculateRewards(stakes[user], i)
             );
+            totalAmountRestaked = totalAmountRestaked.add(rewardsPerSlot);
             position.slotStake[i].rewards = 0;
             position.slotStake[i].startTime = uint32(block.timestamp);
             position.slotStake[i].amount = position.slotStake[i].amount.add(
@@ -532,6 +535,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         }
 
         // TODO need to add an event here
+        emit RestakedAll(user, totalAmountRestaked, uint32(block.timestamp));
     }
 
     /**

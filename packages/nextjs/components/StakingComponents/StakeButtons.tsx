@@ -23,7 +23,7 @@ export const ClaimButton = () => {
 export const RestakeButton = () => {
   const { writeAsync, isLoading } = useScaffoldContractWrite({
     contractName: "StakingContract",
-    functionName: "restake",
+    functionName: "restakeAll",
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
