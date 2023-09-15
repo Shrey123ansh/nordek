@@ -1,11 +1,11 @@
 const contracts = {
-  31337: [
+  5: [
     {
-      name: "Anvil",
-      chainId: "31337",
+      name: "Goerli",
+      chainId: "5",
       contracts: {
         StakingContract: {
-          address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+          address: "0xDdc861Fbdf79579D1dD1Abab2aca6d4D9359a323",
           abi: [
             {
               inputs: [
@@ -208,6 +208,12 @@ const contracts = {
               anonymous: false,
               inputs: [
                 {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
                   indexed: false,
                   internalType: "uint256",
                   name: "totalReward",
@@ -252,6 +258,25 @@ const contracts = {
                 },
                 {
                   indexed: false,
+                  internalType: "uint32",
+                  name: "stakeTime",
+                  type: "uint32",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "slotId",
+                  type: "uint256",
+                },
+              ],
+              name: "Staked",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
                   internalType: "address",
                   name: "user",
                   type: "address",
@@ -339,7 +364,7 @@ const contracts = {
                 {
                   indexed: false,
                   internalType: "uint256",
-                  name: "rewardLeft",
+                  name: "rewardsLeft",
                   type: "uint256",
                 },
               ],
@@ -535,6 +560,234 @@ const contracts = {
                 {
                   internalType: "address",
                   name: "newAddress",
+                  type: "address",
+                },
+              ],
+              name: "migration",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "minimumStake",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "owner",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "pause",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "renounceOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_amount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "_slotId",
+                  type: "uint256",
+                },
+              ],
+              name: "restake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint16",
+                  name: "_newAPY",
+                  type: "uint16",
+                },
+              ],
+              name: "setAPY",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_frequency",
+                  type: "uint256",
+                },
+              ],
+              name: "setFrequency",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_newMinimumStake",
+                  type: "uint256",
+                },
+              ],
+              name: "setMinimumStake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "stake",
+              outputs: [],
+              stateMutability: "payable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              name: "stakes",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "counter",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "transferOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "unstake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_amount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "_slotId",
+                  type: "uint256",
+                },
+              ],
+              name: "unstake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "unstakeAll",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "bool",
+                  name: "_pause",
+                  type: "bool",
+                },
+              ],
+              name: "updateStakingPause",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              stateMutability: "payable",
+              type: "receive",
+            },
+          ],
+        },
+        YourContract: {
+          address: "0x75CbfBFbBcCb2c633645d477132BB8235D447480",
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "_owner",
+                  type: "address",
+                },
+              ],
+              stateMutability: "nonpayable",
+              type: "constructor",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "greetingSetter",
                   type: "address",
                 },
                 {
@@ -897,18 +1150,6 @@ const contracts = {
                   name: "rewardsLeft",
                   type: "uint256",
                 },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "slotId",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "rewardsLeft",
-                  type: "uint256",
-                },
               ],
               name: "RewardClaimed",
               type: "event",
@@ -1036,19 +1277,7 @@ const contracts = {
                 {
                   indexed: false,
                   internalType: "uint256",
-                  name: "rewardLeft",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "_slotId",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "rewardLeft",
+                  name: "rewardsLeft",
                   type: "uint256",
                 },
               ],

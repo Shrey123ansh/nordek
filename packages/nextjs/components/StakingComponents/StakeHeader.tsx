@@ -12,7 +12,7 @@ const StakeHeader: React.FC = () => {
   const totalNRKStaked = Number(data?.formatted);
 
   return (
-    <div className="w-[90%] h-[25rem] flex flex-col justify-center items-center md:h-[30rem] lg:h-[40rem] bg-[url('/assets/headerbg.png')]  bg-no-repeat bg-contain ">
+    <div className="w-[80%] h-[25rem] flex flex-col justify-center items-center md:h-[30rem] lg:h-[40rem] bg-[url('/assets/headerbg.png')]  bg-no-repeat bg-contain ">
       <div className="flex -mt-[8rem] h-[70%] flex-col justify-between items-center lg:flex-row w-[60%]  md:w-[67%] lg:w-3/5 xl:w-3/5">
         <div
           className=" w-[100%] lg:w-[45%] h-[45%]  lg:h-[65%]  bg-cover bg-no-repeat   rounded-[15px]   "
