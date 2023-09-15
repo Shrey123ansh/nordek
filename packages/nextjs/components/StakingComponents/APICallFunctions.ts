@@ -34,12 +34,7 @@ export const updateUserData = async (addr: string, updates: Record<string, any>)
   }
 };
 
-export async function createUser(user: {
-  address: string;
-  totalStaked: number;
-  totalRewards: number;
-  totalRestakes: number;
-}) {
+export async function createUser(user: { address: string; totalRewards: number; totalRestakes: number }) {
   const headers = {
     "Content-Type": "application/json",
     Authorization: "JWT fefege...",
@@ -63,7 +58,6 @@ export async function getUserData(address: string) {
     if (response.data.userData.length === 0) {
       const user = {
         address: address,
-        totalStaked: 0,
         totalRewards: 0,
         totalRestakes: 0,
       };
