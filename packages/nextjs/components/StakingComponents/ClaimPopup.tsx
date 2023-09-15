@@ -46,7 +46,7 @@ export const ClaimPopup = ({
     contractName: "StakingContract",
     functionName: "restake",
     account: address,
-    args: [amount, BigInt(slotId)],
+    args: [BigInt(amount), BigInt(slotId)],
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },

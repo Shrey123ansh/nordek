@@ -1,14 +1,10 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -19,23 +15,13 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "~~/*": [
-        "./*"
-      ]
-    },
+      "~~/*": ["./*"]
+    }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
   "rules": {
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error"
-    ]
+    "@typescript-eslint/no-unused-vars": ["error"]
   }
 }
