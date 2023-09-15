@@ -52,6 +52,7 @@ export const StakesTable = () => {
   const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract");
   const [newStake, setNewStake] = useState<stakesType>();
   const [dbUpdated, setDBUpdated] = useState<any>();
+  const [update, setUpdate] = useState(0)
 
   const callGetStakes = async () => {
     try {
@@ -86,7 +87,7 @@ export const StakesTable = () => {
   };
   useEffect(() => {
     callGetStakes();
-  }, [address, dbUpdated]);
+  }, [address, dbUpdated, update]);
 
   const getAllSlotsInfo = async () => {
     const slotsInfo = await readContract({
@@ -212,6 +213,8 @@ export const StakesTable = () => {
           console.log("UPDATE INFO", updateInfo);
 
           removeStakeInDb(updateInfo);
+          // setNewStake(newStake);
+          setUpdate(unstakeTime)
         }
       });
     },
@@ -244,24 +247,6 @@ export const StakesTable = () => {
     },
   });
 
-  // const updateClaimDB = async (newStake: { rewardsLeft: number; addr: string; slotId: number }) => {
-  //   const headers = {
-  //     "Content-Type": "application/json",
-  //     Authorization: "JWT fefege...",
-  //   };
-  //   try {
-  //     const response = axios.put("/api/claimed", newStake, {
-  //       headers: headers,
-  //     });
-
-  //     console.log(response);
-  //     console.log("Claimed");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-
-  //   console.log("Saved to DB");
-  // };
 
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
@@ -362,13 +347,7 @@ export const StakesTable = () => {
             }));
 
             console.log("TRANSFORMED ARRAY", transformedArray);
-            // const updatedStake = {
-            //   newStakedAmount: Number(amount),
-            //   newStakedAt: Number(stakeTime),
-            //   hash: log.transactionHash ? log.transactionHash?.toString() : "",
-            //   addr: user,
-            //   slotId: Number(slotId),
-            // };
+
 
             console.log("Updating restake All db");
             //updateRestakedAllDB(user, transformedArray);
