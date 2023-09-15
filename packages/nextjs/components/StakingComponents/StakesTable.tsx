@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { TransactionHash } from "../blockexplorer";
+import { saveStakeToDb, updateRestakedDB, updateUserData } from "./APICallFunctions";
 import { ClaimPopup } from "./ClaimPopup";
 import GradientComponent from "./GradientContainer";
 import { readContract } from "@wagmi/core";
@@ -48,7 +49,6 @@ export const StakesTable = () => {
     const callGetStakes = async () => {
       try {
         const data = await getStakes(address || "");
-        console.log("Loaded Data", data);
 
         if (data) {
           for (let i = 0; i < data.length; i++) {
@@ -60,7 +60,7 @@ export const StakesTable = () => {
                 args: [BigInt(data[i].slotId)],
                 account: address,
               });
-              console.log("rewards", rewards);
+
               data[i].rewards = formatEther(rewards);
             } catch (e) {
               console.log("changing rewards failed");
@@ -95,31 +95,6 @@ export const StakesTable = () => {
 
   // Slice the data to show only items for the current page
   const paginatedData = stakes.slice(startIndex, endIndex);
-  console.log("Stakes after slicing", stakes);
-
-  const saveStakeToDb = async (newStake: {
-    stakedAt: number;
-    stakedAmount: number;
-    address: string;
-    hash: string;
-    slotId: number;
-  }) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "JWT fefege...",
-    };
-    try {
-      const response = await axios.post("/api/stakes", newStake, {
-        headers: headers,
-      });
-      console.log(response);
-      console.log("Staked");
-    } catch (error) {
-      console.log(error);
-    }
-
-    console.log("Saved to DB");
-  };
 
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
@@ -273,14 +248,12 @@ export const StakesTable = () => {
         console.log("📡 Claimed", user, totalReward, timeOfClaim, slotId, rewardsLeft);
 
         if (user && timeOfClaim && totalReward != undefined) {
-          // const updatedStake = {
-          //   rewardsLeft: Number(rewardsLeft),
-          //   addr: user,
-          //   slotId: Number(slotId),
-          // };
+          const updates = {
+            totalRewards: Number(totalReward),
+          };
 
-          // console.log("Updating claimed db");
-          // updateClaimDB(updatedStake);
+          console.log("Updating userData db, totalRewards");
+          updateUserData(user, updates);
 
           notification.success(<div> Claimed {formatEther(totalReward)} </div>);
         }
@@ -288,30 +261,27 @@ export const StakesTable = () => {
     },
   });
 
-  const updateRestakedDB = async (newStake: {
-    newStakedAmount: number;
-    newStakedAt: number;
-    hash: string;
-    addr: string;
-    slotId: number;
-  }) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "JWT fefege...",
-    };
-    try {
-      const response = axios.put("/api/stakes", newStake, {
-        headers: headers,
+  useScaffoldEventSubscriber({
+    contractName: "StakingContract",
+    eventName: "AllRewardClaimed",
+    listener: logs => {
+      logs.map(log => {
+        const { user, totalReward, timeOfClaim } = log.args;
+        console.log("📡 Claimed", user, totalReward, timeOfClaim);
+
+        if (user && timeOfClaim && totalReward != undefined) {
+          const updates = {
+            totalRewards: Number(totalReward),
+          };
+
+          console.log("Updating userData db, totalRewards");
+          updateUserData(user, updates);
+
+          notification.success(<div> Claimed {formatEther(totalReward)} </div>);
+        }
       });
-
-      console.log(response);
-      console.log("Restaked");
-    } catch (error) {
-      console.log(error);
-    }
-
-    console.log("Saved to DB");
-  };
+    },
+  });
 
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
@@ -333,6 +303,12 @@ export const StakesTable = () => {
 
           console.log("Updating restaked db");
           updateRestakedDB(updatedStake);
+
+          const updates = {
+            totalRestakes: Number(amount),
+          };
+
+          updateUserData(user, updates);
 
           notification.success(<div> Restaked {formatEther(amount)} </div>);
         }
