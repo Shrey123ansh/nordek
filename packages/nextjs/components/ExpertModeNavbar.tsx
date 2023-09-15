@@ -37,14 +37,14 @@ const ExpertModeNavbar: React.FC<ToggleSwitchProps> = ({
           {/* Element 3 */}
           <button
             className={`appearance-none ${secondaryChartToken.name === "NRK" ? "text-blue-500" : ""}`}
-            onClick={() => setSecondaryChartToken(localTokens.NRK)}
+            onClick={() => setSecondaryChartToken(localTokens[4])}
           >
             NRK
           </button>
 
           <button
             className={`appearance-none ${secondaryChartToken.name === "USDC" ? "text-blue-500" : ""}`}
-            onClick={() => setSecondaryChartToken(localTokens.USDC)}
+            onClick={() => setSecondaryChartToken(localTokens[3])}
           >
             USDC
           </button>

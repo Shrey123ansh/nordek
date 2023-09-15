@@ -1,6 +1,6 @@
 import { useState } from "react";
 import GradientComponent from "./GradientContainer";
-import { formatEther, parseEther } from "viem";
+import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
@@ -32,7 +32,7 @@ export const ClaimPopup = ({
     setAmount(slotReward);
   }
 
-  const { writeAsync: claimRewards, isClaimRewardsLoading } = useScaffoldContractWrite({
+  const { writeAsync: claimRewards } = useScaffoldContractWrite({
     contractName: "StakingContract",
     functionName: "claimRewards",
     account: address,
@@ -42,11 +42,11 @@ export const ClaimPopup = ({
     },
   });
 
-  const { writeAsync: restakeRewards, isRestakeRewardsLoading } = useScaffoldContractWrite({
+  const { writeAsync: restakeRewards } = useScaffoldContractWrite({
     contractName: "StakingContract",
     functionName: "restake",
     account: address,
-    args: [amount, BigInt(slotId)],
+    args: [amount, slotId],
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
@@ -79,7 +79,7 @@ export const ClaimPopup = ({
               placeholder="Enter amount"
               className="w-full p-2 border border-snow-300 rounded-md text-white bg-transparent"
               value={formatEther(amount)}
-              onChange={e => setAmount(Number(e.target.value))}
+              onChange={e => setAmount(BigInt(e.target.value))}
             />
             <button
               type="button"

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { tokenType } from "~~/data/data";
 
@@ -21,8 +22,8 @@ const getTokenList = async () => {
 };
 
 const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setToken }) => {
-  if (!isOpen) return null;
   const [tokens, setTokens] = useState<tokenType[] | undefined>(undefined); // Initialize tokens as undefined
+  // if (!isOpen) return null;
 
   useEffect(() => {
     const fetchTokens = async () => {

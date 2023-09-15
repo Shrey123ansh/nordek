@@ -1,32 +1,33 @@
 import { useEffect, useState } from "react";
 import { parseEther } from "viem";
 import { useAccount } from "wagmi";
-import { tokens } from "~~/data/data.js";
+import { localTokens } from "~~/data/data.js";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 export default function Addliquidity() {
+  const tokens = localTokens
   const { address } = useAccount();
   const [tokenAmount0, setTokenAmount0] = useState("");
   const [tokenAmount1, setTokenAmount1] = useState("");
   const [tokenAddr0, setTokenAddr0] = useState(tokens[0].address);
   const [tokenAddr1, setTokenAddr1] = useState(tokens[1].address);
 
-  const { writeAsync, isLoading } = useScaffoldContractWrite({
-    contractName: "ZuniswapV2Router",
-    functionName: "addLiquidity",
-    args: [
-      tokenAddr0,
-      tokenAddr1,
-      parseEther(tokenAmount0),
-      parseEther(tokenAmount1),
-      parseEther(tokenAmount0),
-      parseEther(tokenAmount1),
-      address,
-    ],
-    onBlockConfirmation: txnReceipt => {
-      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
-    },
-  });
+  // const { writeAsync, isLoading } = useScaffoldContractWrite({
+  //   contractName: "ZuniswapV2Router",
+  //   functionName: "addLiquidity",
+  //   args: [
+  //     tokenAddr0,
+  //     tokenAddr1,
+  //     parseEther(tokenAmount0),
+  //     parseEther(tokenAmount1),
+  //     parseEther(tokenAmount0),
+  //     parseEther(tokenAmount1),
+  //     address,
+  //   ],
+  //   onBlockConfirmation: txnReceipt => {
+  //     console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+  //   },
+  // });
 
   // useEffect(() => {
   //   console.log("tokenAddr0", tokenAddr0);
@@ -35,7 +36,7 @@ export default function Addliquidity() {
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    writeAsync();
+    // writeAsync();
   };
 
   return (
