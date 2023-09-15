@@ -14,6 +14,48 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log("SAVED TO DB");
       break;
 
+    case "DELETE":
+      try {
+        const { delAddress } = req.query;
+
+        if (!delAddress) {
+          return res.status(400).json({ error: "Address parameter is missing" });
+        }
+
+        const result = await db.collection("stakes").deleteMany({ address: delAddress as string });
+
+        if (result.deletedCount > 0) {
+          return res.status(200).json({ message: `${result.deletedCount} stake(s) deleted` });
+        } else {
+          return res.status(404).json({ message: "No matching stakes found for deletion" });
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+    case "GET":
+      const { address } = req.query;
+
+      // Use the address to filter the data in the MongoDB query
+      const userStakes = await db.collection("stakes").find({ address }).toArray();
+      res.status(200).json({ userStakes });
+      break;
+  }
+}
+
+/*
+
+    case "GET":
+      const { address } = req.query;
+
+      // Use the address to filter the data in the MongoDB query
+      const userStakes = await db.collection("stakes").find({ address }).toArray();
+      res.status(200).json({ userStakes });
+
+*/
+
+/*
     case "PUT": // Change to PUT for updating
       const { addr, slotId, newStakedAmount, newStakedAt, rewardsLeft, hash } = req.body;
 
@@ -52,24 +94,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(404).json({ error: "Document not found or not updated" });
       }
       break;
-
-    case "GET":
-      const { address } = req.query;
-
-      // Use the address to filter the data in the MongoDB query
-      const userStakes = await db.collection("stakes").find({ address }).toArray();
-      res.status(200).json({ userStakes });
-      break;
-  }
-}
-
-/*
-
-    case "GET":
-      const { address } = req.query;
-
-      // Use the address to filter the data in the MongoDB query
-      const userStakes = await db.collection("stakes").find({ address }).toArray();
-      res.status(200).json({ userStakes });
-
 */

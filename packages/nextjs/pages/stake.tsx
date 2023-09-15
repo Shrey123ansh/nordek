@@ -60,6 +60,23 @@ const StakeBox = () => {
     },
   });
 
+  const { writeAsync: unstakeAll, isUnstakeAllLoading } = useScaffoldContractWrite({
+    contractName: "StakingContract",
+    functionName: "unstakeAll",
+    account: address,
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
+
+  function handleUnstaking() {
+    if (parseEther(stakeAmount.toString()) === userTotalStakes) {
+      unstakeAll();
+    } else {
+      unstake();
+    }
+  }
+
   const { data: apy, isLoading: isApyLoading } = useScaffoldContractRead({
     contractName: "StakingContract",
     functionName: "getCurrentApy",
@@ -79,7 +96,7 @@ const StakeBox = () => {
     if (isStaking) {
       await stake();
     } else {
-      await unstake();
+      await handleUnstaking();
     }
     // const res = await fetch("http://localhost:3000/api/stakes", {
     //   method: "POST",
@@ -106,10 +123,6 @@ const StakeBox = () => {
   });
 
   const statsH1Class = "flex w-full justify-between space-x-12";
-
-  const handleStakeButtonClick = () => {
-    handleStaking();
-  };
 
   const textColor = "bg-gradient-to-r from-white to-[#F991CC] text-transparent bg-clip-text";
   return (
@@ -210,7 +223,9 @@ const StakeBox = () => {
             <br />
             <button
               className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] font-bold text-white py-2 w-full rounded-lg"
-              onClick={handleStakeButtonClick}
+              onClick={() => {
+                handleStaking();
+              }}
             >
               {isStaking ? "Stake" : "Unstake"}
             </button>

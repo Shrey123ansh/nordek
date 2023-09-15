@@ -29,11 +29,10 @@ export const StakesTable = () => {
   type stakesType = {
     stakedAt: number;
     stakedAmount: number;
-    apy: number;
     address: string;
     hash: string;
     slotId: number;
-    rewards: number;
+    rewards?: number;
   };
   const { address } = useAccount();
   const [isClaim, setIsClaim] = useState(true);
@@ -53,17 +52,15 @@ export const StakesTable = () => {
         if (data) {
           for (let i = 0; i < data.length; i++) {
             try {
-              console.log(i);
               const rewards = await readContract({
                 address: deployedContractInfo?.address!,
                 abi: deployedContractInfo?.abi!,
                 functionName: "getUserRewards",
-                args: [BigInt(i)],
-                chainId: 31337,
+                args: [BigInt(data[i].slotId)],
                 account: address,
               });
               console.log("rewards", rewards);
-              data[i].apy = formatEther(rewards);
+              data[i].rewards = formatEther(rewards);
             } catch (e) {
               console.log("changing rewards failed");
             }
@@ -90,10 +87,10 @@ export const StakesTable = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
+  // removed apy value here
   const saveStakeToDb = async (newStake: {
     stakedAt: number;
     stakedAmount: number;
-    apy: number;
     address: string;
     hash: string;
     slotId: number;
@@ -121,6 +118,7 @@ export const StakesTable = () => {
   // Slice the data to show only items for the current page
   const paginatedData = stakes.slice(startIndex, endIndex);
   console.log("Stakes after slicing", stakes);
+
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "Staked",
@@ -135,7 +133,6 @@ export const StakesTable = () => {
           const newStake: stakesType = {
             stakedAt: stakeTime,
             stakedAmount: Number(amount),
-            apy: 18, //TODO change this to current apy
             address: user,
             hash: log.transactionHash ? log.transactionHash?.toString() : "",
             slotId: Number(slotId),
@@ -334,7 +331,7 @@ export const StakesTable = () => {
                       <td className="px-4 py-2 text-center">{formatEther(stake.stakedAmount)}</td>
                       <td className="px-4 py-2 text-center">{formatTx(stake.hash)}</td>
                       <td className="px-4 py-2 text-center">{timeAgoUnix(stake.stakedAt)}</td>
-                      <td className="px-4 py-2 text-center">{stake.apy}</td>
+                      <td className="px-4 py-2 text-center">{stake.rewards}</td>
 
                       <td className="px-4 py-2 text-center flex justify-center space-x-4">
                         {/* <ActionButton text="Claim" onClick={() => openClaimPopup()}></ActionButton> */}
