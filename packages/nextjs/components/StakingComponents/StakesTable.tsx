@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { TransactionHash } from "../blockexplorer";
 import { ClaimPopup } from "./ClaimPopup";
 import GradientComponent from "./GradientContainer";
 import { readContract } from "@wagmi/core";
@@ -354,9 +355,9 @@ export const StakesTable = () => {
 
           {stakesLoading ? (
             <div className="justify-center">
-              <button type="button" className="bg-base-200 rounded-2xl" disabled>
+              <button type="button" className="bg-base-100 rounded-2xl px-4" disabled>
                 <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg>
-                Processing...
+                Loading...
               </button>
             </div>
           ) : (
@@ -381,7 +382,10 @@ export const StakesTable = () => {
                     >
                       <td className="px-4 py-2 text-center">{stake.slotId}</td>
                       <td className="px-4 py-2 text-center">{formatEther(stake.stakedAmount)}</td>
-                      <td className="px-4 py-2 text-center">{formatTx(stake.hash)}</td>
+                      <td className="px-4 py-2 text-center">
+                        <TransactionHash hash={stake.hash}></TransactionHash>
+                      </td>
+                      {/* <td className="px-4 py-2 text-center"><a href=""></a>{formatTx(stake.hash)}</td> */}
                       <td className="px-4 py-2 text-center">{timeAgoUnix(stake.stakedAt)}</td>
                       <td className="px-4 py-2 text-center">{stake.rewards}</td>
 

@@ -4,7 +4,7 @@ import { formatEther } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import { useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { getTokenData } from "~~/utils/coingeckoPrices";
-import { formatNumberWithKMB } from "~~/utils/usd";
+import { formatNumberWithKMB, parseUSD } from "~~/utils/usd";
 
 export const StakeInfo = () => {
   const { address } = useAccount();
@@ -55,22 +55,18 @@ export const StakeInfo = () => {
     },
     {
       text: "Total Value",
-      data: `$ ${tvl.toFixed(2)}`,
+      data: `$ ${parseUSD(tvl)}`,
     },
     // {
     //   text: "Total Rewards Earned",
     //   data: "",
     // },
     {
-      text: "APY Applicable",
-      data: apy?.toString() + "%",
-    },
-    {
       text: "Rewards",
       data: `${formatEther(userRewards)} NRK`,
     },
     {
-      text: "Restake",
+      text: "Total Restake Till Now",
       data: `${formatEther(userTotalStakes)} NRK`,
     },
   ];
@@ -79,7 +75,7 @@ export const StakeInfo = () => {
     <section className="mt-8 w-full">
       <GradientComponent>
         <div className="rounded-xl relative flex flex-col w-full p-8 bg-gradient-to-r from-[#141525] to-[#140B1E] space-y-4">
-          <h1 className="text-2xl"> Total NRK Staked</h1>
+          <h1 className="text-2xl"> User Data</h1>
           {data.map((info, idx) => {
             return (
               <div className="w-full flex justify-between" key={idx}>
