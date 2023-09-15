@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { TransactionHash } from "../blockexplorer";
-import { saveStakeToDb, updateRestakedDB, updateUserData } from "./APICallFunctions";
+import {
+  removeStakeInDb,
+  saveStakeToDb,
+  updateRestakedAllDB,
+  updateRestakedDB,
+  updateUserData,
+} from "./APICallFunctions";
 import { ClaimPopup } from "./ClaimPopup";
 import GradientComponent from "./GradientContainer";
 import { readContract } from "@wagmi/core";
@@ -44,6 +50,17 @@ export const StakesTable = () => {
   const [stakes, setStakes] = useState<stakesType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract");
+
+  const getAllSlotsInfo = async () => {
+    const slotsInfo = await readContract({
+      address: deployedContractInfo?.address!,
+      abi: deployedContractInfo?.abi!,
+      functionName: "getUserStakesInfo",
+      account: address,
+    });
+
+    return slotsInfo;
+  };
 
   useEffect(() => {
     const callGetStakes = async () => {
@@ -130,36 +147,15 @@ export const StakesTable = () => {
     },
   });
 
-  const removeStakeInDb = async (updateInfo: {
-    user: string;
-    slotsToDel: number[];
-    updateSlot: bigint[] | undefined;
-  }) => {
-    console.log("removing/updating slots");
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "JWT fefege...",
-    };
-
-    try {
-      const response = await axios.put(`/api/updateStakes/`, updateInfo, {
-        headers: headers,
-      });
-    } catch (e) {
-      console.log("Couldn't send update/del request", e);
-    }
-
-    console.log("Removed from DB");
-  };
-
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "UnstakedTokens",
     listener: logs => {
       logs.map(log => {
         const { user, amount, unstakeTime, _slotId, rewardsLeft } = log.args;
-        console.log("📡 Unstaked", user, amount, unstakeTime);
-        if (user && amount && unstakeTime && _slotId != undefined && rewardsLeft != undefined) {
+        console.log("📡 Unstaked", user, amount, unstakeTime, _slotId, rewardsLeft);
+        console.log("IF VALUE", user && amount != undefined && _slotId != undefined && rewardsLeft != undefined);
+        if (user && amount != undefined && _slotId != undefined && rewardsLeft != undefined) {
           const topSlotId = stakes[0].slotId;
           let slotsToDel = [];
           let slotToUpdate = undefined;
@@ -171,13 +167,13 @@ export const StakesTable = () => {
           } else {
             if (BigInt(topSlotId) === _slotId) {
               // only need to update this val
-              slotToUpdate = [_slotId, rewardsLeft];
+              slotToUpdate = [Number(_slotId), Number(rewardsLeft)];
             } else {
               // del topSlotId to _slotId, update the _slotId
               for (let i = topSlotId; i < _slotId; i++) {
                 slotsToDel.push(i);
               }
-              slotToUpdate = [_slotId, rewardsLeft];
+              slotToUpdate = [Number(_slotId), Number(rewardsLeft)];
             }
           }
 
@@ -186,6 +182,8 @@ export const StakesTable = () => {
             slotsToDel: slotsToDel,
             updateSlot: slotToUpdate,
           };
+
+          console.log("UPDATE INFO", updateInfo);
 
           removeStakeInDb(updateInfo);
         }
@@ -325,24 +323,40 @@ export const StakesTable = () => {
         console.log("📡 Restaked", user, restakedAmount, timeStamp);
 
         if (user && timeStamp && restakedAmount != undefined) {
-          // const updatedStake = {
-          //   newStakedAmount: Number(amount),
-          //   newStakedAt: Number(stakeTime),
-          //   hash: log.transactionHash ? log.transactionHash?.toString() : "",
-          //   addr: user,
-          //   slotId: Number(slotId),
-          // };
+          const updateSlots = async () => {
+            const slots = await getAllSlotsInfo();
+            console.log("retrieved slots", slots);
 
-          // console.log("Updating restaked db");
-          // updateRestakedDB(updatedStake);
+            const transformedArray = slots.map(item => ({
+              stakedAmount: item.amount,
+              stakedAt: item.startTime,
+              address: user, // Replace with the desired address
+              hash: log.transactionHash,
+              slotId: item.id, // Replace with the desired hash
+            }));
 
-          const updates = {
-            totalRestakes: Number(restakedAmount),
+            console.log("TRANSFORMED ARRAY", transformedArray);
+            // const updatedStake = {
+            //   newStakedAmount: Number(amount),
+            //   newStakedAt: Number(stakeTime),
+            //   hash: log.transactionHash ? log.transactionHash?.toString() : "",
+            //   addr: user,
+            //   slotId: Number(slotId),
+            // };
+
+            console.log("Updating restake All db");
+            //updateRestakedAllDB(user, transformedArray);
+
+            const updates = {
+              totalRestakes: Number(restakedAmount),
+            };
+
+            updateUserData(user, updates);
+
+            notification.success(<div> Restaked {formatEther(restakedAmount)} </div>);
           };
 
-          updateUserData(user, updates);
-
-          notification.success(<div> Restaked {formatEther(restakedAmount)} </div>);
+          updateSlots();
         }
       });
     },

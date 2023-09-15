@@ -10,8 +10,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   switch (req.method) {
     case "POST":
       const reqBody = req.body;
+
       await db.collection("stakes").insertMany([reqBody]);
-      console.log("SAVED TO DB");
+      console.log("SAVED TO DB", reqBody);
       break;
 
     case "DELETE":

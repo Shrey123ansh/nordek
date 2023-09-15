@@ -1,21 +1,14 @@
 import { useState } from "react";
 import type { NextPage } from "next";
-import { format } from "path";
 import { formatEther, parseEther } from "viem";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount } from "wagmi";
 import GradientComponent from "~~/components/StakingComponents/GradientContainer";
 import StakeHeader from "~~/components/StakingComponents/StakeHeader";
 import { StakeInfo } from "~~/components/StakingComponents/StakeInfo";
 import { StakesTable } from "~~/components/StakingComponents/StakesTable";
-import ActionButton from "~~/components/ui/actionButton";
-import {
-  useAccountBalance,
-  useScaffoldContractRead,
-  useScaffoldContractWrite,
-  useScaffoldEventSubscriber,
-} from "~~/hooks/scaffold-eth";
+import { useAccountBalance, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+
 //import { connectToDatabase } from "~~/lib/mongoDb";
-import { getTargetNetwork, notification } from "~~/utils/scaffold-eth";
 
 const StakeBox = () => {
   const [stakeAmount, setStakeAmount] = useState(0);
