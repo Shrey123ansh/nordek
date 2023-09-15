@@ -57,10 +57,10 @@ export const StakeInfo = () => {
       text: "Total Value",
       data: `$ ${tvl.toFixed(2)}`,
     },
-    {
-      text: "Total Rewards Earned",
-      data: "",
-    },
+    // {
+    //   text: "Total Rewards Earned",
+    //   data: "",
+    // },
     {
       text: "APY Applicable",
       data: apy?.toString() + "%",
