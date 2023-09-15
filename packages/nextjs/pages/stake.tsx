@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { NextPage } from "next";
+import { format } from "path";
 import { formatEther, parseEther } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import GradientComponent from "~~/components/StakingComponents/GradientContainer";
@@ -7,7 +8,12 @@ import StakeHeader from "~~/components/StakingComponents/StakeHeader";
 import { StakeInfo } from "~~/components/StakingComponents/StakeInfo";
 import { StakesTable } from "~~/components/StakingComponents/StakesTable";
 import ActionButton from "~~/components/ui/actionButton";
-import { useScaffoldContractRead, useScaffoldContractWrite, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
+import {
+  useAccountBalance,
+  useScaffoldContractRead,
+  useScaffoldContractWrite,
+  useScaffoldEventSubscriber,
+} from "~~/hooks/scaffold-eth";
 //import { connectToDatabase } from "~~/lib/mongoDb";
 import { getTargetNetwork, notification } from "~~/utils/scaffold-eth";
 
@@ -16,11 +22,7 @@ const StakeBox = () => {
   const { address } = useAccount();
   const [isStaking, setIsStaking] = useState(true);
 
-  const { data: balanceData } = useBalance({
-    address,
-    watch: true,
-    chainId: getTargetNetwork().id,
-  });
+  const { balance } = useAccountBalance(address);
 
   const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
     contractName: "StakingContract",
@@ -28,15 +30,11 @@ const StakeBox = () => {
     account: address,
   });
 
-  const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(2) : "";
-
-  const userStakes = userTotalStakes ? formatEther(userTotalStakes) : "0";
-
   function setStakeAmountMax() {
     if (isStaking) {
-      setStakeAmount(Number(balance));
+      setStakeAmount(Number(balance?.toFixed(4)));
     } else {
-      setStakeAmount(Number(userStakes));
+      setStakeAmount(Number(userTotalStakes));
     }
   }
 
@@ -150,14 +148,14 @@ const StakeBox = () => {
             </h1>
             <h1 className={statsH1Class}>
               <span className={textColor}>Current Apy</span>
-              <span className={textColor}>{apy ? apy.toString() : ""}</span>
+              <span className={textColor}>{apy ? apy.toString() : ""}%</span>
             </h1>
 
             <h1 className="text-xl font-semibold">Your Position</h1>
 
             <h1 className={statsH1Class}>
               <span className={textColor}>Your Staked Amount</span>
-              <span className={textColor}> {userStakes} NRK</span>
+              <span className={textColor}> {userTotalStakes ? formatEther(userTotalStakes) : ""} NRK</span>
             </h1>
 
             <h1 className={statsH1Class}>

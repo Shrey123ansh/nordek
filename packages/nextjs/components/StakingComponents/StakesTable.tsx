@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { TransactionHash } from "../blockexplorer";
+import { saveStakeToDb, updateRestakedDB, updateUserData } from "./APICallFunctions";
 import { ClaimPopup } from "./ClaimPopup";
 import GradientComponent from "./GradientContainer";
 import { readContract } from "@wagmi/core";
@@ -304,14 +306,12 @@ export const StakesTable = () => {
         console.log("📡 Claimed", user, totalReward, timeOfClaim, slotId, rewardsLeft);
 
         if (user && timeOfClaim && totalReward != undefined) {
-          // const updatedStake = {
-          //   rewardsLeft: Number(rewardsLeft),
-          //   addr: user,
-          //   slotId: Number(slotId),
-          // };
+          const updates = {
+            totalRewards: Number(totalReward),
+          };
 
-          // console.log("Updating claimed db");
-          // updateClaimDB(updatedStake);
+          console.log("Updating userData db, totalRewards");
+          updateUserData(user, updates);
 
           notification.success(<div> Claimed {formatEther(totalReward)} </div>);
         }
@@ -319,30 +319,27 @@ export const StakesTable = () => {
     },
   });
 
-  const updateRestakedDB = async (newStake: {
-    newStakedAmount: number;
-    newStakedAt: number;
-    hash: string;
-    addr: string;
-    slotId: number;
-  }) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "JWT fefege...",
-    };
-    try {
-      const response = axios.put("/api/stakes", newStake, {
-        headers: headers,
+  useScaffoldEventSubscriber({
+    contractName: "StakingContract",
+    eventName: "AllRewardClaimed",
+    listener: logs => {
+      logs.map(log => {
+        const { user, totalReward, timeOfClaim } = log.args;
+        console.log("📡 Claimed", user, totalReward, timeOfClaim);
+
+        if (user && timeOfClaim && totalReward != undefined) {
+          const updates = {
+            totalRewards: Number(totalReward),
+          };
+
+          console.log("Updating userData db, totalRewards");
+          updateUserData(user, updates);
+
+          notification.success(<div> Claimed {formatEther(totalReward)} </div>);
+        }
       });
-
-      console.log(response);
-      console.log("Restaked");
-    } catch (error) {
-      console.log(error);
-    }
-
-    console.log("Saved to DB");
-  };
+    },
+  });
 
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
@@ -365,7 +362,45 @@ export const StakesTable = () => {
           console.log("Updating restaked db");
           updateRestakedDB(updatedStake);
 
+          const updates = {
+            totalRestakes: Number(amount),
+          };
+
+          updateUserData(user, updates);
+
           notification.success(<div> Restaked {formatEther(amount)} </div>);
+        }
+      });
+    },
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "StakingContract",
+    eventName: "RestakedAll",
+    listener: logs => {
+      logs.map(log => {
+        const { user, restakedAmount, timeStamp } = log.args;
+        console.log("📡 Restaked", user, restakedAmount, timeStamp);
+
+        if (user && timeStamp && restakedAmount != undefined) {
+          // const updatedStake = {
+          //   newStakedAmount: Number(amount),
+          //   newStakedAt: Number(stakeTime),
+          //   hash: log.transactionHash ? log.transactionHash?.toString() : "",
+          //   addr: user,
+          //   slotId: Number(slotId),
+          // };
+
+          // console.log("Updating restaked db");
+          // updateRestakedDB(updatedStake);
+
+          const updates = {
+            totalRestakes: Number(restakedAmount),
+          };
+
+          updateUserData(user, updates);
+
+          notification.success(<div> Restaked {formatEther(restakedAmount)} </div>);
         }
       });
     },
@@ -386,9 +421,9 @@ export const StakesTable = () => {
 
           {stakesLoading ? (
             <div className="justify-center">
-              <button type="button" className="bg-base-200 rounded-2xl" disabled>
+              <button type="button" className="bg-base-100 rounded-2xl px-4" disabled>
                 <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg>
-                Processing...
+                Loading...
               </button>
             </div>
           ) : (
@@ -413,7 +448,10 @@ export const StakesTable = () => {
                     >
                       <td className="px-4 py-2 text-center">{stake.slotId}</td>
                       <td className="px-4 py-2 text-center">{formatEther(stake.stakedAmount)}</td>
-                      <td className="px-4 py-2 text-center">{formatTx(stake.hash)}</td>
+                      <td className="px-4 py-2 text-center">
+                        <TransactionHash hash={stake.hash}></TransactionHash>
+                      </td>
+                      {/* <td className="px-4 py-2 text-center"><a href=""></a>{formatTx(stake.hash)}</td> */}
                       <td className="px-4 py-2 text-center">{timeAgoUnix(stake.stakedAt)}</td>
                       <td className="px-4 py-2 text-center">{stake.rewards}</td>
 
