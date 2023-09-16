@@ -12,7 +12,7 @@ const StakeHeader: React.FC = () => {
   const totalNRKStaked = Number(data?.formatted);
 
   return (
-    <div className="w-[90%] h-[25rem] flex flex-col justify-center items-center md:h-[30rem] lg:h-[40rem] bg-[url('/assets/headerbg.png')]  bg-no-repeat bg-contain ">
+    <div className="w-[80%] h-[25rem] flex flex-col justify-center items-center md:h-[30rem] lg:h-[40rem] bg-[url('/assets/headerbg.png')]  bg-no-repeat bg-contain ">
       <div className="flex -mt-[8rem] h-[70%] flex-col justify-between items-center lg:flex-row w-[60%]  md:w-[67%] lg:w-3/5 xl:w-3/5">
         <div
           className=" w-[100%] lg:w-[45%] h-[45%]  lg:h-[65%]  bg-cover bg-no-repeat   rounded-[15px]   "
@@ -42,7 +42,7 @@ const StakeHeader: React.FC = () => {
           }}
         >
           <div className="flex flex-col p-[1rem] lg:p-[3rem] justify-between items-center rounded-[15px] ">
-            <div className="text-[20px] md:text-[50px] lg:text-[60px] xl:text-[80px] font-[600]">$3M</div>
+            <div className="text-[20px] md:text-[50px] lg:text-[60px] xl:text-[80px] font-[600]">2.1B</div>
             <div className="text-[15px] md:text-[18px] lg:text-[21px] xl:text-[24px] text-center">Total NRK Supply</div>
           </div>
         </div>
