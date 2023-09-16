@@ -1,4 +1,4 @@
-//@ts-nocheck
+// @ts-nocheck
 import { useEffect, useState } from "react";
 import { Abi, AbiFunction } from "abitype";
 import { Address, TransactionReceipt } from "viem";

@@ -268,13 +268,14 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             address(this).balance >= amount + totalRewards,
             "Contract insufficient balance"
         );
+
         // use , amount -> token + rewards, timestamp, last slot, total rewards
         emit UnstakedTokens(
             user,
             amount,
             uint32(block.timestamp),
             i,
-            totalRewards
+            stakes[msg.sender].slotStake[i].amount
         );
         (bool success, ) = user.call{value: amount + totalRewards}("");
         require(success, "Failed to send rewards and staked amount");

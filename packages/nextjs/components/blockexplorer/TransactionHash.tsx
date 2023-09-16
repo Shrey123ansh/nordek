@@ -8,9 +8,9 @@ export const TransactionHash = ({ hash }: { hash: string }) => {
 
   return (
     <div className="flex justify-center">
-      <Link href={`/blockexplorer/transaction/${hash}`}>
+      <span>
         {hash?.substring(0, 2)}...{hash?.substring(hash.length - 2)}
-      </Link>
+      </span>
       {addressCopied ? (
         <CheckCircleIcon
           className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"

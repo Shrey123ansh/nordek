@@ -28,7 +28,7 @@ const StakeBox = () => {
     if (isStaking) {
       setStakeAmount(Number(balance?.toFixed(4)));
     } else {
-      setStakeAmount(Number(userTotalStakes));
+      setStakeAmount(Number(formatEther(userTotalStakes)));
     }
   }
 
@@ -195,16 +195,16 @@ const StakeBox = () => {
                 {" "}
                 Enter Amount
               </label>
-              <div className="flex w-full">
+              <div className="relative flex w-full rounded-lg border border-snow-300 text-center">
                 <input
                   type="number"
                   placeholder="0"
-                  className="px-2 py-2 w-full rounded-lg text-left appearance-none bg-base-200 border border-snow-300 text-white bg-transparent w-[90%]"
+                  className="px-2 py-2 mr-4 w-full text-left appearance-none bg-base-200 text-white bg-transparent w-[90%] focus:border-transparent focus:ring-0"
                   value={stakeAmount}
                   onChange={e => setStakeAmount(Number(e.target.value))}
                 />
                 <button
-                  className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-0 px-8 rounded-full"
+                  className="relative top-1 h-8 mr-2 bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-0 px-4 rounded-full"
                   onClick={setStakeAmountMax}
                 >
                   Max

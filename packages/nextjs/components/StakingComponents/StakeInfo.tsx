@@ -59,7 +59,7 @@ export const StakeInfo = () => {
     //   data: "",
     // },
     {
-      text: "Rewards Claimed Till Now",
+      text: "Total Rewards Claimed",
       data: `${formatEther(userData?.totalRewards ? userData.totalRewards : BigInt(0))} NRK`,
     },
     {

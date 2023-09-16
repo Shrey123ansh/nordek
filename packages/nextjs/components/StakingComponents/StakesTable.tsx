@@ -165,6 +165,7 @@ export const StakesTable = () => {
           };
 
           console.log("Saving to DB from event");
+
           saveStakeToDb(newStake);
 
           setNewStake(newStake);

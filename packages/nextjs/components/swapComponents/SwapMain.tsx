@@ -6,7 +6,8 @@ import axios from "axios";
 import { useAccount } from "wagmi";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import { localTokens, tokenType } from "~~/data/data";
-import { getTokenData } from "~~/utils/coingeckoPrices";
+
+//import { getTokenData } from "~~/utils/coingeckoPrices";
 
 export default function SwapMain() {
   const [token0Amount, setToken0Amount] = useState<number>(0.0);

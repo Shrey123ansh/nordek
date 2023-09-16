@@ -74,17 +74,17 @@ export const ClaimPopup = ({
               </svg>
             </button>
           </div>
-          <div className="flex w-full justify-center text-center mb-8">
+          <div className="flex w-full justify-center text-center mb-8 rounded-lg border border-snow-300 text-center">
             <input
               type="text"
               placeholder="Enter amount"
-              className="w-full p-2 border border-snow-300 rounded-md text-white bg-transparent"
+              className="w-full p-2 mr-4 rounded-md text-white bg-transparent focus:border-transparent focus:ring-0"
               value={formatEther(amount)}
               onChange={e => setAmount(BigInt(e.target.value))}
             />
             <button
               type="button"
-              className="h-8 bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white rounded-full px-4"
+              className="relative top-1 mr-2 h-8 bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white rounded-full px-4"
               onClick={setStakeAmountMax}
             >
               Max
