@@ -5,7 +5,7 @@ const contracts = {
       chainId: "5",
       contracts: {
         StakingContract: {
-          address: "0x2bdd4e32f38AC4332569b41D25cd82CeC6e7b9b6",
+          address: "0xEc76F8231658fE9c814Ac98175Af7B3418F825c5",
           abi: [
             {
               inputs: [
@@ -819,7 +819,7 @@ const contracts = {
           ],
         },
         YourContract: {
-          address: "0x684ec81d5e4e6eCE2FEa0aFBCAcc8BAF166A6Ae1",
+          address: "0x0918aDeBF18190E771058d43298BBf96f6185dFB",
           abi: [
             {
               inputs: [

@@ -141,7 +141,7 @@ const StakeBox = () => {
               <span className={textColor}>{frequency ? Number(frequency) / 86400 : ""} Days</span>
             </h1>
             <h1 className={statsH1Class}>
-              <span className={textColor}>Current Apy</span>
+              <span className={textColor}>Current APY</span>
               <span className={textColor}>{apy ? apy.toString() : ""}%</span>
             </h1>
 

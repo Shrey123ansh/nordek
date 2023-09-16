@@ -129,7 +129,16 @@ export const updateRestakedAllDB = async (address: string, newStakes: any) => {
 
   console.log("Saved to DB");
 };
-
+export const removeAllStakesForUser = async (user: string) => {
+  console.log("REMOVING USER STAKES FROM DB");
+  try {
+    const response = await axios.delete(`/api/stakes?delAddress=${user}`);
+    console.log(response.data);
+  } catch (error) {
+    console.error("Delete request failed:", error);
+  }
+  console.log("Removed from DB");
+};
 export const removeStakeInDb = async (updateInfo: {
   user: string;
   slotsToDel: number[];

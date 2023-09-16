@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { TransactionHash } from "../blockexplorer";
 import {
   getStakes,
+  removeAllStakesForUser,
   removeStakeInDb,
   saveStakeToDb,
   updateRestakedAllDB,
@@ -205,17 +206,6 @@ export const StakesTable = () => {
     },
   });
 
-  const removeAllStakesForUser = async (user: string) => {
-    console.log("REMOVING USER STAKES FROM DB");
-    try {
-      const response = await axios.delete(`/api/stakes?delAddress=${user}`);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Delete request failed:", error);
-    }
-    console.log("Removed from DB");
-  };
-
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "UnstakedAllTokens",
@@ -324,22 +314,22 @@ export const StakesTable = () => {
                 address: deployedContractInfo?.address!,
                 abi: deployedContractInfo?.abi!,
                 functionName: "getUserStakesInfo",
-                account: address,
+                account: user,
               });
               console.log("retrieved slots", slots);
 
               const transformedArray = slots.map(item => ({
-                stakedAmount: item.amount,
+                stakedAmount: Number(item.amount),
                 stakedAt: item.startTime,
                 address: user, // Replace with the desired address
                 hash: log.transactionHash,
-                slotId: item.id, // Replace with the desired hash
+                slotId: Number(item.id), // Replace with the desired hash
               }));
 
               console.log("TRANSFORMED ARRAY", transformedArray);
 
               console.log("Updating restake All db");
-              //await updateRestakedAllDB(user, transformedArray);
+              await updateRestakedAllDB(user, transformedArray);
 
               const updates = {
                 totalRestakes: Number(restakedAmount),

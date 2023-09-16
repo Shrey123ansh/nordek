@@ -14,6 +14,7 @@ const StakeHeader: React.FC = () => {
   const totalNRKStaked = Number(data?.formatted);
 
   useEffect(() => {
+    console.log("Updaing tvl");
     const updateTVL = async () => {
       const NRKTokendata = await getTokenData("nordek", "usd");
       if (NRKTokendata) {
@@ -25,7 +26,7 @@ const StakeHeader: React.FC = () => {
     };
 
     updateTVL();
-  }, [totalNRKStaked]);
+  }, [totalNRKStaked, isLoading]);
 
   return (
     <div className="w-[100%] h-[25rem] flex flex-col justify-center items-center md:h-[30rem] lg:h-[40rem] bg-[url('/assets/headerbg.png')]  bg-no-repeat bg-contain ">
