@@ -1,77 +1,70 @@
 import { useEffect, useState } from "react";
+import { getUserData } from "./APICallFunctions";
 import GradientComponent from "./GradientContainer";
+import axios from "axios";
 import { formatEther } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import { useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { getTokenData } from "~~/utils/coingeckoPrices";
-import { formatNumberWithKMB } from "~~/utils/usd";
+import { formatNumberWithKMB, parseUSD } from "~~/utils/usd";
+
+type user = { address: string; totalStaked: bigint; totalRewards: bigint; totalRestakes: bigint };
 
 export const StakeInfo = () => {
   const { address } = useAccount();
-  const { data: deployedContract } = useDeployedContractInfo("StakingContract");
-  const {
-    data: totalNRKStaked,
-    isError,
-    isLoading,
-  } = useBalance({
-    address: deployedContract?.address,
-  });
+  const [userData, setUserData] = useState<user>();
   const [tvl, setTvl] = useState(0);
-
-  useEffect(() => {
-    const updateTVL = async () => {
-      const NRKTokendata = await getTokenData("nordek", "usd");
-      const totalStakedNrk = Number(totalNRKStaked?.formatted);
-      const tvlVal = NRKTokendata ? NRKTokendata.usd * totalStakedNrk : 0;
-      setTvl(tvlVal);
-    };
-    updateTVL();
-  }, [totalNRKStaked]);
-
-  const { data: apy, isLoading: isApyLoading } = useScaffoldContractRead({
-    contractName: "StakingContract",
-    functionName: "getCurrentApy",
-  });
-
-  let { data: userRewards, isLoading: isUserTotalRewards } = useScaffoldContractRead({
-    contractName: "StakingContract",
-    functionName: "getTotalRewards",
-    account: address,
-  });
-
-  let { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
+  const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
     contractName: "StakingContract",
     functionName: "getUserTotalStakes",
     account: address,
   });
 
-  userTotalStakes = userTotalStakes ? userTotalStakes : BigInt(0);
-  userRewards = userRewards ? userRewards : BigInt(0);
+  //const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(2) : "";
+
+  const userStakes = userTotalStakes ? formatEther(userTotalStakes) : "0";
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (address) {
+        const data = await getUserData(address);
+        setUserData(data);
+      }
+    };
+
+    const updateTVL = async () => {
+      const NRKTokendata = await getTokenData("nordek", "usd");
+      if (NRKTokendata) {
+        const tvlVal = NRKTokendata?.usd * Number(userStakes);
+        setTvl(tvlVal);
+      } else {
+        setTvl(0);
+      }
+    };
+    loadData();
+    updateTVL();
+  }, [address]);
 
   const data = [
     {
       text: "Total NRK Staked",
-      data: formatNumberWithKMB(Number(totalNRKStaked?.formatted)),
+      data: `${userStakes} NRK`,
     },
     {
       text: "Total Value",
-      data: `$ ${tvl.toFixed(2)}`,
+      data: `$ ${parseUSD(tvl)}`,
+    },
+    // {
+    //   text: "Total Rewards Earned",
+    //   data: "",
+    // },
+    {
+      text: "Total Rewards Claimed",
+      data: `${formatEther(userData?.totalRewards ? userData.totalRewards : BigInt(0))} NRK`,
     },
     {
-      text: "Total Rewards Earned",
-      data: "",
-    },
-    {
-      text: "APY Applicable",
-      data: apy?.toString() + "%",
-    },
-    {
-      text: "Rewards",
-      data: `${formatEther(userRewards)} NRK`,
-    },
-    {
-      text: "Restake",
-      data: `${formatEther(userTotalStakes)} NRK`,
+      text: "Restaked Till Now",
+      data: `${formatEther(userData?.totalRestakes ? userData.totalRestakes : BigInt(0))} NRK`,
     },
   ];
   const textColor = "bg-gradient-to-r from-white to-[#F991CC] text-transparent bg-clip-text";
@@ -79,7 +72,7 @@ export const StakeInfo = () => {
     <section className="mt-8 w-full">
       <GradientComponent>
         <div className="rounded-xl relative flex flex-col w-full p-8 bg-gradient-to-r from-[#141525] to-[#140B1E] space-y-4">
-          <h1 className="text-2xl"> Total NRK Staked</h1>
+          <h1 className="text-2xl"> User Data</h1>
           {data.map((info, idx) => {
             return (
               <div className="w-full flex justify-between" key={idx}>

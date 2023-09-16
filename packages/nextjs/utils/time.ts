@@ -13,10 +13,15 @@ export function renderTimeSince(s: number): string {
   return `${minutes}m ${seconds}s`;
 }
 
+export function unixTimestampToDate(unixTimestamp: number): string {
+  const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+  return new Date(unixTimestamp * 1000).toLocaleDateString("en-US", options);
+}
+
 export function timeAgoUnix(unixTimestamp: number) {
   const currentDate = new Date();
   const timestampDate = new Date(unixTimestamp * 1000); // Convert to milliseconds
-
+  // @ts-expect-error
   const timeDifference = currentDate - timestampDate;
   const seconds = Math.floor(timeDifference / 1000);
   const minutes = Math.floor(seconds / 60);

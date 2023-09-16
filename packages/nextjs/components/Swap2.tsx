@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import ExpertToggle from "./swapComponents/ExpertModeToggle";
-import SwapFooter from "./swapComponents/SwapFooter";
 import SwapHeader from "./swapComponents/SwapHeader";
 import SwapMain from "./swapComponents/SwapMain";
 import { ToggleSwitchProps } from "./swapComponents/ToggleSwitchProps";

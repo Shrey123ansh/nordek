@@ -3987,6 +3987,7 @@ __metadata:
     class-variance-authority: ^0.7.0
     clsx: ^2.0.0
     cmdk: ^0.2.0
+    coingecko-api-v3: ^0.0.29
     daisyui: ~3.5.1
     date-fns: ^2.30.0
     dotenv-cli: ^7.3.0
@@ -3995,6 +3996,8 @@ __metadata:
     eslint-config-prettier: ~8.5.0
     eslint-plugin-prettier: ~4.2.1
     ioredis: ^5.3.2
+    mongodb: ^6.1.0
+    mongoose: ^7.5.0
     next: ~13.1.6
     nextjs-progressbar: ~0.0.16
     postcss: ~8.4.16
@@ -4426,13 +4429,6 @@ __metadata:
     "@types/node": "*"
     "@types/responselike": ^1.0.0
   checksum: d9b26403fe65ce6b0cb3720b7030104c352bcb37e4fac2a7089a25a97de59c355fa08940658751f2f347a8512aa9d18fdb66ab3ade835975b2f454f2d5befbd9
-  languageName: node
-  linkType: hard
-
-"@types/chai@npm:^4":
-  version: 4.3.6
-  resolution: "@types/chai@npm:4.3.6"
-  checksum: 32a6c18bf53fb3dbd89d1bfcadb1c6fd45cc0007c34e436393cc37a0a5a556f9e6a21d1e8dd71674c40cc36589d2f30bf4d9369d7787021e54d6e997b0d7300a
   languageName: node
   linkType: hard
 
@@ -6598,6 +6594,13 @@ __metadata:
   version: 5.4.0
   resolution: "bson@npm:5.4.0"
   checksum: 1c07e3d09f139d414bd226bf7f4e9aaa7a726e0c9718c55b53bb23ffa2805cac8b66e4fa46b424c73a35c6e292ed5f7432df5c76ea5d08052642b2ac9e0399e3
+  languageName: node
+  linkType: hard
+
+"bson@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "bson@npm:6.1.0"
+  checksum: 8250c8158c22d2a0ca0e7677c0cbef9fa6341c176382b835dbf4c7f8aebdfd74d530f7225c6f3b98ca78a68aab4f1ad3d2fad54160a98b3e6ed9823b80db2e48
   languageName: node
   linkType: hard
 
@@ -12238,6 +12241,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mongodb@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "mongodb@npm:6.1.0"
+  dependencies:
+    "@mongodb-js/saslprep": ^1.1.0
+    bson: ^6.1.0
+    mongodb-connection-string-url: ^2.6.0
+  peerDependencies:
+    "@aws-sdk/credential-providers": ^3.188.0
+    "@mongodb-js/zstd": ^1.1.0
+    gcp-metadata: ^5.2.0
+    kerberos: ^2.0.1
+    mongodb-client-encryption: ">=6.0.0 <7"
+    snappy: ^7.2.2
+    socks: ^2.7.1
+  peerDependenciesMeta:
+    "@aws-sdk/credential-providers":
+      optional: true
+    "@mongodb-js/zstd":
+      optional: true
+    gcp-metadata:
+      optional: true
+    kerberos:
+      optional: true
+    mongodb-client-encryption:
+      optional: true
+    snappy:
+      optional: true
+    socks:
+      optional: true
+  checksum: ed60c14f0a7e2e9088ba58f29b0425bc5c00d81e3f692938e3bb887b2fdbb411935e845a8bab3faa7609e6e52e94b9705cf60fac61684d21b8bc92a5c3938964
+  languageName: node
+  linkType: hard
+
 "mongoose@npm:^7.5.0":
   version: 7.5.0
   resolution: "mongoose@npm:7.5.0"
@@ -14601,12 +14638,12 @@ __metadata:
   dependencies:
     "@next/font": ^13.4.19
     "@tanstack/eslint-plugin-query": ^4.34.1
-    "@types/chai": ^4
     "@types/react-select": ^5.0.1
     axios: ^1.5.0
     coingecko-api-v3: ^0.0.29
     husky: ~8.0.3
     lint-staged: ~13.2.2
+    mongodb: ^6.1.0
     mongoose: ^7.5.0
   languageName: unknown
   linkType: soft

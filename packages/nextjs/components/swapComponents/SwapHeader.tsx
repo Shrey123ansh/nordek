@@ -1,5 +1,4 @@
 import { useState } from "react";
-import SettingsPopup from "~~/components/SettingsPopup";
 
 export default function SwapHeader() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);

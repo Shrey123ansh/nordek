@@ -1,26 +1,22 @@
+//@ts-nocheck
 import { useState } from "react";
 import type { NextPage } from "next";
 import { formatEther, parseEther } from "viem";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount } from "wagmi";
 import GradientComponent from "~~/components/StakingComponents/GradientContainer";
 import StakeHeader from "~~/components/StakingComponents/StakeHeader";
 import { StakeInfo } from "~~/components/StakingComponents/StakeInfo";
 import { StakesTable } from "~~/components/StakingComponents/StakesTable";
-import ActionButton from "~~/components/ui/actionButton";
-import { useScaffoldContractRead, useScaffoldContractWrite, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
+import { useAccountBalance, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+
 //import { connectToDatabase } from "~~/lib/mongoDb";
-import { getTargetNetwork, notification } from "~~/utils/scaffold-eth";
 
 const StakeBox = () => {
   const [stakeAmount, setStakeAmount] = useState(0);
   const { address } = useAccount();
   const [isStaking, setIsStaking] = useState(true);
 
-  const { data: balanceData } = useBalance({
-    address,
-    watch: true,
-    chainId: getTargetNetwork().id,
-  });
+  const { balance } = useAccountBalance(address);
 
   const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
     contractName: "StakingContract",
@@ -28,21 +24,18 @@ const StakeBox = () => {
     account: address,
   });
 
-  const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(2) : "";
-
-  const userStakes = userTotalStakes ? formatEther(userTotalStakes) : "0";
-
   function setStakeAmountMax() {
     if (isStaking) {
-      setStakeAmount(Number(balance));
+      setStakeAmount(Number(balance?.toFixed(4)));
     } else {
-      setStakeAmount(Number(userStakes));
+      setStakeAmount(Number(formatEther(userTotalStakes)));
     }
   }
 
   const { writeAsync: stake, isStakeLoading } = useScaffoldContractWrite({
     contractName: "StakingContract",
     functionName: "stake",
+
     account: address,
     value: `${stakeAmount}`,
     onBlockConfirmation: txnReceipt => {
@@ -150,14 +143,14 @@ const StakeBox = () => {
             </h1>
             <h1 className={statsH1Class}>
               <span className={textColor}>Current Apy</span>
-              <span className={textColor}>{apy ? apy.toString() : ""}</span>
+              <span className={textColor}>{apy ? apy.toString() : ""}%</span>
             </h1>
 
             <h1 className="text-xl font-semibold">Your Position</h1>
 
             <h1 className={statsH1Class}>
               <span className={textColor}>Your Staked Amount</span>
-              <span className={textColor}> {userStakes} NRK</span>
+              <span className={textColor}> {userTotalStakes ? formatEther(userTotalStakes) : ""} NRK</span>
             </h1>
 
             <h1 className={statsH1Class}>
@@ -202,16 +195,16 @@ const StakeBox = () => {
                 {" "}
                 Enter Amount
               </label>
-              <div className="flex w-full">
+              <div className="relative flex w-full rounded-lg border border-snow-300 text-center">
                 <input
                   type="number"
                   placeholder="0"
-                  className="px-2 py-2 w-full rounded-lg text-left appearance-none bg-base-200 border border-snow-300 text-white bg-transparent w-[90%]"
+                  className="px-2 py-2 mr-4 w-full text-left appearance-none bg-base-200 text-white bg-transparent w-[90%] focus:border-transparent focus:ring-0"
                   value={stakeAmount}
                   onChange={e => setStakeAmount(Number(e.target.value))}
                 />
                 <button
-                  className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-0 px-8 rounded-full"
+                  className="relative top-1 h-8 mr-2 bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-0 px-4 rounded-full"
                   onClick={setStakeAmountMax}
                 >
                   Max

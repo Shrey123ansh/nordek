@@ -1,0 +1,16 @@
+contract address{
+    user{
+        total nrk, 
+        total reward earned till now,
+        total reward claimed
+        SLOTS:[
+            {
+                id,
+                amountstaked,
+                hash,
+                date,   
+            }
+        ]
+
+    }
+}

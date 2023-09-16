@@ -7,10 +7,10 @@ export const TransactionHash = ({ hash }: { hash: string }) => {
   const [addressCopied, setAddressCopied] = useState(false);
 
   return (
-    <div className="flex items-center">
-      <Link href={`/blockexplorer/transaction/${hash}`}>
-        {hash?.substring(0, 6)}...{hash?.substring(hash.length - 4)}
-      </Link>
+    <div className="flex justify-center">
+      <span>
+        {hash?.substring(0, 2)}...{hash?.substring(hash.length - 2)}
+      </span>
       {addressCopied ? (
         <CheckCircleIcon
           className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"

@@ -1,11 +1,11 @@
 const contracts = {
-  31337: [
+  5: [
     {
-      name: "Anvil",
-      chainId: "31337",
+      name: "Goerli",
+      chainId: "5",
       contracts: {
         StakingContract: {
-          address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+          address: "0x2bdd4e32f38AC4332569b41D25cd82CeC6e7b9b6",
           abi: [
             {
               inputs: [
@@ -209,37 +209,6 @@ const contracts = {
               inputs: [
                 {
                   indexed: false,
-                  internalType: "uint256",
-                  name: "totalReward",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint32",
-                  name: "timeOfClaim",
-                  type: "uint32",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "slotId",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "rewardsLeft",
-                  type: "uint256",
-                },
-              ],
-              name: "RewardClaimed",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
                   internalType: "address",
                   name: "user",
                   type: "address",
@@ -247,504 +216,7 @@ const contracts = {
                 {
                   indexed: false,
                   internalType: "uint256",
-                  name: "amount",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "address",
-                  name: "user",
-                  type: "address",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "amount",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint32",
-                  name: "unstakeTime",
-                  type: "uint32",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "slotid",
-                  type: "uint256",
-                },
-              ],
-              name: "Unstaked",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "user",
-                  type: "address",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "totalAmount",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "rewards",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint32",
-                  name: "unstakeTime",
-                  type: "uint32",
-                },
-              ],
-              name: "UnstakedAllTokens",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "user",
-                  type: "address",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "amount",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint32",
-                  name: "unstakeTime",
-                  type: "uint32",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "_slotId",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "rewardLeft",
-                  type: "uint256",
-                },
-              ],
-              name: "UnstakedTokens",
-              type: "event",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              name: "apy",
-              outputs: [
-                {
-                  internalType: "uint16",
-                  name: "value",
-                  type: "uint16",
-                },
-                {
-                  internalType: "uint32",
-                  name: "changeTime",
-                  type: "uint32",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "claimAllRewards",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "uint256",
-                  name: "_rewardAmount",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "_slotId",
-                  type: "uint256",
-                },
-              ],
-              name: "claimRewards",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "frequency",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "getCurrentApy",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "getTotalRewards",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "uint256",
-                  name: "_slotId",
-                  type: "uint256",
-                },
-              ],
-              name: "getUserRewards",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "uint256",
-                  name: "_slotId",
-                  type: "uint256",
-                },
-              ],
-              name: "getUserStake",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "amount",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint32",
-                  name: "startTime",
-                  type: "uint32",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "getUserStakesInfo",
-              outputs: [
-                {
-                  components: [
-                    {
-                      internalType: "uint256",
-                      name: "amount",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "rewards",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint32",
-                      name: "startTime",
-                      type: "uint32",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "id",
-                      type: "uint256",
-                    },
-                  ],
-                  internalType: "struct StakingContract.Slot[]",
-                  name: "",
-                  type: "tuple[]",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "getUserTotalStakes",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "amount",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "uint256",
-                  name: "amount",
-                  type: "uint256",
-                },
-                {
-                  internalType: "address",
-                  name: "newAddress",
-                  type: "address",
-                },
-                {
-                  indexed: false,
-                  internalType: "string",
-                  name: "newGreeting",
-                  type: "string",
-                },
-                {
-                  indexed: false,
-                  internalType: "bool",
-                  name: "premium",
-                  type: "bool",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "value",
-                  type: "uint256",
-                },
-              ],
-              name: "GreetingChange",
-              type: "event",
-            },
-            {
-              inputs: [],
-              name: "greeting",
-              outputs: [
-                {
-                  internalType: "string",
-                  name: "",
-                  type: "string",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "owner",
-              outputs: [
-                {
-                  internalType: "address",
-                  name: "",
-                  type: "address",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "premium",
-              outputs: [
-                {
-                  internalType: "bool",
-                  name: "",
-                  type: "bool",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "string",
-                  name: "_newGreeting",
-                  type: "string",
-                },
-              ],
-              name: "setGreeting",
-              outputs: [],
-              stateMutability: "payable",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "totalCounter",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "",
-                  type: "address",
-                },
-              ],
-              name: "userGreetingCounter",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "withdraw",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
-              stateMutability: "payable",
-              type: "receive",
-            },
-          ],
-        },
-      },
-    },
-  ],
-  31337: [
-    {
-      name: "Anvil",
-      chainId: "31337",
-      contracts: {
-        StakingContract: {
-          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-          abi: [
-            {
-              inputs: [
-                {
-                  internalType: "uint16",
-                  name: "_apy",
-                  type: "uint16",
-                },
-                {
-                  internalType: "uint256",
-                  name: "_minimumStake",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "_frequency",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "nonpayable",
-              type: "constructor",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "user",
-                  type: "address",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "totalReward",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint32",
-                  name: "timeOfClaim",
-                  type: "uint32",
-                },
-              ],
-              name: "AllRewardClaimed",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "amount",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "address",
-                  name: "newAddress",
-                  type: "address",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint32",
-                  name: "migrationTime",
-                  type: "uint32",
-                },
-              ],
-              name: "AmountMigrated",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "apy",
+                  name: "restakedAmount",
                   type: "uint256",
                 },
                 {
@@ -754,114 +226,7 @@ const contracts = {
                   type: "uint32",
                 },
               ],
-              name: "ApyUpdated",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "frequency",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint32",
-                  name: "timeStamp",
-                  type: "uint32",
-                },
-              ],
-              name: "FrequencyUpdated",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: false,
-                  internalType: "uint8",
-                  name: "version",
-                  type: "uint8",
-                },
-              ],
-              name: "Initialized",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "minimumStake",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint32",
-                  name: "timeStamp",
-                  type: "uint32",
-                },
-              ],
-              name: "MinimumStakeUpdated",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "previousOwner",
-                  type: "address",
-                },
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "newOwner",
-                  type: "address",
-                },
-              ],
-              name: "OwnershipTransferred",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "user",
-                  type: "address",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "amount",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint32",
-                  name: "stakeTime",
-                  type: "uint32",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "slotId",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "rewardsLeft",
-                  type: "uint256",
-                },
-              ],
-              name: "ReStaked",
+              name: "RestakedAll",
               type: "event",
             },
             {
@@ -884,18 +249,6 @@ const contracts = {
                   internalType: "uint32",
                   name: "timeOfClaim",
                   type: "uint32",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "slotId",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "rewardsLeft",
-                  type: "uint256",
                 },
                 {
                   indexed: false,
@@ -971,6 +324,12 @@ const contracts = {
                   name: "slotid",
                   type: "uint256",
                 },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewards",
+                  type: "uint256",
+                },
               ],
               name: "Unstaked",
               type: "event",
@@ -1036,19 +395,7 @@ const contracts = {
                 {
                   indexed: false,
                   internalType: "uint256",
-                  name: "rewardLeft",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "_slotId",
-                  type: "uint256",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "rewardLeft",
+                  name: "rewardsLeft",
                   type: "uint256",
                 },
               ],
@@ -1319,6 +666,26 @@ const contracts = {
             {
               inputs: [
                 {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "restake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "restakeAll",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
                   internalType: "uint16",
                   name: "_newAPY",
                   type: "uint16",
@@ -1452,7 +819,971 @@ const contracts = {
           ],
         },
         YourContract: {
-          address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+          address: "0x684ec81d5e4e6eCE2FEa0aFBCAcc8BAF166A6Ae1",
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "_owner",
+                  type: "address",
+                },
+              ],
+              stateMutability: "nonpayable",
+              type: "constructor",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "greetingSetter",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "string",
+                  name: "newGreeting",
+                  type: "string",
+                },
+                {
+                  indexed: false,
+                  internalType: "bool",
+                  name: "premium",
+                  type: "bool",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "value",
+                  type: "uint256",
+                },
+              ],
+              name: "GreetingChange",
+              type: "event",
+            },
+            {
+              inputs: [],
+              name: "greeting",
+              outputs: [
+                {
+                  internalType: "string",
+                  name: "",
+                  type: "string",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "owner",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "premium",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "string",
+                  name: "_newGreeting",
+                  type: "string",
+                },
+              ],
+              name: "setGreeting",
+              outputs: [],
+              stateMutability: "payable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "totalCounter",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              name: "userGreetingCounter",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "withdraw",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              stateMutability: "payable",
+              type: "receive",
+            },
+          ],
+        },
+      },
+    },
+  ],
+  31337: [
+    {
+      name: "Anvil",
+      chainId: "31337",
+      contracts: {
+        StakingContract: {
+          address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: "uint16",
+                  name: "_apy",
+                  type: "uint16",
+                },
+                {
+                  internalType: "uint256",
+                  name: "_minimumStake",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "_frequency",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "nonpayable",
+              type: "constructor",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "totalReward",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeOfClaim",
+                  type: "uint32",
+                },
+              ],
+              name: "AllRewardClaimed",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "address",
+                  name: "newAddress",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "migrationTime",
+                  type: "uint32",
+                },
+              ],
+              name: "AmountMigrated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "apy",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "ApyUpdated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "frequency",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "FrequencyUpdated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint8",
+                  name: "version",
+                  type: "uint8",
+                },
+              ],
+              name: "Initialized",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "minimumStake",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "MinimumStakeUpdated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "previousOwner",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "OwnershipTransferred",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "stakeTime",
+                  type: "uint32",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "slotId",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewardsLeft",
+                  type: "uint256",
+                },
+              ],
+              name: "ReStaked",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "restakedAmount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "RestakedAll",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "totalReward",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeOfClaim",
+                  type: "uint32",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "slotId",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewardsLeft",
+                  type: "uint256",
+                },
+              ],
+              name: "RewardClaimed",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "stakeTime",
+                  type: "uint32",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "slotId",
+                  type: "uint256",
+                },
+              ],
+              name: "Staked",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "unstakeTime",
+                  type: "uint32",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "slotid",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewards",
+                  type: "uint256",
+                },
+              ],
+              name: "Unstaked",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "totalAmount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewards",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "unstakeTime",
+                  type: "uint32",
+                },
+              ],
+              name: "UnstakedAllTokens",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "unstakeTime",
+                  type: "uint32",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "_slotId",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "rewardsLeft",
+                  type: "uint256",
+                },
+              ],
+              name: "UnstakedTokens",
+              type: "event",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              name: "apy",
+              outputs: [
+                {
+                  internalType: "uint16",
+                  name: "value",
+                  type: "uint16",
+                },
+                {
+                  internalType: "uint32",
+                  name: "changeTime",
+                  type: "uint32",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "claimAllRewards",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_rewardAmount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "_slotId",
+                  type: "uint256",
+                },
+              ],
+              name: "claimRewards",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "frequency",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "getCurrentApy",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "getTotalRewards",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_slotId",
+                  type: "uint256",
+                },
+              ],
+              name: "getUserRewards",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_slotId",
+                  type: "uint256",
+                },
+              ],
+              name: "getUserStake",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint32",
+                  name: "startTime",
+                  type: "uint32",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "getUserStakesInfo",
+              outputs: [
+                {
+                  components: [
+                    {
+                      internalType: "uint256",
+                      name: "amount",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "rewards",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint32",
+                      name: "startTime",
+                      type: "uint32",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "id",
+                      type: "uint256",
+                    },
+                  ],
+                  internalType: "struct StakingContract.Slot[]",
+                  name: "",
+                  type: "tuple[]",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "getUserTotalStakes",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "address",
+                  name: "newAddress",
+                  type: "address",
+                },
+              ],
+              name: "migration",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "minimumStake",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "owner",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "pause",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "renounceOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_amount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "_slotId",
+                  type: "uint256",
+                },
+              ],
+              name: "restake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "restake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "restakeAll",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint16",
+                  name: "_newAPY",
+                  type: "uint16",
+                },
+              ],
+              name: "setAPY",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_frequency",
+                  type: "uint256",
+                },
+              ],
+              name: "setFrequency",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_newMinimumStake",
+                  type: "uint256",
+                },
+              ],
+              name: "setMinimumStake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "stake",
+              outputs: [],
+              stateMutability: "payable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              name: "stakes",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "counter",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "transferOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "unstake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_amount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "_slotId",
+                  type: "uint256",
+                },
+              ],
+              name: "unstake",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "unstakeAll",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "bool",
+                  name: "_pause",
+                  type: "bool",
+                },
+              ],
+              name: "updateStakingPause",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              stateMutability: "payable",
+              type: "receive",
+            },
+          ],
+        },
+        YourContract: {
+          address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
           abi: [
             {
               inputs: [
