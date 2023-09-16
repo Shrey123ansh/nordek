@@ -50,6 +50,18 @@ export async function createUser(user: { address: string; totalRewards: number; 
   }
 }
 
+export async function getStakes(address: string) {
+  const apiUrl = `api/stakes?address=${address}`;
+  try {
+    const response = await axios.get(apiUrl);
+    console.log(response);
+
+    return response.data.userStakes;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function getUserData(address: string) {
   const apiUrl = `api/userData?address=${address}`;
   try {

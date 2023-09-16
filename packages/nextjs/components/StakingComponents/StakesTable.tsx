@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { TransactionHash } from "../blockexplorer";
 import {
+  getStakes,
   removeStakeInDb,
   saveStakeToDb,
   updateRestakedAllDB,
@@ -20,18 +21,6 @@ import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldEventSubsc
 import { formatTx } from "~~/utils/formatStuff";
 import { notification } from "~~/utils/scaffold-eth";
 import { timeAgoUnix, unixTimestampToDate } from "~~/utils/time";
-
-async function getStakes(address: string) {
-  const apiUrl = `api/stakes?address=${address}`;
-  try {
-    const response = await axios.get(apiUrl);
-    console.log(response);
-
-    return response.data.userStakes;
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 export const StakesTable = () => {
   type stakesType = {
@@ -88,17 +77,6 @@ export const StakesTable = () => {
   useEffect(() => {
     callGetStakes();
   }, [address, dbUpdated, update]);
-
-  const getAllSlotsInfo = async () => {
-    const slotsInfo = await readContract({
-      address: deployedContractInfo?.address!,
-      abi: deployedContractInfo?.abi!,
-      functionName: "getUserStakesInfo",
-      account: address,
-    });
-
-    return slotsInfo;
-  };
 
   useEffect(() => {
     // const lastStakeRewards = async () => {
@@ -184,38 +162,44 @@ export const StakesTable = () => {
         console.log("📡 Unstaked", user, amount, unstakeTime, _slotId, rewardsLeft);
         console.log("IF VALUE", user && amount != undefined && _slotId != undefined && rewardsLeft != undefined);
         if (user && amount != undefined && _slotId != undefined && rewardsLeft != undefined) {
-          const topSlotId = stakes[0].slotId;
-          const slotsToDel = [];
-          let slotToUpdate = undefined;
-          if (rewardsLeft === BigInt(0)) {
-            // del topSlotId to _slotId
-            for (let i = topSlotId; i <= _slotId; i++) {
-              slotsToDel.push(i);
-            }
-          } else {
-            if (BigInt(topSlotId) === _slotId) {
-              // only need to update this val
-              slotToUpdate = [Number(_slotId), Number(rewardsLeft)];
-            } else {
-              // del topSlotId to _slotId, update the _slotId
-              for (let i = topSlotId; i < _slotId; i++) {
+          try {
+            const topSlotId = stakes[0].slotId;
+            const slotsToDel = [];
+            let slotToUpdate = undefined;
+            if (rewardsLeft === BigInt(0)) {
+              // del topSlotId to _slotId
+              for (let i = topSlotId; i <= _slotId; i++) {
                 slotsToDel.push(i);
               }
-              slotToUpdate = [Number(_slotId), Number(rewardsLeft)];
+            } else {
+              if (BigInt(topSlotId) === _slotId) {
+                // only need to update this val
+                slotToUpdate = [Number(_slotId), Number(rewardsLeft)];
+              } else {
+                // del topSlotId to _slotId, update the _slotId
+                for (let i = topSlotId; i < _slotId; i++) {
+                  slotsToDel.push(i);
+                }
+                slotToUpdate = [Number(_slotId), Number(rewardsLeft)];
+              }
             }
+
+            console.log("UPDATE: ", user, slotsToDel, slotToUpdate);
+            const updateInfo = {
+              user: user,
+              slotsToDel: slotsToDel,
+              updateSlot: slotToUpdate,
+            };
+
+            console.log("UPDATE INFO", updateInfo);
+
+            removeStakeInDb(updateInfo);
+            // setNewStake(newStake);
+            setUpdate(unstakeTime);
+          } catch (e) {
+            console.log("Stakes", stakes);
+            console.log("Unstake db update error", e);
           }
-
-          const updateInfo = {
-            user: user,
-            slotsToDel: slotsToDel,
-            updateSlot: slotToUpdate,
-          };
-
-          console.log("UPDATE INFO", updateInfo);
-
-          removeStakeInDb(updateInfo);
-          // setNewStake(newStake);
-          setUpdate(unstakeTime);
         }
       });
     },
@@ -335,7 +319,12 @@ export const StakesTable = () => {
 
         if (user && timeStamp && restakedAmount != undefined) {
           const updateSlots = async () => {
-            const slots = await getAllSlotsInfo();
+            const slots = await readContract({
+              address: deployedContractInfo?.address!,
+              abi: deployedContractInfo?.abi!,
+              functionName: "getUserStakesInfo",
+              account: address,
+            });
             console.log("retrieved slots", slots);
 
             const transformedArray = slots.map(item => ({
@@ -349,12 +338,13 @@ export const StakesTable = () => {
             console.log("TRANSFORMED ARRAY", transformedArray);
 
             console.log("Updating restake All db");
-            //updateRestakedAllDB(user, transformedArray);
+            updateRestakedAllDB(user, transformedArray);
 
             const updates = {
               totalRestakes: Number(restakedAmount),
             };
 
+            console.log("Updating userData");
             updateUserData(user, updates);
 
             notification.success(<div> Restaked {formatEther(restakedAmount)} </div>);
