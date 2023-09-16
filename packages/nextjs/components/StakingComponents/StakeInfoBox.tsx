@@ -5,7 +5,6 @@ import {
   useDeployedContractInfo,
   useScaffoldContractRead,
   useScaffoldContractWrite,
-  useScaffoldEventSubscriber,
 } from "~~/hooks/scaffold-eth";
 import { getTokenData } from "~~/utils/coingeckoPrices";
 import { notification } from "~~/utils/scaffold-eth/notification";
