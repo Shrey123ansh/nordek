@@ -319,33 +319,37 @@ export const StakesTable = () => {
 
         if (user && timeStamp && restakedAmount != undefined) {
           const updateSlots = async () => {
-            const slots = await readContract({
-              address: deployedContractInfo?.address!,
-              abi: deployedContractInfo?.abi!,
-              functionName: "getUserStakesInfo",
-              account: address,
-            });
-            console.log("retrieved slots", slots);
+            try {
+              const slots = await readContract({
+                address: deployedContractInfo?.address!,
+                abi: deployedContractInfo?.abi!,
+                functionName: "getUserStakesInfo",
+                account: address,
+              });
+              console.log("retrieved slots", slots);
 
-            const transformedArray = slots.map(item => ({
-              stakedAmount: item.amount,
-              stakedAt: item.startTime,
-              address: user, // Replace with the desired address
-              hash: log.transactionHash,
-              slotId: item.id, // Replace with the desired hash
-            }));
+              const transformedArray = slots.map(item => ({
+                stakedAmount: item.amount,
+                stakedAt: item.startTime,
+                address: user, // Replace with the desired address
+                hash: log.transactionHash,
+                slotId: item.id, // Replace with the desired hash
+              }));
 
-            console.log("TRANSFORMED ARRAY", transformedArray);
+              console.log("TRANSFORMED ARRAY", transformedArray);
 
-            console.log("Updating restake All db");
-            updateRestakedAllDB(user, transformedArray);
+              console.log("Updating restake All db");
+              //await updateRestakedAllDB(user, transformedArray);
 
-            const updates = {
-              totalRestakes: Number(restakedAmount),
-            };
+              const updates = {
+                totalRestakes: Number(restakedAmount),
+              };
 
-            console.log("Updating userData");
-            updateUserData(user, updates);
+              console.log("Updating userData");
+              await updateUserData(user, updates);
+            } catch (e) {
+              console.log("failed to update the DB", e);
+            }
 
             notification.success(<div> Restaked {formatEther(restakedAmount)} </div>);
           };

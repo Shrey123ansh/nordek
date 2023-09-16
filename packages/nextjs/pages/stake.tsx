@@ -28,14 +28,13 @@ const StakeBox = () => {
     if (isStaking) {
       setStakeAmount(Number(balance?.toFixed(4)));
     } else {
-      setStakeAmount(Number(formatEther(userTotalStakes)));
+      setStakeAmount(Number(formatEther(userTotalStakes)).toFixed(4));
     }
   }
 
   const { writeAsync: stake, isStakeLoading } = useScaffoldContractWrite({
     contractName: "StakingContract",
     functionName: "stake",
-
     account: address,
     value: `${stakeAmount}`,
     onBlockConfirmation: txnReceipt => {
@@ -47,7 +46,7 @@ const StakeBox = () => {
     contractName: "StakingContract",
     functionName: "unstake",
     account: address,
-    args: [parseEther(stakeAmount.toString())],
+    args: [parseEther(stakeAmount?.toString())],
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
