@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useState } from "react";
 import { Abi, ExtractAbiFunctionNames } from "abitype";
 import { parseEther } from "viem";

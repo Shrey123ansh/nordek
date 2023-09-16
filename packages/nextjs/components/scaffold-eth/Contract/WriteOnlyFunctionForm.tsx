@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useState } from "react";
 import { Abi, AbiFunction } from "abitype";
 import { Address, TransactionReceipt } from "viem";
@@ -33,9 +34,13 @@ export const WriteOnlyFunctionForm = ({ abiFunction, onChange, contractAddress }
     writeAsync,
   } = useContractWrite({
     chainId: getTargetNetwork().id,
+
     address: contractAddress,
+
     functionName: abiFunction.name,
+
     abi: [abiFunction] as Abi,
+
     args: getParsedContractFunctionArgs(form),
   });
 

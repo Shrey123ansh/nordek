@@ -13,8 +13,8 @@ export default function LiquidityMain() {
   const [token0Amount, setToken0Amount] = useState<number>(0.0);
   const [token1Amount, setToken1Amount] = useState<number>(0.0);
   const { address } = useAccount();
-  const [token0, setToken0] = useState<tokenType>(localTokens[4]);
-  const [token1, setToken1] = useState<tokenType>(localTokens[3]);
+  const [token0, setToken0] = useState<tokenType>(localTokens.ETH);
+  const [token1, setToken1] = useState<tokenType>(localTokens.NRK);
 
   const handleAddLiquidity = () => {
     console.log("Swapped");

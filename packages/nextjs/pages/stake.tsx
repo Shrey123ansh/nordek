@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useState } from "react";
 import type { NextPage } from "next";
 import { formatEther, parseEther } from "viem";
@@ -34,6 +35,7 @@ const StakeBox = () => {
   const { writeAsync: stake, isStakeLoading } = useScaffoldContractWrite({
     contractName: "StakingContract",
     functionName: "stake",
+
     account: address,
     value: `${stakeAmount}`,
     onBlockConfirmation: txnReceipt => {

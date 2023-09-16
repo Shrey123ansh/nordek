@@ -19,7 +19,7 @@ import { RestakeButton } from "~~/components/StakingComponents/StakeButtons";
 import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 import { formatTx } from "~~/utils/formatStuff";
 import { notification } from "~~/utils/scaffold-eth";
-import { timeAgoUnix } from "~~/utils/time";
+import { timeAgoUnix, unixTimestampToDate } from "~~/utils/time";
 
 async function getStakes(address: string) {
   const apiUrl = `api/stakes?address=${address}`;
@@ -52,7 +52,7 @@ export const StakesTable = () => {
   const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract");
   const [newStake, setNewStake] = useState<stakesType>();
   const [dbUpdated, setDBUpdated] = useState<any>();
-  const [update, setUpdate] = useState(0)
+  const [update, setUpdate] = useState(0);
 
   const callGetStakes = async () => {
     try {
@@ -214,7 +214,7 @@ export const StakesTable = () => {
 
           removeStakeInDb(updateInfo);
           // setNewStake(newStake);
-          setUpdate(unstakeTime)
+          setUpdate(unstakeTime);
         }
       });
     },
@@ -246,7 +246,6 @@ export const StakesTable = () => {
       });
     },
   });
-
 
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
@@ -348,7 +347,6 @@ export const StakesTable = () => {
 
             console.log("TRANSFORMED ARRAY", transformedArray);
 
-
             console.log("Updating restake All db");
             //updateRestakedAllDB(user, transformedArray);
 
@@ -413,7 +411,7 @@ export const StakesTable = () => {
                         <TransactionHash hash={stake?.hash}></TransactionHash>
                       </td>
                       {/* <td className="px-4 py-2 text-center"><a href=""></a>{formatTx(stake.hash)}</td> */}
-                      <td className="px-4 py-2 text-center">{timeAgoUnix(stake?.stakedAt)}</td>
+                      <td className="px-4 py-2 text-center">{unixTimestampToDate(stake?.stakedAt)}</td>
                       <td className="px-4 py-2 text-center">{stake?.rewards}</td>
 
                       <td className="px-4 py-2 text-center flex justify-center space-x-4">

@@ -1,5 +1,5 @@
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { tokenType } from "~~/data/data";
 
 interface TokenListPopupProps {

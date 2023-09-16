@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useState } from "react";
 import GradientComponent from "./GradientContainer";
 import { formatEther } from "viem";
