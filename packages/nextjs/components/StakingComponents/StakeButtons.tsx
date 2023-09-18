@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/router";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 export const ClaimButton = () => {
@@ -39,5 +40,17 @@ export const RestakeButton = () => {
         Restake All
       </button>
     </div>
+  );
+};
+
+export const TransactionsButton = ({ address }) => {
+  const router = useRouter();
+  return (
+    <button
+      className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] font-bold text-white py-0 px-8 rounded-lg"
+      onClick={() => router.push(`/blockexplorer/address/${address}`)}
+    >
+      Transactions
+    </button>
   );
 };

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { TransactionHash } from "../blockexplorer";
 import {
+  getPlatformDetails,
   getStakes,
   removeAllStakesForUser,
   removeStakeInDb,
   saveStakeToDb,
+  setPlatformDetails,
   updateRestakedAllDB,
   updateRestakedDB,
   updateUserData,
@@ -12,16 +14,16 @@ import {
 import { ClaimPopup } from "./ClaimPopup";
 import GradientComponent from "./GradientContainer";
 import { readContract } from "@wagmi/core";
-import axios from "axios";
+import { Timestamp } from "mongodb";
+import useSWR from "swr";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { ClaimButton } from "~~/components/StakingComponents/StakeButtons";
+import { ClaimButton, TransactionsButton } from "~~/components/StakingComponents/StakeButtons";
 import { RestakeButton } from "~~/components/StakingComponents/StakeButtons";
-import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
-import { formatTx } from "~~/utils/formatStuff";
+import { useDeployedContractInfo, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
-import { timeAgoUnix, unixTimestampToDate } from "~~/utils/time";
+import { unixTimestampToDate } from "~~/utils/time";
 
 export const StakesTable = () => {
   type stakesType = {
@@ -36,76 +38,107 @@ export const StakesTable = () => {
   const [isClaim, setIsClaim] = useState(true);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(0);
-  const [stakesLoading, setStakesLoading] = useState(true);
-  const [stakes, setStakes] = useState<stakesType[]>([]);
+  //const [stakesLoading, setStakesLoading] = useState(true);
+  //const [stakes, setStakes] = useState<stakesType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract");
-  const [newStake, setNewStake] = useState<stakesType>();
-  const [dbUpdated, setDBUpdated] = useState<any>();
-  const [update, setUpdate] = useState(0);
 
-  const callGetStakes = async () => {
-    try {
-      const data = await getStakes(address || "");
-      console.log("Loaded Data", data);
-
-      if (data) {
-        for (let i = 0; i < data.length; i++) {
-          try {
-            const rewards = await readContract({
-              address: deployedContractInfo?.address!,
-              abi: deployedContractInfo?.abi!,
-              functionName: "getUserRewards",
-              args: [BigInt(data[i].slotId)],
-              account: address,
-            });
-
-            data[i].rewards = formatEther(rewards);
-          } catch (e) {
-            console.log("changing rewards failed");
-          }
-        }
-
-        setStakes(data);
-        setStakesLoading(false);
-      } else {
-        setStakesLoading(false);
-      }
-    } catch (e) {
-      console.log("getting data failed", e);
-    }
+  const stakesFetcher = async () => {
+    const data = await getStakes(address || "");
+    console.log("Loaded SWR Data", data);
+    return data;
   };
-  useEffect(() => {
-    callGetStakes();
-  }, [address, dbUpdated, update]);
 
-  useEffect(() => {
-    // const lastStakeRewards = async () => {
-    //   console.log("updating")
-    //   try {
-    //     const data = stakes
-    //     const rewards = await readContract({
-    //       address: deployedContractInfo?.address!,
-    //       abi: deployedContractInfo?.abi!,
-    //       functionName: "getUserRewards",
-    //       args: [BigInt(newStake?.slotId! - 1)],
-    //       account: address,
-    //     });
-    //     data[newStake?.slotId! - 1].rewards = formatEther(rewards)
-    //     data.push(newStake!)
-    //     console.log(data)
-    //     setStakes(data);
-    //   } catch { }
-    // }
-    // if (newStake != undefined && newStake.slotId != 0) {
-    //   console.log("updating the previous value")
-    //   lastStakeRewards()
-    // }
-    // if (newStake?.slotId == 0) {
-    // }
+  // const platformApyFetcher = async () => {
+  //   const data = await getPlatformDetails();
+  //   return data;
+  // };
 
-    setStakes([...stakes, newStake]);
-  }, [newStake]);
+  // const {
+  //   data: platformDetails,
+  //   isLoading: isPlatformDetailsLoading,
+  //   error: isPlatformDetailsError,
+  //   mutate: mutatePlatformDetails,
+  // } = useSWR(`/api/platformDetails`, platformApyFetcher);
+
+  function updateWithRewards(data) {}
+
+  const {
+    data: stakes,
+    isLoading: isStakesLoading,
+    error: isStakesError,
+    mutate: mutateStakes,
+  } = useSWR(address ? `/api/stakes` : null, stakesFetcher);
+  // ,{
+  //   onSuccess: data => updateWithRewards(data)
+  // });
+
+  if (isStakesError) {
+    return "An Error Occured";
+  }
+
+  // const callGetStakes = async () => {
+  //   try {
+  //     const data = await getStakes(address || "");
+  //     console.log("Loaded Data", data);
+
+  //     if (data) {
+  //       for (let i = 0; i < data.length; i++) {
+  //         try {
+  //           const rewards = await readContract({
+  //             address: deployedContractInfo?.address!,
+  //             abi: deployedContractInfo?.abi!,
+  //             functionName: "getUserRewards",
+  //             args: [BigInt(data[i].slotId)],
+  //             account: address,
+  //           });
+
+  //           data[i].rewards = formatEther(rewards);
+  //         } catch (e) {
+  //           console.log("changing rewards failed");
+  //         }
+  //       }
+
+  //       setStakes(data);
+  //       setStakesLoading(false);
+  //     } else {
+  //       setStakesLoading(false);
+  //     }
+  //   } catch (e) {
+  //     console.log("getting data failed", e);
+  //   }
+  // };
+  // useEffect(() => {
+  //   callGetStakes();
+  // }, [address, dbUpdated, update]);
+
+  // useEffect(() => {
+  //   // const lastStakeRewards = async () => {
+  //   //   console.log("updating")
+  //   //   try {
+  //   //     const data = stakes
+  //   //     const rewards = await readContract({
+  //   //       address: deployedContractInfo?.address!,
+  //   //       abi: deployedContractInfo?.abi!,
+  //   //       functionName: "getUserRewards",
+  //   //       args: [BigInt(newStake?.slotId! - 1)],
+  //   //       account: address,
+  //   //     });
+  //   //     data[newStake?.slotId! - 1].rewards = formatEther(rewards)
+  //   //     data.push(newStake!)
+  //   //     console.log(data)
+  //   //     setStakes(data);
+  //   //   } catch { }
+  //   // }
+  //   // if (newStake != undefined && newStake.slotId != 0) {
+  //   //   console.log("updating the previous value")
+  //   //   lastStakeRewards()
+  //   // }
+  //   // if (newStake?.slotId == 0) {
+  //   // }
+
+  //   setStakes([...stakes, newStake]);
+  // }, [newStake]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -115,15 +148,98 @@ export const StakesTable = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
-  // removed apy value here
-
   const startIndex = (currentPage - 1) * 5;
   const endIndex = startIndex + 5;
 
-  // Slice the data to show only items for the current page
-  const paginatedData = stakes.slice(startIndex, endIndex);
-  // console.log("Stakes after slicing", stakes);
+  // const addPlatformDetailsMutation = async details => {
+  //   try {
+  //     await setPlatformDetails(details);
+  //     mutatePlatformDetails();
+  //   } catch (e) {
+  //     console.log("Error in saving new stake", e);
+  //   }
+  // };
 
+  const addStakesMutation = async newStake => {
+    console.log("Called mutation");
+    try {
+      await saveStakeToDb(newStake);
+      mutateStakes();
+    } catch (e) {
+      console.log("Error in saving new stake", e);
+    }
+  };
+
+  const removeStakesMutation = async updateInfo => {
+    console.log("Called mutation");
+    try {
+      await removeStakeInDb(updateInfo);
+      mutateStakes();
+    } catch (e) {
+      console.log("Error in removing stake on unstake", e);
+    }
+  };
+
+  const removeAllStakesMutation = async user => {
+    console.log("Called mutation");
+    try {
+      await removeAllStakesForUser(user);
+
+      mutateStakes();
+    } catch (e) {
+      console.log("Error in removing stake on unstake", e);
+    }
+  };
+
+  const updateRestakedMutation = async updatedStake => {
+    console.log("Called mutation");
+    try {
+      await updateRestakedDB(updatedStake);
+
+      mutateStakes();
+    } catch (e) {
+      console.log("Error in removing stake on unstake", e);
+    }
+  };
+
+  const updateAllRestakedMutation = async (user, updatedStakes) => {
+    console.log("Called mutation");
+    try {
+      await updateRestakedAllDB(user, updatedStakes);
+
+      mutateStakes();
+    } catch (e) {
+      console.log("Error in removing stake on unstake", e);
+    }
+  };
+
+  // APY Updated
+  // useScaffoldEventSubscriber({
+  //   contractName: "StakingContract",
+  //   eventName: "ApyUpdated",
+  //   listener: logs => {
+  //     logs.map(log => {
+  //       // TODO save to db
+
+  //       const { apy, timeStamp } = log.args;
+  //       console.log("📡 New APY set", apy, timeStamp);
+
+  //       if (apy != undefined && Timestamp != undefined) {
+  //         console.log("saving new apy");
+  //         const details = {
+  //           apy: apy,
+  //           timestamp: Number(timeStamp),
+  //           hash: log.transactionHash ? log.transactionHash?.toString() : "",
+  //         };
+
+  //         console.log("Saving to DB from event");
+  //         addPlatformDetailsMutation(details);
+  //       }
+  //     });
+  //   },
+  // });
+
+  // Staked
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "Staked",
@@ -135,6 +251,7 @@ export const StakesTable = () => {
         console.log("📡 Staked", user, amount, stakeTime, slotId);
 
         if (user && amount != undefined && stakeTime != undefined) {
+          console.log("saving new stake");
           const newStake: stakesType = {
             stakedAt: stakeTime,
             stakedAmount: Number(amount),
@@ -144,26 +261,25 @@ export const StakesTable = () => {
           };
 
           console.log("Saving to DB from event");
-
-          saveStakeToDb(newStake);
-
-          setNewStake(newStake);
-          // setStakes([...stakes, newStake]);
+          addStakesMutation(newStake);
         }
       });
     },
   });
 
+  // Unstaked arbitrary tokens
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "UnstakedTokens",
     listener: logs => {
       logs.map(log => {
+        console.log("STAKES before if", stakes);
         const { user, amount, unstakeTime, _slotId, rewardsLeft } = log.args;
         console.log("📡 Unstaked", user, amount, unstakeTime, _slotId, rewardsLeft);
         console.log("IF VALUE", user && amount != undefined && _slotId != undefined && rewardsLeft != undefined);
-        if (user && amount != undefined && _slotId != undefined && rewardsLeft != undefined) {
+        if (user != undefined && amount != undefined && _slotId != undefined && rewardsLeft != undefined) {
           try {
+            console.log("STAKES in unstaked tokens", stakes);
             const topSlotId = stakes[0].slotId;
             const slotsToDel = [];
             let slotToUpdate = undefined;
@@ -193,10 +309,7 @@ export const StakesTable = () => {
             };
 
             console.log("UPDATE INFO", updateInfo);
-
-            removeStakeInDb(updateInfo);
-            // setNewStake(newStake);
-            setUpdate(unstakeTime);
+            removeStakesMutation(updateInfo);
           } catch (e) {
             console.log("Stakes", stakes);
             console.log("Unstake db update error", e);
@@ -206,6 +319,7 @@ export const StakesTable = () => {
     },
   });
 
+  // Unstaked all tokens
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "UnstakedAllTokens",
@@ -214,7 +328,7 @@ export const StakesTable = () => {
         const { user, totalAmount, rewards, unstakeTime } = log.args;
         console.log("📡 Unstaked", user, totalAmount, rewards, unstakeTime);
         if (user && totalAmount && unstakeTime && rewards != undefined) {
-          removeAllStakesForUser(user);
+          removeAllStakesMutation(user);
           notification.error(<div> Unstaked All: {formatEther(totalAmount)} </div>);
           notification.success(<div> Claimed {formatEther(rewards)} </div>);
         }
@@ -222,6 +336,7 @@ export const StakesTable = () => {
     },
   });
 
+  // Reward Claimed
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "RewardClaimed",
@@ -244,6 +359,7 @@ export const StakesTable = () => {
     },
   });
 
+  // All Rewards Claimed
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "AllRewardClaimed",
@@ -266,6 +382,7 @@ export const StakesTable = () => {
     },
   });
 
+  // Restaked
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "ReStaked",
@@ -285,7 +402,7 @@ export const StakesTable = () => {
           };
 
           console.log("Updating restaked db");
-          updateRestakedDB(updatedStake);
+          updateRestakedMutation(updatedStake);
 
           const updates = {
             totalRestakes: Number(amount),
@@ -299,6 +416,7 @@ export const StakesTable = () => {
     },
   });
 
+  // Restaked All
   useScaffoldEventSubscriber({
     contractName: "StakingContract",
     eventName: "RestakedAll",
@@ -328,8 +446,7 @@ export const StakesTable = () => {
 
               console.log("TRANSFORMED ARRAY", transformedArray);
 
-              console.log("Updating restake All db");
-              await updateRestakedAllDB(user, transformedArray);
+              await updateAllRestakedMutation(user, transformedArray);
 
               const updates = {
                 totalRestakes: Number(restakedAmount),
@@ -357,13 +474,14 @@ export const StakesTable = () => {
           <div className="flex justify-between mb-4">
             <h1 className="text-2xl font-bold text-left"> Your Staked Positions </h1>
             <div className="flex space-x-4">
+              <TransactionsButton address={address}></TransactionsButton>
               <ClaimButton></ClaimButton>
 
               <RestakeButton></RestakeButton>
             </div>
           </div>
 
-          {stakesLoading ? (
+          {isStakesLoading || !stakes ? (
             <div className="justify-center">
               <button type="button" className="bg-base-100 rounded-2xl px-4" disabled>
                 <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg>
@@ -371,85 +489,86 @@ export const StakesTable = () => {
               </button>
             </div>
           ) : (
-            <table className="w-full bg-base-200 shadow-lg rounded-lg overflow-hidden">
-              <thead className="w-full">
-                <tr className="bg-[#11101A] ">
-                  <th className="px-4 py-4 border border-white">ID</th>
-                  <th className="px-4 py-4 border border-white">Amount Staked</th>
-                  <th className="px-4 py-4 border border-white">Txn Hash</th>
-                  <th className="px-4 py-4 border border-white">Staked At</th>
-                  <th className="px-4 py-4 border border-white">Rewards</th>
-                  <th className="px-4 py-4 border border-white">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Sample Data */}
-                {paginatedData.map((stake: any, idx: any) => {
-                  return (
-                    <tr
-                      className="w-full p-4 my-2 items-center justify-center border border-white bg-[#11101A]"
-                      key={stake.hash}
-                    >
-                      <td className="px-4 py-2 text-center">{stake?.slotId}</td>
-                      <td className="px-4 py-2 text-center">{formatEther(stake?.stakedAmount || "")}</td>
-                      <td className="px-4 py-2 text-center">
-                        <TransactionHash hash={stake?.hash}></TransactionHash>
-                      </td>
-                      {/* <td className="px-4 py-2 text-center"><a href=""></a>{formatTx(stake.hash)}</td> */}
-                      <td className="px-4 py-2 text-center">{unixTimestampToDate(stake?.stakedAt)}</td>
-                      <td className="px-4 py-2 text-center">{stake?.rewards}</td>
+            <div>
+              <table className="w-full bg-base-200 shadow-lg rounded-lg overflow-hidden">
+                <thead className="w-full">
+                  <tr className="bg-[#11101A] ">
+                    <th className="px-4 py-4 border border-white">ID</th>
+                    <th className="px-4 py-4 border border-white">Amount Staked</th>
+                    <th className="px-4 py-4 border border-white">Txn Hash</th>
+                    <th className="px-4 py-4 border border-white">Staked At</th>
+                    <th className="px-4 py-4 border border-white">Rewards</th>
+                    <th className="px-4 py-4 border border-white">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Sample Data */}
+                  {stakes.slice(startIndex, endIndex).map((stake: any, idx: any) => {
+                    return (
+                      <tr
+                        className="w-full p-4 my-2 items-center justify-center border border-white bg-[#11101A]"
+                        key={idx}
+                      >
+                        <td className="px-4 py-2 text-center">{stake?.slotId}</td>
+                        <td className="px-4 py-2 text-center">{formatEther(stake?.stakedAmount || "")}</td>
+                        <td className="px-4 py-2 text-center">
+                          <TransactionHash hash={stake?.hash}></TransactionHash>
+                        </td>
+                        {/* <td className="px-4 py-2 text-center"><a href=""></a>{formatTx(stake.hash)}</td> */}
+                        <td className="px-4 py-2 text-center">{unixTimestampToDate(stake?.stakedAt)}</td>
+                        <td className="px-4 py-2 text-center">{stake?.rewards}</td>
 
-                      <td className="px-4 py-2 text-center flex justify-center space-x-4">
-                        {/* <ActionButton text="Claim" onClick={() => openClaimPopup()}></ActionButton> */}
+                        <td className="px-4 py-2 text-center flex justify-center space-x-4">
+                          {/* <ActionButton text="Claim" onClick={() => openClaimPopup()}></ActionButton> */}
 
-                        <button
-                          className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-0 px-8 rounded-full"
-                          onClick={() => {
-                            setIsClaim(true);
-                            handlePopup();
-                            setSelectedSlot(stake.slotId);
-                          }}
-                        >
-                          Claim
-                        </button>
-                        <div className="p-0.5 text-sm rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3]">
                           <button
-                            type="button"
-                            className="px-4 py-2 border-1 rounded-full bg-gray-800"
+                            className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-0 px-8 rounded-full"
                             onClick={() => {
-                              setIsClaim(false);
+                              setIsClaim(true);
                               handlePopup();
                               setSelectedSlot(stake.slotId);
                             }}
                           >
-                            Restake
+                            Claim
                           </button>
-                        </div>
-                        {/* <UnStake unstakeAmount={stake.stakedAmount} slotId={stake.slotId}></UnStake> */}
-                      </td>
-                    </tr>
-                  );
-                })}
-                {/* Add more rows with similar structure */}
-                <ClaimPopup
-                  isOpen={isPopupOpen}
-                  onClose={handlePopup}
-                  slotId={BigInt(selectedSlot)}
-                  isClaim={isClaim}
-                ></ClaimPopup>
-              </tbody>
-            </table>
+                          <div className="p-0.5 text-sm rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3]">
+                            <button
+                              type="button"
+                              className="px-4 py-2 border-1 rounded-full bg-gray-800"
+                              onClick={() => {
+                                setIsClaim(false);
+                                handlePopup();
+                                setSelectedSlot(stake.slotId);
+                              }}
+                            >
+                              Restake
+                            </button>
+                          </div>
+                          {/* <UnStake unstakeAmount={stake.stakedAmount} slotId={stake.slotId}></UnStake> */}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {/* Add more rows with similar structure */}
+                  <ClaimPopup
+                    isOpen={isPopupOpen}
+                    onClose={handlePopup}
+                    slotId={BigInt(selectedSlot)}
+                    isClaim={isClaim}
+                  ></ClaimPopup>
+                </tbody>
+              </table>
+              <div className="flex pagination space-x-4 justify-end">
+                <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                  <ArrowLeftIcon className="inline-block h-4 w-4" />
+                </button>
+                <span className="text-accent font-bold">{currentPage}</span>
+                <button onClick={() => handlePageChange(currentPage + 1)} disabled={endIndex >= stakes.length}>
+                  <ArrowRightIcon className="inline-block h-4 w-4" />
+                </button>
+              </div>
+            </div>
           )}
-
-          <div className="flex pagination space-x-4 justify-end">
-            <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-              <ArrowLeftIcon className="inline-block h-4 w-4" />
-            </button>
-            <span className="text-accent font-bold">{currentPage}</span>
-            <button onClick={() => handlePageChange(currentPage + 1)} disabled={endIndex >= stakes.length}>
-              <ArrowRightIcon className="inline-block h-4 w-4" />
-            </button>
-          </div>
         </div>
       </GradientComponent>
     </section>

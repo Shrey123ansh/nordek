@@ -54,9 +54,33 @@ export async function getStakes(address: string) {
   const apiUrl = `api/stakes?address=${address}`;
   try {
     const response = await axios.get(apiUrl);
-    console.log(response);
-
     return response.data.userStakes;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getPlatformDetails() {
+  const apiUrl = `api/platformDetails`;
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.platformDetails;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function setPlatformDetails(details: { apy: number; timestamp: Date }) {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: "JWT fefege...",
+  };
+  try {
+    const response = await axios.post("/api/platformDetails", details, {
+      headers: headers,
+    });
+    console.log(response);
+    console.log("Platform Details Added");
   } catch (error) {
     console.log(error);
   }
@@ -130,14 +154,12 @@ export const updateRestakedAllDB = async (address: string, newStakes: any) => {
   console.log("Saved to DB");
 };
 export const removeAllStakesForUser = async (user: string) => {
-  console.log("REMOVING USER STAKES FROM DB");
   try {
     const response = await axios.delete(`/api/stakes?delAddress=${user}`);
     console.log(response.data);
   } catch (error) {
     console.error("Delete request failed:", error);
   }
-  console.log("Removed from DB");
 };
 export const removeStakeInDb = async (updateInfo: {
   user: string;
@@ -154,9 +176,8 @@ export const removeStakeInDb = async (updateInfo: {
     const response = await axios.put(`/api/updateStakes/`, updateInfo, {
       headers: headers,
     });
+    console.log(response);
   } catch (e) {
     console.log("Couldn't send update/del request", e);
   }
-
-  console.log("Removed from DB");
 };
