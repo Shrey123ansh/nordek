@@ -21,11 +21,12 @@ import { useAccount } from "wagmi";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { ClaimButton, TransactionsButton } from "~~/components/StakingComponents/StakeButtons";
 import { RestakeButton } from "~~/components/StakingComponents/StakeButtons";
-import { useDeployedContractInfo, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
+import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
+import { calculateRewards } from "~~/utils/Norswap";
 import { notification } from "~~/utils/scaffold-eth";
 import { unixTimestampToDate } from "~~/utils/time";
 
-export const StakesTable = () => {
+export const StakesTable = ({ platformDetails }) => {
   type stakesType = {
     stakedAt: number;
     stakedAmount: number;
@@ -38,10 +39,15 @@ export const StakesTable = () => {
   const [isClaim, setIsClaim] = useState(true);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(0);
-  //const [stakesLoading, setStakesLoading] = useState(true);
-  //const [stakes, setStakes] = useState<stakesType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract");
+
+  const { data: frequency, isLoading: isFrequency } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "frequency",
+  });
+
+  console.log("PLATFORM DETAILS", platformDetails);
 
   const stakesFetcher = async () => {
     const data = await getStakes(address || "");
@@ -61,19 +67,37 @@ export const StakesTable = () => {
   //   mutate: mutatePlatformDetails,
   // } = useSWR(`/api/platformDetails`, platformApyFetcher);
 
-  function updateWithRewards(data) {}
+  function updateWithRewards(
+    data: stakesType[],
+    frequency,
+    platformDetails: { apy: string; timestamp: string; hash: string }[],
+  ) {
+    const apyData = platformDetails.map(details => ({
+      value: Number(details.apy),
+      timestamp: Number(details.timestamp),
+    }));
+
+    data.map(stake => {
+      stake.rewards = calculateRewards({
+        amount: stake.stakedAmount,
+        startTime: stake.stakedAt,
+        frequency: frequency,
+        apy: apyData,
+      }).toString();
+    });
+  }
 
   const {
     data: stakes,
     isLoading: isStakesLoading,
     error: isStakesError,
     mutate: mutateStakes,
-  } = useSWR(address ? `/api/stakes` : null, stakesFetcher);
-  // ,{
-  //   onSuccess: data => updateWithRewards(data)
-  // });
+  } = useSWR(address && frequency && platformDetails ? `/api/stakes` : null, stakesFetcher, {
+    onSuccess: data => updateWithRewards(data, Number(frequency), platformDetails),
+  });
 
   if (isStakesError) {
+    console.log("Stakes Error", isStakesError);
     return "An Error Occured";
   }
 
@@ -493,7 +517,7 @@ export const StakesTable = () => {
               <table className="w-full bg-base-200 shadow-lg rounded-lg overflow-hidden">
                 <thead className="w-full">
                   <tr className="bg-[#11101A] ">
-                    <th className="px-4 py-4 border border-white">ID</th>
+                    <th className="px-4 py-4 border border-white">Slot ID</th>
                     <th className="px-4 py-4 border border-white">Amount Staked</th>
                     <th className="px-4 py-4 border border-white">Txn Hash</th>
                     <th className="px-4 py-4 border border-white">Staked At</th>

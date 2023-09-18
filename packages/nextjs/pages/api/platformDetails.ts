@@ -9,11 +9,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   switch (req.method) {
     case "POST":
-      const reqBody = req.body;
+      const { apy, timestamp, hash } = req.body;
 
-      await db.collection("platformDetails").insertOne(reqBody);
-      console.log("SAVED TO DB", reqBody);
-      res.status(200).json({ message: "Added New Platform Details Field", data: reqBody });
+      await db.collection("platformDetails").insertOne({ apy, timestamp, hash });
+      console.log("SAVED TO DB", req.body);
+      res.status(200).json({ message: "Added New Platform Details Field", data: req.body });
       break;
 
     case "GET":

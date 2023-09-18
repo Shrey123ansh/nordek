@@ -70,7 +70,7 @@ export async function getPlatformDetails() {
   }
 }
 
-export async function setPlatformDetails(details: { apy: number; timestamp: Date }) {
+export async function setPlatformDetails(details: { apy: number; timestamp: number }) {
   const headers = {
     "Content-Type": "application/json",
     Authorization: "JWT fefege...",

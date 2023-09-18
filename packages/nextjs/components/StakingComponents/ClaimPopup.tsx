@@ -82,13 +82,15 @@ export const ClaimPopup = ({
               value={formatEther(amount)}
               onChange={e => setAmount(BigInt(e.target.value))}
             />
-            <button
-              type="button"
-              className="relative top-1 mr-2 h-8 bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white rounded-full px-4"
-              onClick={setStakeAmountMax}
-            >
-              Max
-            </button>
+            <div className="relative top-1 h-8 mr-2 rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] p-0.5 text-sm text-white">
+              <button
+                type="button"
+                className="border-1 rounded-full font-bold bg-gray-800 px-4 h-7"
+                onClick={setStakeAmountMax}
+              >
+                Max
+              </button>
+            </div>
           </div>
 
           <div className="flex flex-col space-y-4 mb-8">

@@ -1,13 +1,13 @@
 export const calculateRewards = ({
   amount,
   startTime,
-  apy,
   frequency,
+  apy,
 }: {
   amount: number;
   startTime: number;
   frequency: number;
-  apy: { value: number; changeTime: number }[];
+  apy: { value: number; timestamp: number }[];
 }) => {
   let index = 0;
   let rewards = 0;
@@ -18,7 +18,7 @@ export const calculateRewards = ({
 
   if (length > 1) {
     for (let i = 0; i < length; i++) {
-      if (startTime <= apy[i].changeTime) {
+      if (startTime <= apy[i].timestamp) {
         index = i;
         break;
       }
@@ -28,10 +28,10 @@ export const calculateRewards = ({
       return (amount * apy[length - 1].value * (blockTime - startTime)) / (10000 * frequency);
     } else {
       for (let i = index; i < length; i++) {
-        let _value = (amount * apy[i - 1].value * (apy[i].changeTime - startTime)) / (10000 * frequency);
+        let _value = (amount * apy[i - 1].value * (apy[i].timestamp - startTime)) / (10000 * frequency);
         // rewards.add(_value);
         rewards += _value;
-        startTime = apy[i].changeTime;
+        startTime = apy[i].timestamp;
       }
       rewards += (amount * apy[length - 1].value * (blockTime - startTime)) / (10000 * frequency);
 

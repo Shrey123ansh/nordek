@@ -1,8 +1,10 @@
 //@ts-nocheck
 import { useState } from "react";
 import type { NextPage } from "next";
+import useSWR from "swr";
 import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
+import { getPlatformDetails } from "~~/components/StakingComponents/APICallFunctions";
 import GradientComponent from "~~/components/StakingComponents/GradientContainer";
 import StakeHeader from "~~/components/StakingComponents/StakeHeader";
 import { StakeInfo } from "~~/components/StakingComponents/StakeInfo";
@@ -15,7 +17,6 @@ const StakeBox = () => {
   const [stakeAmount, setStakeAmount] = useState(0);
   const { address } = useAccount();
   const [isStaking, setIsStaking] = useState(true);
-
   const { balance } = useAccountBalance(address);
 
   const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
@@ -202,12 +203,15 @@ const StakeBox = () => {
                   value={stakeAmount}
                   onChange={e => setStakeAmount(Number(e.target.value))}
                 />
-                <button
-                  className="relative top-1 h-8 mr-2 bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-0 px-4 rounded-full"
-                  onClick={setStakeAmountMax}
-                >
-                  Max
-                </button>
+                <div className="relative top-1 h-8 mr-2 rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] p-0.5 text-sm text-white">
+                  <button
+                    type="button"
+                    className="border-1 rounded-full font-bold bg-gray-800 px-4 h-7"
+                    onClick={setStakeAmountMax}
+                  >
+                    Max
+                  </button>
+                </div>
               </div>
             </div>
             <br />
@@ -326,6 +330,19 @@ const StakeBox = () => {
 const Stake: NextPage = () => {
   //const [stakeAmount, setStakeAmount] = useState(0);
 
+  const platformApyFetcher = async () => {
+    const data = await getPlatformDetails();
+    console.log("LOADED PLATFORM DATA", data);
+    return data;
+  };
+
+  const {
+    data: platformDetails,
+    isLoading: isPlatformDetailsLoading,
+    error: isPlatformDetailsError,
+    mutate: mutatePlatformDetails,
+  } = useSWR(`/api/platformDetails`, platformApyFetcher);
+
   return (
     <>
       <div className="w-[80%] flex items-center flex-col flex-grow pt-10 justify-center m-auto font-inter">
@@ -333,7 +350,7 @@ const Stake: NextPage = () => {
         <StakeHeader />
         <StakeInfo></StakeInfo>
         <StakeBox></StakeBox>
-        <StakesTable></StakesTable>
+        <StakesTable platformDetails={platformDetails}></StakesTable>
       </div>
     </>
   );
