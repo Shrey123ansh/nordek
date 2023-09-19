@@ -3,11 +3,14 @@ import { Block, Transaction, TransactionReceipt } from "viem";
 import { usePublicClient } from "wagmi";
 import { hardhat } from "wagmi/chains";
 import { decodeTransactionData } from "~~/utils/scaffold-eth";
+import { getTargetNetwork } from "~~/utils/scaffold-eth";
 
 const BLOCKS_PER_PAGE = 20;
 
 export const useFetchBlocks = () => {
-  const client = usePublicClient({ chainId: hardhat.id });
+  const configuredNetwork = getTargetNetwork();
+  // const client = usePublicClient({ chainId: hardhat.id });
+  const client = usePublicClient({ chainId: configuredNetwork.id });
 
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [transactionReceipts, setTransactionReceipts] = useState<{
@@ -106,7 +109,6 @@ export const useFetchBlocks = () => {
 
     return client.watchBlocks({ onBlock: handleNewBlock, includeTransactions: true });
   }, [blocks, client, currentPage]);
-
   return {
     blocks,
     transactionReceipts,

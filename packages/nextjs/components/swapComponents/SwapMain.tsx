@@ -73,7 +73,7 @@ export default function SwapMain() {
       isBuy: true, // need to change this
     };
 
-    saveStakeToDb(tradeData);
+    //saveStakeToDb(tradeData);
 
     // save data to database
     console.log("Swapped");

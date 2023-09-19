@@ -158,7 +158,8 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const configuredNetwork = getTargetNetwork();
   const address = (context.params?.address as string).toLowerCase();
   const contracts = deployedContracts as GenericContractsDeclaration | null;
-  const chainId = hardhat.id;
+  // const chainId = hardhat.id;configuredNetwork.id
+  const chainId = configuredNetwork.id;
   let contractPath = "";
 
   const buildInfoDirectory = path.join(

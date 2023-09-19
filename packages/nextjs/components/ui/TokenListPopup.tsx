@@ -23,7 +23,7 @@ const getTokenList = async () => {
 
 const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setToken }) => {
   const [tokens, setTokens] = useState<tokenType[] | undefined>(undefined); // Initialize tokens as undefined
-  // if (!isOpen) return null;
+  if (!isOpen) return null;
 
   useEffect(() => {
     const fetchTokens = async () => {

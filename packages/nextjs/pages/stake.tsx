@@ -73,6 +73,7 @@ const StakeBox = () => {
   const { data: apy, isLoading: isApyLoading } = useScaffoldContractRead({
     contractName: "StakingContract",
     functionName: "getCurrentApy",
+    account: address,
   });
 
   const handleStaking = async () => {
@@ -102,11 +103,13 @@ const StakeBox = () => {
   const { data: minStake, isLoading: isMinStake } = useScaffoldContractRead({
     contractName: "StakingContract",
     functionName: "minimumStake",
+    account: address,
   });
 
   const { data: frequency, isLoading: isFrequency } = useScaffoldContractRead({
     contractName: "StakingContract",
     functionName: "frequency",
+    account: address,
   });
 
   const { data: userRewards, isLoading: isUserTotalRewards } = useScaffoldContractRead({
@@ -341,7 +344,9 @@ const Stake: NextPage = () => {
     isLoading: isPlatformDetailsLoading,
     error: isPlatformDetailsError,
     mutate: mutatePlatformDetails,
-  } = useSWR(`/api/platformDetails`, platformApyFetcher);
+  } = useSWR(`/api/platformDetails`, platformApyFetcher, {
+    refreshInterval: 0,
+  });
 
   return (
     <>

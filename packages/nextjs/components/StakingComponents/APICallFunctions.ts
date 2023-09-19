@@ -146,7 +146,6 @@ export const updateRestakedAllDB = async (address: string, newStakes: any) => {
     });
 
     console.log(response);
-    console.log("Restaked");
   } catch (error) {
     console.log(error);
   }
