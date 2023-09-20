@@ -75,8 +75,9 @@ contract DeployScript is ScaffoldETHDeploy {
             18,
             10000000000000000,
             31536000,
-            address(123)
+            address(liquidityPool)
         );
+        liquidityPool.verifiedContract(address(stakingContract));
 
         console.logString(
             string.concat(
