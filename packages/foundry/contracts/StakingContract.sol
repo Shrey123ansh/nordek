@@ -5,11 +5,9 @@ import "openzeppelin/access/Ownable.sol";
 import "openzeppelin/security/ReentrancyGuard.sol";
 import "openzeppelin/proxy/utils/Initializable.sol";
 import "openzeppelin/utils/math/SafeMath.sol";
+import "openzeppelin/proxy/transparent/TransparentUpgradeableProxy.sol";
+import "./ILiquidityPool.sol";
 
-/**
- * @title StakingContract
- * @dev A contract for staking and earning rewards.
- */
 contract StakingContract is Ownable, ReentrancyGuard, Initializable {
     using SafeMath for uint256; // Using SafeMath for safe arithmetic operations
 
@@ -54,6 +52,8 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
     mapping(address => SlotStake) public stakes;
 
     APY[] public apy;
+
+    ILiquidityPool public liquidityPool;
 
     event Staked(
         address indexed user,
@@ -112,16 +112,27 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
     event MinimumStakeUpdated(uint256 minimumStake, uint32 timeStamp);
     event FrequencyUpdated(uint256 frequency, uint32 timeStamp);
     event ApyUpdated(uint256 apy, uint32 timeStamp);
+    event LiquidityPoolUpdated(address newPool, uint32 timeStamp);
 
     //  _apy = 18
     // _minimumStake = 100000000000000000000
     // _frequency = 31536000
     // uint16 _apy, uint256 _minimumStake, uint256 _frequency
-    constructor(uint16 _apy, uint256 _minimumStake, uint256 _frequency) {
+    constructor(
+        uint16 _apy,
+        uint256 _minimumStake,
+        uint256 _frequency,
+        address _liquidityPool
+    ) {
         apy.push(APY(_apy, uint32(block.timestamp)));
         minimumStake = _minimumStake;
         frequency = _frequency;
+        liquidityPool = ILiquidityPool(_liquidityPool);
     }
+
+    fallback() external payable {}
+
+    receive() external payable {}
 
     /**
      * @dev Stake tokens into the contract.
@@ -179,6 +190,8 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         stakes[user].slotStake[_slotId].startTime = uint32(block.timestamp);
         stakes[user].slotStake[_slotId].rewards = 0;
 
+        liquidityPool.accessFunds(currentReward, "UNSTAKE");
+
         require(
             address(this).balance >= _amount + currentReward,
             "Contract insufficient balance"
@@ -211,6 +224,8 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             delete stakes[user].slotStake[i];
         }
         stakes[user].counter = 0;
+        liquidityPool.accessFunds(rewards, "UNSTAKE");
+
         require(
             address(this).balance >= stakedAmount + rewards,
             "Contract insufficient balance"
@@ -264,6 +279,8 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
                 amount = amount.sub(_amount);
             }
         }
+        liquidityPool.accessFunds(totalRewards, "UNSTAKE");
+
         require(
             address(this).balance >= amount + totalRewards,
             "Contract insufficient balance"
@@ -314,6 +331,8 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
             .sub(_rewardAmount);
         stakes[user].slotStake[_slotId].startTime = uint32(block.timestamp);
 
+        liquidityPool.accessFunds(_rewardAmount, "CLAIM REWARDS");
+
         require(
             address(this).balance >= _rewardAmount,
             "Contract insufficient balance"
@@ -340,6 +359,8 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         uint256 length = stakes[msg.sender].counter;
         address user = msg.sender;
         uint256 _rewardAmount = getTotalRewards();
+        liquidityPool.accessFunds(_rewardAmount, "CLAIM ALL REWARDS");
+
         require(
             address(this).balance > _rewardAmount,
             "Contract insufficient balance"
@@ -648,8 +669,14 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
         emit FrequencyUpdated(_frequency, uint32(block.timestamp));
     }
 
-    receive() external payable {
-        // Sending deposited currency to the contract address
+    /**
+     * @dev Set the liqudity pool which provides reward NRK tokens
+     * @param _liquidityPool new pool address.
+     * @notice this function can only be called by the contract owner.
+     */
+    function setLiquidityPool(address _liquidityPool) external onlyOwner {
+        liquidityPool = ILiquidityPool(_liquidityPool);
+        emit LiquidityPoolUpdated(_liquidityPool, uint32(block.timestamp));
     }
 
     /**

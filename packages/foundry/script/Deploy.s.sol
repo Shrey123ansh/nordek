@@ -4,6 +4,7 @@ pragma solidity ^0.8.19;
 import "../contracts/YourContract.sol";
 import "./DeployHelpers.s.sol";
 import "../contracts/StakingContract.sol";
+import "../contracts/LiquidityPool.sol";
 
 contract DeployScript is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);
@@ -14,6 +15,7 @@ contract DeployScript is ScaffoldETHDeploy {
     // ERC20Mintable tokenD;
 
     StakingContract stakingContract;
+    LiquidityPool liquidityPool;
 
     function run() external {
         uint256 deployerPrivateKey = setupLocalhostEnv();
@@ -64,12 +66,34 @@ contract DeployScript is ScaffoldETHDeploy {
 
         // console.logString("Minted and recevied tokens");
 
-        stakingContract = new StakingContract(18, 10000000000000000, 31536000);
+        vm.deal(vm.addr(deployerPrivateKey), 100);
+
+        liquidityPool = new LiquidityPool();
+        address(liquidityPool).call{value: 100}("");
+
+        stakingContract = new StakingContract(
+            18,
+            10000000000000000,
+            31536000,
+            address(123)
+        );
 
         console.logString(
             string.concat(
                 "staking contract deployed at: ",
                 vm.toString(address(stakingContract))
+            )
+        );
+        console.logString(
+            string.concat(
+                "balance of liquidity : ",
+                vm.toString(address(liquidityPool).balance)
+            )
+        );
+        console.logString(
+            string.concat(
+                "liquidity pool contract at: ",
+                vm.toString(address(liquidityPool))
             )
         );
 

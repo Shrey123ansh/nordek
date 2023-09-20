@@ -4,9 +4,11 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "../contracts/StakingContract.sol";
 import "openzeppelin/utils/math/SafeMath.sol";
+import "../contracts/LiquidityPool.sol";
 
 contract StakingTest is Test {
     StakingContract stakingContract;
+    LiquidityPool liquidityPool;
 
     using SafeMath for uint256;
 
@@ -14,10 +16,15 @@ contract StakingTest is Test {
         // _apy = 18
         // _minimumStakingTokens = 100 NRK
         // frequency = 365 days
+
+        liquidityPool = new LiquidityPool();
+        vm.deal(address(liquidityPool),100);
+
         stakingContract = new StakingContract(
             18,
             100000000000000000000,
-            31536000
+            31536000,
+            address(liquidityPool)
         );
     }
 
