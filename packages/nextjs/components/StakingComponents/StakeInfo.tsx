@@ -3,12 +3,13 @@ import { getUserData } from "./APICallFunctions";
 import GradientComponent from "./GradientContainer";
 import axios from "axios";
 import { formatEther } from "viem";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, usePublicClient } from "wagmi";
 import { useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { getTokenData } from "~~/utils/coingeckoPrices";
+import { getTargetNetwork } from "~~/utils/scaffold-eth";
 import { formatNumberWithKMB, parseUSD } from "~~/utils/usd";
 
-type user = { address: string; totalStaked: bigint; totalRewards: bigint; totalRestakes: bigint };
+type user = { address: string; totalStaked: bigint; totalRewards: bigint; totalRestakes: bigint; blockNumber: number };
 
 export const StakeInfo = () => {
   const { address } = useAccount();
@@ -23,11 +24,14 @@ export const StakeInfo = () => {
   //const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(2) : "";
 
   const userStakes = userTotalStakes ? formatEther(userTotalStakes) : "0";
+  const configuredNetwork = getTargetNetwork();
+  const client = usePublicClient({ chainId: configuredNetwork.id });
 
   useEffect(() => {
     const loadData = async () => {
       if (address) {
-        const data = await getUserData(address);
+        const blockNumber = await client.getBlockNumber();
+        const data = await getUserData(address, Number(blockNumber));
         setUserData(data);
       }
     };

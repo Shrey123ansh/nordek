@@ -9,12 +9,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   switch (req.method) {
     case "POST":
-      const reqBody = req.body;
+      try {
+        const { stakedAt, stakedAmount, address, hash, slotId } = req.body;
+        const collection = db.collection("stakes");
+        collection.createIndex({ stakedAt, stakedAmount, address, hash, slotId }, { unique: true });
 
-      await db.collection("stakes").insertMany([reqBody]);
-      console.log("SAVED TO DB", reqBody);
-      break;
-
+        await collection.insertOne({ stakedAt, stakedAmount, address, hash, slotId });
+        return res.status(200).json({ message: `New Stake Saved`, ok: true });
+      } catch (e) {
+        console.error("Error:", e);
+        return res.status(500).json({ error: `Internal Server Error ${e}` });
+      }
     case "DELETE":
       try {
         const { delAddress } = req.query;

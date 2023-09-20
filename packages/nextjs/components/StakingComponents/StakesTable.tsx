@@ -26,7 +26,7 @@ import { calculateRewards } from "~~/utils/Norswap";
 import { notification } from "~~/utils/scaffold-eth";
 import { unixTimestampToDate } from "~~/utils/time";
 
-export const StakesTable = ({ platformDetails }) => {
+export const StakesTable = () => {
   type stakesType = {
     stakedAt: number;
     stakedAmount: number;
@@ -48,25 +48,28 @@ export const StakesTable = ({ platformDetails }) => {
     account: address,
   });
 
-  console.log("PLATFORM DETAILS", platformDetails);
+  //console.log("PLATFORM DETAILS", platformDetails);
 
   const stakesFetcher = async () => {
     const data = await getStakes(address || "");
-    console.log("Loaded SWR Data", data);
+    console.log("Loaded Stakes Data", data);
     return data;
   };
 
-  // const platformApyFetcher = async () => {
-  //   const data = await getPlatformDetails();
-  //   return data;
-  // };
+  const platformApyFetcher = async () => {
+    const data = await getPlatformDetails();
+    console.log("LOADED PLATFORM DATA", data);
+    return data;
+  };
 
-  // const {
-  //   data: platformDetails,
-  //   isLoading: isPlatformDetailsLoading,
-  //   error: isPlatformDetailsError,
-  //   mutate: mutatePlatformDetails,
-  // } = useSWR(`/api/platformDetails`, platformApyFetcher);
+  const {
+    data: platformDetails,
+    isLoading: isPlatformDetailsLoading,
+    error: isPlatformDetailsError,
+    mutate: mutatePlatformDetails,
+  } = useSWR(`/api/platformDetails`, platformApyFetcher, {
+    refreshInterval: 0,
+  });
 
   function updateWithRewards(
     data: stakesType[],

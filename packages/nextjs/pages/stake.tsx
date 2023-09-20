@@ -333,20 +333,20 @@ const StakeBox = () => {
 const Stake: NextPage = () => {
   //const [stakeAmount, setStakeAmount] = useState(0);
 
-  const platformApyFetcher = async () => {
-    const data = await getPlatformDetails();
-    console.log("LOADED PLATFORM DATA", data);
-    return data;
-  };
+  // const platformApyFetcher = async () => {
+  //   const data = await getPlatformDetails();
+  //   console.log("LOADED PLATFORM DATA", data);
+  //   return data;
+  // };
 
-  const {
-    data: platformDetails,
-    isLoading: isPlatformDetailsLoading,
-    error: isPlatformDetailsError,
-    mutate: mutatePlatformDetails,
-  } = useSWR(`/api/platformDetails`, platformApyFetcher, {
-    refreshInterval: 0,
-  });
+  // const {
+  //   data: platformDetails,
+  //   isLoading: isPlatformDetailsLoading,
+  //   error: isPlatformDetailsError,
+  //   mutate: mutatePlatformDetails,
+  // } = useSWR(`/api/platformDetails`, platformApyFetcher, {
+  //   refreshInterval: 0,
+  // });
 
   return (
     <>
@@ -355,7 +355,7 @@ const Stake: NextPage = () => {
         <StakeHeader />
         <StakeInfo></StakeInfo>
         <StakeBox></StakeBox>
-        <StakesTable platformDetails={platformDetails}></StakesTable>
+        <StakesTable></StakesTable>
       </div>
     </>
   );
