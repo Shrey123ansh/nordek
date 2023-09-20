@@ -110,6 +110,7 @@ export async function getUserData(address: string, blockNumber: number) {
 
 export async function fetchUserData(address: string) {
   const apiUrl = `/api/userData?address=${address}`;
+  console.log("Fething user data", apiUrl);
   try {
     const response = await axios.get(apiUrl);
 
