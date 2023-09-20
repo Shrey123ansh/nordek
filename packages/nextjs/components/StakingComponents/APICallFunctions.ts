@@ -1,6 +1,7 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = "https://nordek-nextjs.vercel.app/";
+//axios.defaults.baseURL = process.env.API_URL;
 
 export const saveStakeToDb = async (newStake: {
   stakedAt: number;
