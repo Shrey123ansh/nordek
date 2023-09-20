@@ -16,7 +16,7 @@ import GradientComponent from "./GradientContainer";
 import { readContract } from "@wagmi/core";
 import { Timestamp } from "mongodb";
 import useSWR from "swr";
-import { formatEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { ClaimButton, TransactionsButton } from "~~/components/StakingComponents/StakeButtons";
@@ -26,7 +26,10 @@ import { calculateRewards } from "~~/utils/Norswap";
 import { notification } from "~~/utils/scaffold-eth";
 import { unixTimestampToDate } from "~~/utils/time";
 
+
 export const StakesTable = () => {
+
+
   type stakesType = {
     stakedAt: number;
     stakedAmount: number;
