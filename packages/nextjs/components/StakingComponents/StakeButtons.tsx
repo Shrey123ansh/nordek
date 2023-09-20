@@ -48,7 +48,7 @@ export const TransactionsButton = ({ address }) => {
   return (
     <button
       className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] font-bold text-white py-0 px-8 rounded-lg"
-      onClick={() => router.push(`/blockexplorer/address/${address}`)}
+      onClick={() => router.push(`/stakeTransactions/${address}`)}
     >
       Transactions
     </button>

@@ -1,5 +1,9 @@
 import axios from "axios";
 
+//axios.defaults.baseURL = "https://nordek-nextjs.vercel.app/";
+console.log("BASE URL", process.env.API_URL);
+axios.defaults.baseURL = `${process.env.API_URL}`;
+
 export const saveStakeToDb = async (newStake: {
   stakedAt: number;
   stakedAmount: number;
@@ -7,21 +11,13 @@ export const saveStakeToDb = async (newStake: {
   hash: string;
   slotId: number;
 }) => {
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: "JWT fefege...",
-  };
   try {
-    const response = await axios.post("/api/stakes", newStake, {
-      headers: headers,
-    });
+    const response = await axios.post("/api/stakes", newStake);
     console.log(response);
     console.log("Staked");
   } catch (error) {
-    console.log(error);
+    console.log("Failed to save stake", error);
   }
-
-  console.log("Saved to DB");
 };
 
 export const updateUserData = async (addr: string, updates: Record<string, any>) => {
@@ -34,7 +30,12 @@ export const updateUserData = async (addr: string, updates: Record<string, any>)
   }
 };
 
-export async function createUser(user: { address: string; totalRewards: number; totalRestakes: number }) {
+export async function createUser(user: {
+  address: string;
+  totalRewards: number;
+  totalRestakes: number;
+  blockNumber: number;
+}) {
   const headers = {
     "Content-Type": "application/json",
     Authorization: "JWT fefege...",
@@ -86,7 +87,7 @@ export async function setPlatformDetails(details: { apy: number; timestamp: numb
   }
 }
 
-export async function getUserData(address: string) {
+export async function getUserData(address: string, blockNumber: number) {
   const apiUrl = `api/userData?address=${address}`;
   try {
     const response = await axios.get(apiUrl);
@@ -96,11 +97,24 @@ export async function getUserData(address: string) {
         address: address,
         totalRewards: 0,
         totalRestakes: 0,
+        blockNumber: blockNumber,
       };
       createUser(user);
     } else {
       return response.data.userData[0];
     }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function fetchUserData(address: string) {
+  const apiUrl = `/api/userData?address=${address}`;
+  console.log("Fething user data", apiUrl);
+  try {
+    const response = await axios.get(apiUrl);
+
+    return response.data.userData[0];
   } catch (error) {
     console.log(error);
   }
@@ -178,5 +192,15 @@ export const removeStakeInDb = async (updateInfo: {
     console.log(response);
   } catch (e) {
     console.log("Couldn't send update/del request", e);
+  }
+};
+
+export const getTransactionsFromNordekScan = async ({ userAddress, blockNumber, contractAddress }) => {
+  const apiUrl = `https://nordekscan.com/api?module=account&action=txlist&address=${userAddress}&sort=desc&start_block=${blockNumber}&filter_by=to:"${contractAddress}"`;
+  try {
+    const response = await axios.get(apiUrl);
+    return await response.data.result;
+  } catch (error) {
+    console.log(error);
   }
 };
