@@ -91,7 +91,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
         from: tx.from,
         timeStamp: tx.timeStamp,
         blockNumber: tx.blockNumber,
-        functionName: tx.functionName,
+        functionName: tx.functionName ? tx.functionName : "",
       };
     });
 

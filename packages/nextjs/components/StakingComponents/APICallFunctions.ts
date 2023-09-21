@@ -1,8 +1,8 @@
 import axios from "axios";
 
 //axios.defaults.baseURL = "https://nordek-nextjs.vercel.app/";
-console.log("BASE URL", process.env.API_URL);
-axios.defaults.baseURL = `${process.env.API_URL}`;
+//console.log("BASE URL", process.env.API_URL);
+//axios.defaults.baseURL = `${process.env.API_URL}`;
 
 export const saveStakeToDb = async (newStake: {
   stakedAt: number;
@@ -62,9 +62,10 @@ export async function getStakes(address: string) {
 }
 
 export async function getPlatformDetails() {
-  const apiUrl = `api/platformDetails`;
+  const apiUrl = `/api/platformDetails`;
   try {
     const response = await axios.get(apiUrl);
+
     return response.data.platformDetails;
   } catch (error) {
     console.log(error);

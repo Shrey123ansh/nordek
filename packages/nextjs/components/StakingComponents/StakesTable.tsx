@@ -26,10 +26,7 @@ import { calculateRewards } from "~~/utils/Norswap";
 import { notification } from "~~/utils/scaffold-eth";
 import { unixTimestampToDate } from "~~/utils/time";
 
-
 export const StakesTable = () => {
-
-
   type stakesType = {
     stakedAt: number;
     stakedAmount: number;
@@ -70,9 +67,7 @@ export const StakesTable = () => {
     isLoading: isPlatformDetailsLoading,
     error: isPlatformDetailsError,
     mutate: mutatePlatformDetails,
-  } = useSWR(`/api/platformDetails`, platformApyFetcher, {
-    refreshInterval: 0,
-  });
+  } = useSWR(`/api/platformDetails`, platformApyFetcher);
 
   function updateWithRewards(
     data: stakesType[],
@@ -93,6 +88,8 @@ export const StakesTable = () => {
       }).toString();
     });
   }
+
+  console.log(address, frequency, platformDetails, address && frequency && platformDetails);
 
   const {
     data: stakes,
