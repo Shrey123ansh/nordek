@@ -2057,8 +2057,167 @@ const contracts = {
       name: "nordek",
       chainId: "81041",
       contracts: {
+        LiquidityPool: {
+          address: "0xC77c5288d3E4CE77CD8120B713F41C6967e84f69",
+          abi: [
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "address",
+                  name: "contractAddress",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "string",
+                  name: "action",
+                  type: "string",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "AccessedFunds",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "address",
+                  name: "contractAddress",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint32",
+                  name: "timeStamp",
+                  type: "uint32",
+                },
+              ],
+              name: "ContractVerified",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "previousOwner",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "OwnershipTransferred",
+              type: "event",
+            },
+            {
+              stateMutability: "payable",
+              type: "fallback",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_amount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "_action",
+                  type: "string",
+                },
+              ],
+              name: "accessFunds",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "owner",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "renounceOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "transferOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              name: "verifiedContract",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "_contract",
+                  type: "address",
+                },
+              ],
+              name: "verifyContract",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              stateMutability: "payable",
+              type: "receive",
+            },
+          ],
+        },
         StakingContract: {
-          address: "0x7452FcCA0805d58feB2F7d8eF56d90558900c1E4",
+          address: "0x0ecade015Fa86f4D17DFC45b11c43a5fB8fc7065",
           abi: [
             {
               inputs: [

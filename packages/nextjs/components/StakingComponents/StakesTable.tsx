@@ -466,12 +466,14 @@ export const StakesTable = () => {
     },
   });
 
+  const tableSize = "whitespace-nowrap px-2 py-2 text-sm md:text-base lg:px-4 lg:py-4";
+
   return (
     <section className="mt-8 w-full">
       <GradientComponent>
         <div className="relative p-8 flex flex-col space-y-2 bg-gradient-to-r from-[#141525] to-[#140B1E] rounded-2xl w-full">
-          <div className="flex justify-between mb-4">
-            <h1 className="text-2xl font-bold text-left"> Your Staked Positions </h1>
+          <div className="flex flex-col lg:flex-row justify-between mb-4 space-y-4 lg:space-y-0">
+            <h1 className="text-2xl font-bold text-left "> Your Staked Positions </h1>
             <div className="flex space-x-4">
               <TransactionsButton address={address}></TransactionsButton>
               <ClaimButton></ClaimButton>
@@ -488,16 +490,16 @@ export const StakesTable = () => {
               </button>
             </div>
           ) : (
-            <div>
+            <div className="overflow-x-auto w-full">
               <table className="w-full bg-base-200 shadow-lg rounded-lg overflow-hidden">
                 <thead className="w-full">
                   <tr className="bg-[#11101A] ">
-                    <th className="px-4 py-4 border border-white">Slot ID</th>
-                    <th className="px-4 py-4 border border-white">Amount Staked</th>
-                    <th className="px-4 py-4 border border-white">Txn Hash</th>
-                    <th className="px-4 py-4 border border-white">Staked At</th>
-                    <th className="px-4 py-4 border border-white">Rewards</th>
-                    <th className="px-4 py-4 border border-white">Actions</th>
+                    <th className={`${tableSize} border border-white`}>Slot ID</th>
+                    <th className={`${tableSize} border border-white`}>Amount Staked</th>
+                    <th className={`${tableSize} border border-white`}>Txn Hash</th>
+                    <th className={`${tableSize} border border-white`}>Staked At</th>
+                    <th className={`${tableSize} border border-white`}>Rewards</th>
+                    <th className={`${tableSize} border border-white`}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -508,20 +510,20 @@ export const StakesTable = () => {
                         className="w-full p-4 my-2 items-center justify-center border border-white bg-[#11101A]"
                         key={idx}
                       >
-                        <td className="px-4 py-2 text-center">{stake?.slotId}</td>
-                        <td className="px-4 py-2 text-center">{formatEther(stake?.stakedAmount || "")}</td>
-                        <td className="px-4 py-2 text-center">
+                        <td className={`${tableSize} text-center`}>{stake?.slotId}</td>
+                        <td className={`${tableSize} text-center`}>{formatEther(stake?.stakedAmount || "")}</td>
+                        <td className={`${tableSize} text-center`}>
                           <TransactionHash hash={stake?.hash}></TransactionHash>
                         </td>
-                        {/* <td className="px-4 py-2 text-center"><a href=""></a>{formatTx(stake.hash)}</td> */}
-                        <td className="px-4 py-2 text-center">{unixTimestampToDate(stake?.stakedAt)}</td>
-                        <td className="px-4 py-2 text-center">{stake?.rewards}</td>
+                        {/* <td className={`${tableSize} text-center`}><a href=""></a>{formatTx(stake.hash)}</td> */}
+                        <td className={`${tableSize} text-center`}>{unixTimestampToDate(stake?.stakedAt)}</td>
+                        <td className={`${tableSize} text-center`}>{stake?.rewards}</td>
 
-                        <td className="px-4 py-2 text-center flex justify-center space-x-4">
+                        <td className={`${tableSize} text-center flex justify-center space-x-2 md:space-x-4`}>
                           {/* <ActionButton text="Claim" onClick={() => openClaimPopup()}></ActionButton> */}
 
                           <button
-                            className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-0 px-8 rounded-full"
+                            className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-xs md:text-sm text-white py-1 px-2 md:px-8 rounded-full"
                             onClick={() => {
                               setIsClaim(true);
                               handlePopup();
@@ -530,10 +532,10 @@ export const StakesTable = () => {
                           >
                             Claim
                           </button>
-                          <div className="p-0.5 text-sm rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3]">
+                          <div className="p-0.5 text-xs md:text-sm rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3]">
                             <button
                               type="button"
-                              className="px-4 py-2 border-1 rounded-full bg-gray-800"
+                              className="py-1 px-2 md:px-8 md:py-2 border-1 rounded-full bg-gray-800"
                               onClick={() => {
                                 setIsClaim(false);
                                 handlePopup();
@@ -557,6 +559,7 @@ export const StakesTable = () => {
                   ></ClaimPopup>
                 </tbody>
               </table>
+
               <div className="flex pagination space-x-4 justify-end">
                 <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
                   <ArrowLeftIcon className="inline-block h-4 w-4" />

@@ -70,15 +70,11 @@ export const getServerSideProps: GetServerSideProps = async context => {
     const userData = await fetchUserData(userAddress);
     //const userDataParsed = JSON.parse(JSON.stringify(userData));
 
-    console.log("USER DATA", userData);
-
     const transactions = await getTransactionsFromNordekScan({
       userAddress: userAddress,
       blockNumber: userData?.blockNumber || 0,
       contractAddress: contractAddress,
     });
-
-    console.log("Transactions DATA", transactions);
 
     const formattedTransactions = transactions.map(item => {
       const tx = decodeTransactionData(item);

@@ -71,7 +71,8 @@ export const StakeInfo = () => {
       data: `${formatEther(userData?.totalRestakes ? userData.totalRestakes : BigInt(0))} NRK`,
     },
   ];
-  const textColor = "bg-gradient-to-r from-white to-[#F991CC] text-transparent bg-clip-text";
+  const textColor =
+    "bg-gradient-to-r from-white to-[#F991CC] text-transparent bg-clip-text text-xs md:text-base lg:text-base";
   return (
     <section className="mt-8 w-full">
       <GradientComponent>
@@ -81,7 +82,7 @@ export const StakeInfo = () => {
             return (
               <div className="w-full flex justify-between" key={idx}>
                 <h1 className={textColor}>{info.text}</h1>
-                <h1 className={textColor}>{info.data?.toString()}</h1>
+                <h1 className={`${textColor} text-right`}>{info.data?.toString()}</h1>
               </div>
             );
           })}
