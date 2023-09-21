@@ -8,6 +8,11 @@ import "openzeppelin/utils/math/SafeMath.sol";
 import "openzeppelin/proxy/transparent/TransparentUpgradeableProxy.sol";
 import "./ILiquidityPool.sol";
 
+/**
+ * @title Stake NRK tokens and earn rewards
+ * @author https://anmol-dhiman.netlify.app/
+ * @notice Dynamic Staking, APY and Compounding frequency
+ */
 contract StakingContract is Ownable, ReentrancyGuard, Initializable {
     using SafeMath for uint256; // Using SafeMath for safe arithmetic operations
 
