@@ -40,7 +40,13 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
         avatar={BlockieAvatar}
         theme={isDarkTheme ? darkTheme() : lightTheme()}
       >
-        <div className="flex flex-col min-h-screen  bg-gradient-to-r from-[#1B0A30] to-[#000000]">
+        <div
+          className={`flex flex-col min-h-screen ${
+            isDarkTheme
+              ? "bg-gradient-to-r from-[#1B0A30] to-[#000000]"
+              : "bg-gradient-to-r from-[#FFFFFF] to-[#FFFFFF]"
+          }`}
+        >
           <Header />
           <main className="relative flex flex-col flex-1">
             <Component {...pageProps} />

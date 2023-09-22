@@ -23,8 +23,8 @@ const NavLink = ({
       href={href}
       passHref
       className={`${
-        isActive ? "bg-accent shadow-md" : ""
-      } hover:bg-accent hover:shadow-md focus:bg-accent py-1.5 px-6 lg:text-sm lg:font-normal text-2xl font-bold space-x-2 rounded-none m-0 h-full text-center  flex items-center justify-center`}
+        isActive ? "bg-accent shadow-md text-white" : ""
+      } hover:bg-accent hover:shadow-md hover:text-white focus:bg-accent py-1.5 px-6 lg:text-sm lg:font-normal text-2xl font-bold space-x-2 rounded-none m-0 h-full text-center  flex items-center justify-center`}
       onClick={toggleDrawer}
     >
       {children}
@@ -71,7 +71,7 @@ export const Header = () => {
         <div className="flex items-center space-x-2 ml-4 mr-6">
           <Link href="/" passHref className="flex items-center space-x-2">
             <div className="flex relative w-8 h-10">
-              <Image alt="SE2 logo" className="cursor-pointer" fill src="/icon.svg" />
+              <Image alt="SE2 logo" className="cursor-pointer fill-black" fill src="/icon.svg" />
             </div>
             <div className="flex flex-col">
               <span className="font-bold">NORSWAP</span>
@@ -93,7 +93,7 @@ export const Header = () => {
 
         {isDrawerOpen && (
           <div
-            className={`block h-screen top-0 fixed z-10 flex flex-col bg-base-200 lg:hidden md:w-1/2 w-full right-0 p-12`}
+            className={`block h-full top-0 fixed z-10 flex flex-col bg-base-200 lg:hidden md:w-1/2 w-full right-0 p-12`}
           >
             <div className="flex items-center justify-between space-x-2 mb-8">
               <div className="flex">

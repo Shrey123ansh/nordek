@@ -120,13 +120,12 @@ const StakeBox = () => {
 
   const statsH1Class = "flex w-full justify-between space-x-12";
 
-  const textColor =
-    "bg-gradient-to-r from-white to-[#F991CC] text-transparent bg-clip-text text-xs md:text-base lg:text-base";
+  const textColor = "text-secondary-content text-xs md:text-base lg:text-base";
   return (
     <section className="flex flex-col lg:flex-row  justify-between w-full mt-8">
       <div className="w-full lg:w-[40%] lg:mr-8 mb-4 lg:mb-0">
         <GradientComponent>
-          <div className="relative flex flex-col w-full space-y-8 px-2 bg-gradient-to-r from-[#141525] to-[#140B1E] rounded-xl py-8 px-8">
+          <div className="relative flex flex-col w-full space-y-8 px-2 bg-custom-gradient rounded-xl py-8 px-8">
             <h1 className="text-2xl font-semibold"> Stake </h1>
 
             {/* <div>Min Stake: {minStake ? formatEther(minStake) : ""}</div>
@@ -138,23 +137,25 @@ const StakeBox = () => {
             <h1 className={statsH1Class}>
               {" "}
               <span className={textColor}>Min Stake</span>{" "}
-              <span className={`${textColor} text-right`}>{minStake ? formatEther(minStake) : ""}</span>
+              <span className={`${textColor} important-text text-right`}>{minStake ? formatEther(minStake) : ""}</span>
             </h1>
             <h1 className={statsH1Class}>
               {" "}
               <span className={textColor}>Frequency</span>{" "}
-              <span className={`${textColor} text-right`}>{frequency ? Number(frequency) / 86400 : ""} Days</span>
+              <span className={`${textColor} important-text text-right`}>
+                {frequency ? Number(frequency) / 86400 : ""} Days
+              </span>
             </h1>
             <h1 className={statsH1Class}>
               <span className={textColor}>Current APY</span>
-              <span className={`${textColor} text-right`}>{apy ? apy.toString() : ""}%</span>
+              <span className={`${textColor} important-text text-right`}>{apy ? apy.toString() : ""}%</span>
             </h1>
 
             <h1 className="text-xl font-semibold">Your Position</h1>
 
             <h1 className={statsH1Class}>
               <span className={textColor}>Your Staked Amount</span>
-              <span className={`${textColor} text-right`}>
+              <span className={`${textColor} important-text text-right`}>
                 {" "}
                 {userTotalStakes ? formatEther(userTotalStakes) : ""} NRK
               </span>
@@ -162,20 +163,23 @@ const StakeBox = () => {
 
             <h1 className={statsH1Class}>
               <span className={textColor}>Your Rewards</span>
-              <span className={`${textColor} text-right`}> {userRewards ? formatEther(userRewards) : ""} NRK </span>
+              <span className={`${textColor} important-text text-right`}>
+                {" "}
+                {userRewards ? formatEther(userRewards) : ""} NRK{" "}
+              </span>
             </h1>
             <h1 className={statsH1Class}>
               <span className={textColor}>NRK in Wallet</span>
-              <span className={`${textColor} text-right`}>{balance?.toFixed(4)} NRK</span>
+              <span className={`${textColor} important-text text-right`}>{balance?.toFixed(4)} NRK</span>
             </h1>
           </div>
         </GradientComponent>
       </div>
       <div className="w-full lg:w-[60%] lg:ml-8 h-full mt-4 lg:mt-0">
         <GradientComponent>
-          <div className="relative p-8 flex flex-col items-center space-y-8 rounded-lg bg-gradient-to-r from-[#141525] to-[#140B1E] w-full h-full">
+          <div className="relative p-8 flex flex-col items-center space-y-8 rounded-lg bg-custom-gradient w-full h-full">
             <h1 className="text-2xl font-semibold w-full text-left"> Order Summary </h1>
-            <div className="flex justify-between w-full mb-8">
+            <div className="flex justify-between w-full mb-8 font-semibold">
               <button
                 className={
                   isStaking
@@ -206,14 +210,14 @@ const StakeBox = () => {
                 <input
                   type="number"
                   placeholder="0"
-                  className="px-2 py-2 mr-4 w-full text-left appearance-none bg-base-200 text-white bg-transparent w-[90%] focus:border-transparent focus:ring-0"
+                  className="px-2 py-2 mr-4 w-full text-left appearance-none bg-base-200 bg-transparent w-[90%] focus:border-transparent focus:ring-0 text-base-content"
                   value={stakeAmount}
                   onChange={e => setStakeAmount(Number(e.target.value))}
                 />
                 <div className="relative top-1 h-8 mr-2 rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] p-0.5 text-sm text-white">
                   <button
                     type="button"
-                    className="border-1 rounded-full font-bold bg-gray-800 px-4 h-7"
+                    className="border-1 rounded-full font-bold bg-base-100 px-4 h-7 text-base-content"
                     onClick={setStakeAmountMax}
                   >
                     Max

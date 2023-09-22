@@ -34,7 +34,7 @@ export const RestakeButton = () => {
     <div className="rounded-lg bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] p-0.5">
       <button
         type="button"
-        className="py-1 px-2 text-xs lg:text-lg lg:py-2 lg:px-8 border-1 rounded-lg font-bold bg-gray-800"
+        className="py-1 px-2 text-xs lg:text-lg lg:py-2 lg:px-8 border-1 rounded-lg font-bold bg-base-100"
         onClick={() => writeAsync()}
       >
         Restake All

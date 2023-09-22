@@ -8,11 +8,11 @@ module.exports = {
     themes: [
       {
         scaffoldEth: {
-          primary: "#93BBFB",
+          primary: "#642EFF",
           "primary-content": "#212638",
           secondary: "#DAE8FF",
           "secondary-content": "#212638",
-          accent: "#93BBFB",
+          accent: "#642EFF",
           "accent-content": "#212638",
           neutral: "#212638",
           "neutral-content": "#ffffff",
@@ -20,15 +20,40 @@ module.exports = {
           "base-200": "#f4f8ff",
           "base-300": "#DAE8FF",
           "base-content": "#212638",
-          info: "#93BBFB",
+
+          info: "#642EFF",
           success: "#34EEB6",
           warning: "#FFCF72",
           error: "#FF8863",
 
           "--rounded-btn": "9999rem",
 
+          "--shadow-color": "#888197",
+
+          "--custom-bg-gradient": "linear-gradient(to right, #FFFFFF, #FFFFFF)",
+
+          "--custon-body-gradient": "linear-gradient(to right, #FFFFFF, #FFFFFF)",
+
+          "--custom-text": "#631CB9",
+
           ".tooltip": {
             "--tooltip-tail": "6px",
+          },
+
+          ".bg-shadow-color": {
+            backgroundColor: "var(--shadow-color)", // Use the CSS variable
+          },
+
+          ".bg-custom-gradient": {
+            backgroundImage: "var(--custom-bg-gradient)", // Use the CSS variable
+          },
+
+          ".bg-body-gradient": {
+            backgroundImage: "var(--custom-body-gradient)", // Use the CSS variable
+          },
+
+          ".important-text": {
+            color: "var(--custom-text)", // Use the CSS variable
           },
         },
       },
@@ -37,7 +62,7 @@ module.exports = {
           primary: "#642EFF",
           "primary-content": "#FFFFFF",
           secondary: "#A259FF",
-          "secondary-content": "#FFEFF0",
+          "secondary-content": "#F991CC",
           accent: "#642EFF",
           "accent-content": "#FFFFFF",
           neutral: "#",
@@ -46,6 +71,7 @@ module.exports = {
           "base-200": "#060203",
           "base-300": "#323232",
           "base-content": "#FFFFFF",
+
           info: "#385183",
           success: "#34EEB6",
           warning: "#FFCF72",
@@ -53,35 +79,39 @@ module.exports = {
 
           "--rounded-btn": "9999rem",
 
+          "--shadow-color": "#553B8B",
+
+          "--custom-bg-gradient": "linear-gradient(to right, #141525, #140B1E)",
+
+          "--custon-body-gradient": "linear-gradient(to right, #1B0A30, #000000)",
+
+          "--stake-header-gradient": "rgba(200, 200, 200, 0.08)",
+
           ".tooltip": {
             "--tooltip-tail": "6px",
             "--tooltip-color": "hsl(var(--p))",
           },
-        },
-      },
-      {
-        exampleUi: {
-          primary: "#000000",
-          "primary-content": "#ffffff",
-          secondary: "#FF6644",
-          "secondary-content": "#212638",
-          accent: "#93BBFB",
-          "accent-content": "#212638",
-          neutral: "#f3f3f3",
-          "neutral-content": "#212638",
-          "base-100": "#ffffff",
-          "base-200": "#f1f1f1",
-          "base-300": "#d0d0d0",
-          "base-content": "#212638",
-          info: "#93BBFB",
-          success: "#34EEB6",
-          warning: "#FFCF72",
-          error: "#FF8863",
 
-          "--rounded-btn": "9999rem",
+          ".bg-shadow-color": {
+            backgroundColor: "var(--shadow-color)", // Use the CSS variable
+          },
 
-          ".tooltip": {
-            "--tooltip-tail": "6px",
+          "--custom-text": "#F991CC",
+
+          ".bg-custom-gradient": {
+            backgroundImage: "var(--custom-bg-gradient)", // Use the CSS variable
+          },
+
+          ".bg-body-gradient": {
+            backgroundImage: "var(--custom-body-gradient)", // Use the CSS variable
+          },
+
+          ".important-text": {
+            color: "var(--custom-text)", // Use the CSS variable
+          },
+
+          ".stakeHeader": {
+            color: "var(--stake-header-gradient)", // Use the CSS variable
           },
         },
       },

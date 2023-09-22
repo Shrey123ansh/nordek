@@ -54,15 +54,15 @@ export const ClaimPopup = ({
   });
   if (!isOpen) return null;
 
-  const textColor = "bg-gradient-to-r from-white to-[#F991CC] text-transparent bg-clip-text mx-4";
+  const textColor = "text-secondary-content mx-4";
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 bg-gray-800">
       <GradientComponent>
-        <div className="relative bg-gradient-to-r from-[#141525] to-[#140B1E] p-4 rounded-md shadow-md">
+        <div className="relative bg-custom-gradient p-4 rounded-md shadow-md">
           <div className="text-center mb-4 flex justify-between items-center text-center">
             <h2 className="text-lg font-semibold mr-8 ">{isClaim ? "Claim Rewards" : "Restake Rewards"}</h2>
-            <button className="relative top-0 right-0 text-white-600 hover:text-gray-400 ml-8" onClick={onClose}>
+            <button className="relative top-0 right-0 text-base-content hover:text-gray-400 ml-8" onClick={onClose}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -78,14 +78,14 @@ export const ClaimPopup = ({
             <input
               type="text"
               placeholder="Enter amount"
-              className="w-full p-2 mr-4 rounded-md text-white bg-transparent focus:border-transparent focus:ring-0"
+              className="w-full p-2 mr-4 rounded-md text-base-content bg-transparent focus:border-transparent focus:ring-0"
               value={formatEther(amount)}
               onChange={e => setAmount(BigInt(e.target.value))}
             />
             <div className="relative top-1 h-8 mr-2 rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] p-0.5 text-sm text-white">
               <button
                 type="button"
-                className="border-1 rounded-full font-bold bg-gray-800 px-4 h-7"
+                className="border-1 rounded-full font-bold bg-base-100 px-4 h-7 text-base-content"
                 onClick={setStakeAmountMax}
               >
                 Max

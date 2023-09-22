@@ -14,7 +14,7 @@ export const TransactionsTable = ({ transactions, isLoading }: any) => {
       <div className="overflow-x-auto w-full shadow-2xl rounded-xl">
         <table className="table text-xl bg-base-100 table-zebra w-full md:table-md table-sm">
           <thead>
-            <tr className="rounded-xl text-sm text-base-content">
+            <tr className="rounded-xl text-sm text-white">
               <th className="bg-primary">Transaction Hash</th>
               <th className="bg-primary">Function Called</th>
               <th className="bg-primary">Block Number</th>
@@ -51,7 +51,9 @@ export const TransactionsTable = ({ transactions, isLoading }: any) => {
                       {tx.input === "0x" ? (
                         ""
                       ) : (
-                        <span className="badge badge-primary font-bold text-xs">{tx.functionName}</span>
+                        <span className="badge badge-primary font-bold text-xs text-white">
+                          {tx.functionName || tx.input.slice(0, 8) || ""}
+                        </span>
                       )}
                       {/* {functionCalled !== "0x" && (
                         <span className="badge badge-primary font-bold text-xs">{functionCalled}</span>

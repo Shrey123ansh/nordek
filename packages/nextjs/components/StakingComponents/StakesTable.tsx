@@ -471,7 +471,7 @@ export const StakesTable = () => {
   return (
     <section className="mt-8 w-full">
       <GradientComponent>
-        <div className="relative p-8 flex flex-col space-y-2 bg-gradient-to-r from-[#141525] to-[#140B1E] rounded-2xl w-full">
+        <div className="relative p-8 flex flex-col space-y-2 bg-custom-gradient rounded-2xl w-full">
           <div className="flex flex-col lg:flex-row justify-between mb-4 space-y-4 lg:space-y-0">
             <h1 className="text-2xl font-bold text-left "> Your Staked Positions </h1>
             <div className="flex space-x-4">
@@ -491,9 +491,9 @@ export const StakesTable = () => {
             </div>
           ) : (
             <div className="overflow-x-auto w-full">
-              <table className="w-full bg-base-200 shadow-lg rounded-lg overflow-hidden">
+              <table className="w-full bg-base-100 shadow-lg rounded-lg overflow-hidden">
                 <thead className="w-full">
-                  <tr className="bg-[#11101A] ">
+                  <tr className="bg-base-100 ">
                     <th className={`${tableSize} border border-white`}>Slot ID</th>
                     <th className={`${tableSize} border border-white`}>Amount Staked</th>
                     <th className={`${tableSize} border border-white`}>Txn Hash</th>
@@ -507,7 +507,7 @@ export const StakesTable = () => {
                   {stakes.slice(startIndex, endIndex).map((stake: any, idx: any) => {
                     return (
                       <tr
-                        className="w-full p-4 my-2 items-center justify-center border border-white bg-[#11101A]"
+                        className="w-full p-4 my-2 items-center justify-center border border-white bg-base-100"
                         key={idx}
                       >
                         <td className={`${tableSize} text-center`}>{stake?.slotId}</td>
@@ -535,7 +535,7 @@ export const StakesTable = () => {
                           <div className="p-0.5 text-xs md:text-sm rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3]">
                             <button
                               type="button"
-                              className="py-1 px-2 md:px-8 md:py-2 border-1 rounded-full bg-gray-800"
+                              className="py-1 px-2 md:px-8 md:py-2 border-1 rounded-full bg-base-100"
                               onClick={() => {
                                 setIsClaim(false);
                                 handlePopup();

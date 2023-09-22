@@ -1023,7 +1023,7 @@ const contracts = {
       chainId: "31337",
       contracts: {
         LiquidityPool: {
-          address: "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
+          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
           abi: [
             {
               anonymous: false,
@@ -1182,7 +1182,7 @@ const contracts = {
           ],
         },
         StakingContract: {
-          address: "0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8",
+          address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
           abi: [
             {
               inputs: [

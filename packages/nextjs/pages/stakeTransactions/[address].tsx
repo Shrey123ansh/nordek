@@ -18,7 +18,7 @@ const AddressPage = ({ address, transactions }) => {
   return (
     <div className="m-10 mb-20">
       <div className="flex justify-start mb-5">
-        <button className="btn btn-sm btn-primary" onClick={() => router.back()}>
+        <button className="btn btn-sm btn-primary text-white" onClick={() => router.back()}>
           Back
         </button>
       </div>

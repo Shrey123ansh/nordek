@@ -32,7 +32,7 @@ interface WalletButtonProps {
 }
 
 const WalletButton: React.FC<WalletButtonProps> = ({ buttonText, onClickFunc }) => {
-  const buttonStyle = "py-1 px-4 border-3 rounded-full font-bold bg-gray-800";
+  const buttonStyle = "py-1 px-4 border-3 rounded-full font-bold bg-base-100";
 
   return (
     <div className="rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-1">
