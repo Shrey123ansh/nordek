@@ -34,7 +34,7 @@ const StakeHeader: React.FC = () => {
         <div
           className=" w-[100%] lg:w-[30%] h-[45%]  lg:h-[65%]  bg-cover bg-no-repeat   rounded-[15px]"
           style={{
-            background: "rgba(200, 200, 200, 0.08)",
+            background: "rgba(232, 64, 173, 0.44)",
             strokeWidth: "1px",
             stroke: "#CDD5FE",
             filter: "drop-shadow(0px 4px 24px rgba(0, 0, 0, 0.20))",
@@ -51,7 +51,7 @@ const StakeHeader: React.FC = () => {
         <div
           className=" w-[100%] lg:w-[30%] h-[45%]  lg:h-[65%]  bg-cover bg-no-repeat   rounded-[15px]   "
           style={{
-            background: "rgba(200, 200, 200, 0.08)",
+            background: "rgba(9, 87, 184, 0.49)",
             strokeWidth: "1px",
             stroke: "#CDD5FE",
             filter: "drop-shadow(0px 4px 24px rgba(0, 0, 0, 0.20))",
