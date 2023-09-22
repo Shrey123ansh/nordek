@@ -18,7 +18,7 @@ contract DeployScript is ScaffoldETHDeploy {
     LiquidityPool liquidityPool;
 
     function run() external {
-        uint256 deployerPrivateKey = setupLocalhostEnv();
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         if (deployerPrivateKey == 0) {
             revert InvalidPrivateKey(
                 "You don't have a deployer account. Make sure you have set DEPLOYER_PRIVATE_KEY in .env or use `yarn generate` to generate a new random account"
@@ -66,10 +66,10 @@ contract DeployScript is ScaffoldETHDeploy {
 
         // console.logString("Minted and recevied tokens");
 
-        vm.deal(vm.addr(deployerPrivateKey), 100);
+        vm.deal(vm.addr(deployerPrivateKey), 1 ether);
 
         liquidityPool = new LiquidityPool();
-        address(liquidityPool).call{value: 100}("");
+        address(liquidityPool).call{value: 1 ether}("");
 
         stakingContract = new StakingContract(
             18,
@@ -77,7 +77,7 @@ contract DeployScript is ScaffoldETHDeploy {
             31536000,
             address(liquidityPool)
         );
-        liquidityPool.verifiedContract(address(stakingContract));
+        liquidityPool.verifyContract(address(stakingContract));
 
         console.logString(
             string.concat(

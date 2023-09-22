@@ -19,6 +19,8 @@ contract LiquidityPool is Ownable, ReentrancyGuard, ILiquidityPool {
         string action,
         uint32 timeStamp
     );
+    event AmountMigrated(uint256 amount, address newAddress, uint32 timeStamp);
+    event OwnerAccessFunds(uint256 amount, uint32 timeStamp);
 
     mapping(address => bool) public verifiedContract;
 
@@ -52,4 +54,30 @@ contract LiquidityPool is Ownable, ReentrancyGuard, ILiquidityPool {
     fallback() external payable {}
 
     receive() external payable {}
+
+    function migration(
+        uint256 amount,
+        address newAddress
+    ) external nonReentrant onlyOwner {
+        require(
+            address(this).balance >= amount,
+            "Contract insufficient balance"
+        );
+        require(amount > 0, "invalid amount");
+        require(newAddress != address(0), "invalid address");
+        emit AmountMigrated(amount, newAddress, uint32(block.timestamp));
+        (bool success, ) = newAddress.call{value: amount}("");
+        require(success, "Unable to send value or recipient may have reverted");
+    }
+
+    function extractFunds(uint256 _amount) external onlyOwner nonReentrant {
+        require(
+            address(this).balance >= _amount,
+            "Contract insufficient balance"
+        );
+        require(_amount > 0, "invalid amount");
+        (bool success, ) = msg.sender.call{value: _amount}("");
+        require(success, "Unable to send value or recipient may have reverted");
+        emit OwnerAccessFunds(_amount, uint32(block.timestamp));
+    }
 }
