@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.20;
 
 import "openzeppelin/access/Ownable.sol";
 import "openzeppelin/security/ReentrancyGuard.sol";
@@ -22,6 +22,9 @@ contract LiquidityPool is Ownable, ReentrancyGuard, ILiquidityPool {
     event AmountMigrated(uint256 amount, address newAddress, uint32 timeStamp);
     event OwnerAccessFunds(uint256 amount, uint32 timeStamp);
 
+    /**
+     * @notice mapping for verified contract which can be accessed by owner only
+     */
     mapping(address => bool) public verifiedContract;
 
     modifier isVerified() {
@@ -35,10 +38,18 @@ contract LiquidityPool is Ownable, ReentrancyGuard, ILiquidityPool {
      * @param _contract is the contract address which can access NRK tokens
      */
     function verifyContract(address _contract) external onlyOwner {
+        require(_contract != address(0), "invalid contract address");
         verifiedContract[_contract] = true;
         emit ContractVerified(_contract, uint32(block.timestamp));
     }
 
+    /**
+     * @dev verified contract can access NRK tokens with this function only
+     * @param _amount the amount of NRK tokens required by contract
+     * @param _action the purpose of NRK token
+     * @notice only verified contracts by owner can access this function
+     * @notice this function is non reentrant
+     */
     function accessFunds(
         uint256 _amount,
         string memory _action
@@ -55,6 +66,13 @@ contract LiquidityPool is Ownable, ReentrancyGuard, ILiquidityPool {
 
     receive() external payable {}
 
+    /**
+     * @dev this function is used to migrate the NRK tokens from this contract to another EOA or contract
+     * @param amount the amount of NRK tokens needed to migrate
+     * @param newAddress the address on which NRK tokens should be sent
+     * @notice this functions can only be called by owner
+     * @notice this function is non reentrant
+     */
     function migration(
         uint256 amount,
         address newAddress
@@ -70,6 +88,12 @@ contract LiquidityPool is Ownable, ReentrancyGuard, ILiquidityPool {
         require(success, "Unable to send value or recipient may have reverted");
     }
 
+    /**
+     * @dev extract NRK tokens from this contract
+     * @param _amount Specific amount of NRK token needed to be removed from this contract
+     * @notice the contract owner can access this function
+     * @notice this function is non reentrant
+     */
     function extractFunds(uint256 _amount) external onlyOwner nonReentrant {
         require(
             address(this).balance >= _amount,
