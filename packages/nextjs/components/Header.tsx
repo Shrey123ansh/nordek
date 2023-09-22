@@ -35,7 +35,7 @@ const NavLink = ({
 /**
  * Site header
  */
-export const Header = () => {
+export const Header = ({ isDarkTheme }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
 
@@ -71,7 +71,12 @@ export const Header = () => {
         <div className="flex items-center space-x-2 ml-4 mr-6">
           <Link href="/" passHref className="flex items-center space-x-2">
             <div className="flex relative w-8 h-10">
-              <Image alt="SE2 logo" className="cursor-pointer fill-black" fill src="/icon.svg" />
+              <Image
+                alt="SE2 logo"
+                className="cursor-pointer"
+                fill
+                src={isDarkTheme ? "/icon.svg" : "/iconBlack.svg"}
+              />
             </div>
             <div className="flex flex-col">
               <span className="font-bold">NORSWAP</span>
@@ -99,7 +104,12 @@ export const Header = () => {
               <div className="flex">
                 <Link href="/" passHref className="flex items-center space-x-2">
                   <div className="flex relative w-8 h-10">
-                    <Image alt="SE2 logo" className="cursor-pointer" fill src="/icon.svg" />
+                    <Image
+                      alt="SE2 logo"
+                      className="cursor-pointer"
+                      fill
+                      src={isDarkTheme ? "/icon.svg" : "/iconBlack.svg"}
+                    />
                   </div>
                   <div className="flex flex-col">
                     <span className="font-bold">NORSWAP</span>
@@ -107,7 +117,7 @@ export const Header = () => {
                 </Link>
               </div>
               <button onClick={toggleDrawer}>
-                <XMarkIcon className="w-8 h-8 text-white" />
+                <XMarkIcon className="w-8 h-8 text-secondary-content" />
               </button>
             </div>
             <div className="flex flex-col justify-between h-full space-y-8 p-y-12">
@@ -124,7 +134,7 @@ export const Header = () => {
       <div className="lg:hidden navbar-end flex-grow mr-4 my-2 ">
         {/* Hamburger icon for mobile */}
         <button className="p-2 focus:outline-none" onClick={toggleDrawer} aria-label="Toggle Navigation">
-          <Bars3Icon className="w-6 h-6 text-white" />
+          <Bars3Icon className="w-6 h-6 text-secondary-content" />
         </button>
       </div>
 

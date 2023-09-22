@@ -32,7 +32,7 @@ const StakeHeader: React.FC = () => {
     <div className="w-[100%] h-[25rem] flex flex-col justify-center items-center md:h-[30rem] lg:h-[40rem] bg-[url('/assets/headerbg.png')]  bg-no-repeat bg-contain text-white">
       <div className="flex gap-[2rem] lg:gap-[0rem] -mt-[8rem] h-[70%] flex-col justify-between items-center lg:flex-row w-[60%]  md:w-[67%] lg:w-3/5 xl:w-3/5">
         <div
-          className=" w-[100%] lg:w-[30%] h-[45%]  lg:h-[65%]  bg-cover bg-no-repeat   rounded-[15px]"
+          className=" w-[100%] lg:w-[30%] h-[45%]  lg:h-[65%]  bg-cover bg-no-repeat   rounded-[15px] "
           style={{
             background: "rgba(200, 200, 200, 0.08)",
             strokeWidth: "1px",
