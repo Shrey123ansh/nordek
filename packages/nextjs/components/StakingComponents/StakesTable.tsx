@@ -89,8 +89,6 @@ export const StakesTable = () => {
     });
   }
 
-  console.log(address, frequency, platformDetails, address && frequency && platformDetails);
-
   const {
     data: stakes,
     isLoading: isStakesLoading,
