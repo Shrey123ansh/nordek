@@ -196,7 +196,15 @@ export const removeStakeInDb = async (updateInfo: {
   }
 };
 
-export const getTransactionsFromNordekScan = async ({ userAddress, blockNumber, contractAddress }) => {
+export const getTransactionsFromNordekScan = async ({
+  userAddress,
+  blockNumber,
+  contractAddress,
+}: {
+  userAddress: string;
+  blockNumber: any;
+  contractAddress: string;
+}) => {
   const apiUrl = `https://nordekscan.com/api?module=account&action=txlist&address=${userAddress}&sort=desc&start_block=${blockNumber}&filter_by=to:"${contractAddress}"`;
   try {
     const response = await axios.get(apiUrl);
