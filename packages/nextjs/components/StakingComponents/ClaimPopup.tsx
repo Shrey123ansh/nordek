@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { useState } from "react";
 import GradientComponent from "./GradientContainer";
-import { formatEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
@@ -16,7 +16,7 @@ export const ClaimPopup = ({
   slotId: bigint;
   isClaim: boolean;
 }) => {
-  const [amount, setAmount] = useState(BigInt(0));
+  const [amount, setAmount] = useState(0);
   const { address } = useAccount();
 
   const { data: userSlotReward, isLoading: isGetUserSlotReward } = useScaffoldContractRead({
@@ -30,14 +30,14 @@ export const ClaimPopup = ({
   const slotReward = userSlotReward ? userSlotReward : BigInt(0);
 
   function setStakeAmountMax() {
-    setAmount(slotReward);
+    setAmount(Number(formatEther(slotReward)).toFixed(4));
   }
 
   const { writeAsync: claimRewards } = useScaffoldContractWrite({
     contractName: "StakingContract",
     functionName: "claimRewards",
     account: address,
-    args: [amount, BigInt(slotId)],
+    args: [parseEther(amount?.toString()), BigInt(slotId)],
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
@@ -47,7 +47,7 @@ export const ClaimPopup = ({
     contractName: "StakingContract",
     functionName: "restake",
     account: address,
-    args: [BigInt(amount), BigInt(slotId)],
+    args: [parseEther(amount?.toString()), BigInt(slotId)],
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
@@ -76,11 +76,11 @@ export const ClaimPopup = ({
           </div>
           <div className="flex w-full justify-center text-center mb-8 rounded-lg border border-snow-300 text-center">
             <input
-              type="text"
+              type="number"
               placeholder="Enter amount"
               className="w-full p-2 mr-4 rounded-md text-base-content bg-transparent focus:border-transparent focus:ring-0"
-              value={formatEther(amount)}
-              onChange={e => setAmount(BigInt(e.target.value))}
+              value={amount}
+              onChange={e => setAmount(Number(e.target.value))}
             />
             <div className="relative top-1 h-8 mr-2 rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] p-0.5 text-sm text-white">
               <button
@@ -117,6 +117,7 @@ export const ClaimPopup = ({
                 className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-2 px-8 rounded-full w-full"
                 onClick={() => {
                   claimRewards();
+                  onClose();
                 }}
               >
                 Claim
@@ -126,6 +127,7 @@ export const ClaimPopup = ({
                 className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-2 px-8 rounded-full w-full"
                 onClick={() => {
                   restakeRewards();
+                  onClose();
                 }}
               >
                 Restake

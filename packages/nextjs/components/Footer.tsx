@@ -15,17 +15,7 @@ export const Footer = () => {
       <div className="w-full">
         <ul className="menu menu-horizontal w-full">
           <div className="flex justify-center items-center gap-2 text-sm w-full">
-            <div>
-              Built By <HeartIcon className="inline-block h-4 w-4" />
-              <a
-                href="https://shubhpatni.com/"
-                target="_blank"
-                rel="noreferrer"
-                className="underline underline-offset-2"
-              >
-                Giakaa
-              </a>
-            </div>
+            <div></div>
           </div>
         </ul>
       </div>
