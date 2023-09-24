@@ -30,14 +30,14 @@ export const ClaimPopup = ({
   const slotReward = userSlotReward ? userSlotReward : BigInt(0);
 
   function setStakeAmountMax() {
-    setAmount(Number(formatEther(slotReward)).toFixed(4));
+    setAmount(formatEtherNumber(slotReward));
   }
 
   const { writeAsync: claimRewards } = useScaffoldContractWrite({
     contractName: "StakingContract",
     functionName: "claimRewards",
     account: address,
-    args: [parseEther(amount?.toString()), BigInt(slotId)],
+    args: [slotReward, BigInt(slotId)],
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
@@ -47,7 +47,7 @@ export const ClaimPopup = ({
     contractName: "StakingContract",
     functionName: "restake",
     account: address,
-    args: [parseEther(amount?.toString()), BigInt(slotId)],
+    args: [slotReward, BigInt(slotId)],
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
@@ -74,28 +74,10 @@ export const ClaimPopup = ({
               </svg>
             </button>
           </div>
-          <div className="flex w-full justify-center text-center mb-8 rounded-lg border border-snow-300 text-center">
-            <input
-              type="number"
-              placeholder="Enter amount"
-              className="w-full p-2 mr-4 rounded-md text-base-content bg-transparent focus:border-transparent focus:ring-0"
-              value={amount}
-              onChange={e => setAmount(Number(e.target.value))}
-            />
-            <div className="relative top-1 h-8 mr-2 rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] p-0.5 text-sm text-white">
-              <button
-                type="button"
-                className="border-1 rounded-full font-bold bg-base-100 px-4 h-7 text-base-content"
-                onClick={setStakeAmountMax}
-              >
-                Max
-              </button>
-            </div>
-          </div>
 
           <div className="flex flex-col space-y-4 mb-8">
             <h1 className="flex justify-between ">
-              <span className={textColor}>ID</span>
+              <span className={textColor}>Slot ID</span>
               <span className={textColor}>{slotId.toString()}</span>
             </h1>
             {isClaim ? (
@@ -114,23 +96,23 @@ export const ClaimPopup = ({
           <div className="flex justify-between">
             {isClaim ? (
               <button
-                className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-2 px-8 rounded-full w-full"
+                className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-2 px-8 rounded-full w-full font-semibold"
                 onClick={() => {
                   claimRewards();
                   onClose();
                 }}
               >
-                Claim
+                Claim All
               </button>
             ) : (
               <button
-                className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-2 px-8 rounded-full w-full"
+                className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-2 px-8 rounded-full w-full font-semibold"
                 onClick={() => {
                   restakeRewards();
                   onClose();
                 }}
               >
-                Restake
+                Restake All
               </button>
             )}
           </div>

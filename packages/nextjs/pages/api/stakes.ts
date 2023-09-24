@@ -11,10 +11,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     case "POST":
       try {
         const { stakedAt, stakedAmount, address, hash, slotId } = req.body;
-        const collection = db.collection("stakes");
-        collection.createIndex({ stakedAt, stakedAmount, address, hash, slotId }, { unique: true });
-
-        await collection.insertOne({ stakedAt, stakedAmount, address, hash, slotId });
+        console.log("Running save req");
+        await db.collection("stakes").insertOne({ stakedAt, stakedAmount, address, hash, slotId });
         return res.status(200).json({ message: `New Stake Saved`, ok: true });
       } catch (e) {
         console.error("Error:", e);

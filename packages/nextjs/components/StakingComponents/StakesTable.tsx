@@ -124,7 +124,6 @@ export const StakesTable = () => {
   // };
 
   const addStakesMutation = async newStake => {
-    console.log("Called mutation");
     try {
       await saveStakeToDb(newStake);
       mutateStakes();
@@ -134,7 +133,6 @@ export const StakesTable = () => {
   };
 
   const removeStakesMutation = async updateInfo => {
-    console.log("Called mutation");
     try {
       await removeStakeInDb(updateInfo);
       mutateStakes();
@@ -144,7 +142,6 @@ export const StakesTable = () => {
   };
 
   const removeAllStakesMutation = async user => {
-    console.log("Called mutation");
     try {
       await removeAllStakesForUser(user);
 
@@ -155,7 +152,6 @@ export const StakesTable = () => {
   };
 
   const updateRestakedMutation = async updatedStake => {
-    console.log("Called mutation");
     try {
       await updateRestakedDB(updatedStake);
 
@@ -166,7 +162,6 @@ export const StakesTable = () => {
   };
 
   const updateAllRestakedMutation = async (user, updatedStakes) => {
-    console.log("Called mutation");
     try {
       await updateRestakedAllDB(user, updatedStakes);
 
@@ -239,7 +234,7 @@ export const StakesTable = () => {
         console.log("STAKES before if", stakes);
         const { user, amount, unstakeTime, _slotId, rewardsLeft } = log.args;
         console.log("📡 Unstaked", user, amount, unstakeTime, _slotId, rewardsLeft);
-        console.log("IF VALUE", user && amount != undefined && _slotId != undefined && rewardsLeft != undefined);
+
         if (user != undefined && amount != undefined && _slotId != undefined && rewardsLeft != undefined) {
           if (stakes != undefined) {
             try {
@@ -432,14 +427,15 @@ export const StakesTable = () => {
                 account: user,
               });
               console.log("retrieved slots", slots);
-
-              const transformedArray = slots.map(item => ({
-                stakedAmount: Number(item.amount),
-                stakedAt: item.startTime,
-                address: user, // Replace with the desired address
-                hash: log.transactionHash,
-                slotId: Number(item.id), // Replace with the desired hash
-              }));
+              const transformedArray = slots
+                .filter(item => Number(item.amount) !== 0) // Filter out items with stakedAmount as zero
+                .map(item => ({
+                  stakedAmount: Number(item.amount),
+                  stakedAt: item.startTime,
+                  address: user, // Replace with the desired address
+                  hash: log.transactionHash,
+                  slotId: Number(item.id), // Replace with the desired hash
+                }));
 
               console.log("TRANSFORMED ARRAY", transformedArray);
 

@@ -16,7 +16,7 @@ const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT
 export const MetaHeader = ({
   title = "Norswap",
   description = "Norswap",
-  image = "thumbnail.jpg",
+  image = "iconBlack.svg",
   twitterCard = "summary_large_image",
   children,
 }: MetaHeaderProps) => {
@@ -45,7 +45,7 @@ export const MetaHeader = ({
         </>
       )}
       {twitterCard && <meta name="twitter:card" content={twitterCard} />}
-      <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon.svg" />
       {children}
     </Head>
   );
