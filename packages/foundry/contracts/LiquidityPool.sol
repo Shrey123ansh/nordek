@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 
 import "openzeppelin/access/Ownable.sol";
 import "openzeppelin/security/ReentrancyGuard.sol";
-import "openzeppelin/proxy/transparent/TransparentUpgradeableProxy.sol";
 import "./ILiquidityPool.sol";
 
 /**

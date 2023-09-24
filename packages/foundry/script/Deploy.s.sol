@@ -5,6 +5,7 @@ import "../contracts/YourContract.sol";
 import "./DeployHelpers.s.sol";
 import "../contracts/StakingContract.sol";
 import "../contracts/LiquidityPool.sol";
+import "openzeppelin/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 contract DeployScript is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);

@@ -5,7 +5,6 @@ import "openzeppelin/access/Ownable.sol";
 import "openzeppelin/security/ReentrancyGuard.sol";
 import "openzeppelin/proxy/utils/Initializable.sol";
 import "openzeppelin/utils/math/SafeMath.sol";
-import "openzeppelin/proxy/transparent/TransparentUpgradeableProxy.sol";
 import "./ILiquidityPool.sol";
 
 /**
