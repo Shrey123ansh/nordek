@@ -89,8 +89,6 @@ export const StakesTable = () => {
     });
   }
 
-  console.log(address, frequency, platformDetails, address && frequency && platformDetails);
-
   const {
     data: stakes,
     isLoading: isStakesLoading,
@@ -517,7 +515,7 @@ export const StakesTable = () => {
                         </td>
                         {/* <td className={`${tableSize} text-center`}><a href=""></a>{formatTx(stake.hash)}</td> */}
                         <td className={`${tableSize} text-center`}>{unixTimestampToDate(stake?.stakedAt)}</td>
-                        <td className={`${tableSize} text-center`}>{stake?.rewards}</td>
+                        <td className={`${tableSize} text-center`}>{formatEther(stake?.rewards) || ""}</td>
 
                         <td className={`${tableSize} text-center flex justify-center space-x-2 md:space-x-4`}>
                           {/* <ActionButton text="Claim" onClick={() => openClaimPopup()}></ActionButton> */}

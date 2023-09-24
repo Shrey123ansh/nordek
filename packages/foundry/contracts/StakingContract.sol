@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.20;
 
 import "openzeppelin/access/Ownable.sol";
 import "openzeppelin/security/ReentrancyGuard.sol";
@@ -179,7 +179,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
      */
     function unstake(uint256 _amount, uint256 _slotId) public nonReentrant {
         require(!pause, "Please wait until the staking is unpaused");
-
+        require(_amount != 0, "invalid unstake amount specified");
         address user = msg.sender;
         require(
             stakes[user].slotStake[_slotId].amount >= _amount,

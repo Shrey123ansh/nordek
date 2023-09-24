@@ -47,7 +47,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
               : "bg-gradient-to-r from-[#FFFFFF] to-[#FFFFFF]"
           }`}
         >
-          <Header />
+          <Header isDarkTheme={isDarkTheme} />
           <main className="relative flex flex-col flex-1">
             <Component {...pageProps} />
           </main>

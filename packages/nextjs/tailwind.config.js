@@ -55,6 +55,14 @@ module.exports = {
           ".important-text": {
             color: "var(--custom-text)", // Use the CSS variable
           },
+
+          ".stakeHeader": {
+            background: "rgba(144, 40, 222, 0.44)",
+            strokeWidth: "1px",
+            stroke: "#CDD5FE",
+            filter: "drop-shadow(0px 4px 24px rgba(0, 0, 0, 0.20))",
+            backdropFilter: "blur(23px)",
+          },
         },
       },
       {
@@ -85,8 +93,6 @@ module.exports = {
 
           "--custon-body-gradient": "linear-gradient(to right, #1B0A30, #000000)",
 
-          "--stake-header-gradient": "rgba(200, 200, 200, 0.08)",
-
           ".tooltip": {
             "--tooltip-tail": "6px",
             "--tooltip-color": "hsl(var(--p))",
@@ -111,7 +117,11 @@ module.exports = {
           },
 
           ".stakeHeader": {
-            color: "var(--stake-header-gradient)", // Use the CSS variable
+            background: "rgba(200, 200, 200, 0.08)",
+            strokeWidth: "1px",
+            stroke: "#CDD5FE",
+            filter: "drop-shadow(0px 4px 24px rgba(0, 0, 0, 0.20))",
+            backdropFilter: "blur(23px)",
           },
         },
       },
