@@ -118,7 +118,6 @@ contract DeployScript is ScaffoldETHDeploy {
         //     31536000,
         //     address(liquidityPool)
         // );
-        liquidityPoolProxy.verifyContract(address(stakingContractProxy));
 
         console.logString(
             string.concat(
@@ -189,13 +188,12 @@ contract DeployScript is ScaffoldETHDeploy {
         //     )
         // );
 
-        vm.stopBroadcast();
-
         /**
          * This function generates the file containing the contracts Abi definitions.
          * These definitions are used to derive the types needed in the custom scaffold-eth hooks, for example.
          * This function should be called last.
          */
+        vm.stopBroadcast();
         exportDeployments();
     }
 

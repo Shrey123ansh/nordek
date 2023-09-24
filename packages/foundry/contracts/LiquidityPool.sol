@@ -31,6 +31,10 @@ contract LiquidityPool is OwnableUpgradeable, ReentrancyGuard, ILiquidityPool {
         _;
     }
 
+    /**
+     * @dev Proxy initializer function sets new owner other than admin
+     * @param _owner The owner of this contract
+     */
     function initialize(address _owner) external payable initializer {
         __Ownable_init();
         transferOwnership(_owner);

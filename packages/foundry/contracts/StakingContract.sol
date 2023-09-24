@@ -117,11 +117,13 @@ contract StakingContract is OwnableUpgradeable, ReentrancyGuard {
     event ApyUpdated(uint256 apy, uint32 timeStamp);
     event LiquidityPoolUpdated(address newPool, uint32 timeStamp);
 
-    //  _apy = 18
-    // _minimumStake = 100000000000000000000
-    // _frequency = 31536000
-    // uint16 _apy, uint256 _minimumStake, uint256 _frequency
-
+    /**
+     * @dev Proxy initializer function sets new owner other than admin
+     * @param _apy  = 18
+     * @param _owner The owner of this contract
+     * @param _minimumStake = 100000000000000000000
+     * @param _frequency = 31536000
+     */
     function initialize(
         uint16 _apy,
         uint256 _minimumStake,
