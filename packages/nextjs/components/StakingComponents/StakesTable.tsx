@@ -395,9 +395,10 @@ export const StakesTable = () => {
 
           console.log("Updating restaked db");
           updateRestakedMutation(updatedStake);
-
+          console.log("normal amount", amount);
+          console.log("format amount", Number(formatEther(amount)));
           const updates = {
-            totalRestakes: Number(amount),
+            totalRestakes: Number(formatEther(amount)),
           };
 
           updateUserData(user, updates);

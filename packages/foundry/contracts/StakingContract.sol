@@ -480,7 +480,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
 
         emit ReStaked(
             user,
-            totalStake,
+            _amount,
             uint32(block.timestamp),
             _slotId,
             stakes[user].slotStake[_slotId].rewards

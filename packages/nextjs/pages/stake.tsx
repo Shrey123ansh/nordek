@@ -186,7 +186,10 @@ const StakeBox = () => {
                     ? "w-full bg-transparent border-b-2 border-purple-500"
                     : "w-full bg-transparent border-b-2 border-base-300 hover:border-purple-500"
                 }
-                onClick={() => setIsStaking(!isStaking)}
+                onClick={() => {
+                  setIsStaking(!isStaking);
+                  setStakeAmount(0);
+                }}
               >
                 Stake
               </button>
@@ -196,7 +199,10 @@ const StakeBox = () => {
                     ? "w-full bg-transparent border-b-2 border-purple-500"
                     : "w-full bg-transparent border-b-2 border-base-300 hover:border-purple-500"
                 }
-                onClick={() => setIsStaking(!isStaking)}
+                onClick={() => {
+                  setIsStaking(!isStaking);
+                  setStakeAmount(0);
+                }}
               >
                 Unstake
               </button>
