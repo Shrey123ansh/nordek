@@ -9,6 +9,7 @@ import "openzeppelin/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 contract DeployScript is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);
+    error InvalidOwnerAddress();
 
     // ERC20Mintable tokenA;
     // ERC20Mintable tokenB;
@@ -17,13 +18,19 @@ contract DeployScript is ScaffoldETHDeploy {
 
     StakingContract stakingContract;
     LiquidityPool liquidityPool;
+    TransparentUpgradeableProxy liquidityPoolProxy;
+    TransparentUpgradeableProxy stakingContractProxy;
 
     function run() external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        uint256 deployerPrivateKey = vm.envUint("ADMIN_PRIVATE_KEY");
+        uint256 owner = vm.envUint("OWNER_ADDRESS");
         if (deployerPrivateKey == 0) {
             revert InvalidPrivateKey(
                 "You don't have a deployer account. Make sure you have set DEPLOYER_PRIVATE_KEY in .env or use `yarn generate` to generate a new random account"
             );
+        }
+        if (owner == 0) {
+            revert InvalidOwnerAddress();
         }
         vm.startBroadcast(deployerPrivateKey);
 
@@ -67,35 +74,68 @@ contract DeployScript is ScaffoldETHDeploy {
 
         // console.logString("Minted and recevied tokens");
 
-        vm.deal(vm.addr(deployerPrivateKey), 1 ether);
+        address admin = vm.addr(deployerPrivateKey);
+
+        // vm.deal(vm.addr(deployerPrivateKey), 1 ether);
 
         liquidityPool = new LiquidityPool();
-        address(liquidityPool).call{value: 1 ether}("");
-
-        stakingContract = new StakingContract(
-            18,
-            10000000000000000,
-            31536000,
-            address(liquidityPool)
+        // address(liquidityPool).call{value: 1 ether}("");
+        // need to add some ether for liquidity at start
+        liquidityPoolProxy = new TransparentUpgradeableProxy(
+            address(liquidityPool),
+            admin,
+            abi.encodeWithSignature(
+                "initialize(address)",
+                address(uint160(owner))
+            )
         );
-        liquidityPool.verifyContract(address(stakingContract));
+
+        stakingContract = new StakingContract();
+
+        /**
+         * _apy = 18%
+         * minimum stake amount =  1 NRK
+         * frequency = 31536000
+         * liquidity pool contract address = address(liquidityPoolProxy)
+         */
+
+        stakingContractProxy = new TransparentUpgradeableProxy(
+            address(stakingContract),
+            admin,
+            abi.encodeWithSignature(
+                "initialize(uint16,uint256,uint256,address,address)",
+                18,
+                1000000000000000000,
+                31536000,
+                address(liquidityPoolProxy),
+                address(uint160(owner))
+            )
+        );
+
+        // stakingContract = new StakingContract(
+        //     18,
+        //     10000000000000000,
+        //     31536000,
+        //     address(liquidityPool)
+        // );
+        liquidityPoolProxy.verifyContract(address(stakingContractProxy));
 
         console.logString(
             string.concat(
                 "staking contract deployed at: ",
-                vm.toString(address(stakingContract))
+                vm.toString(address(stakingContractProxy))
             )
         );
         console.logString(
             string.concat(
                 "balance of liquidity : ",
-                vm.toString(address(liquidityPool).balance)
+                vm.toString(address(liquidityPoolProxy).balance)
             )
         );
         console.logString(
             string.concat(
                 "liquidity pool contract at: ",
-                vm.toString(address(liquidityPool))
+                vm.toString(address(liquidityPoolProxy))
             )
         );
 

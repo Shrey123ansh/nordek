@@ -48,6 +48,8 @@ export const StakesTable = () => {
     account: address,
   });
 
+
+
   //console.log("PLATFORM DETAILS", platformDetails);
 
   const stakesFetcher = async () => {

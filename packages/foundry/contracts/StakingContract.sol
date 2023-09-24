@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "openzeppelin/access/Ownable.sol";
+import "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "openzeppelin/security/ReentrancyGuard.sol";
-import "openzeppelin/proxy/utils/Initializable.sol";
 import "openzeppelin/utils/math/SafeMath.sol";
 import "./ILiquidityPool.sol";
 
@@ -12,7 +11,7 @@ import "./ILiquidityPool.sol";
  * @author https://anmol-dhiman.netlify.app/
  * @notice Dynamic Staking, APY and Compounding frequency
  */
-contract StakingContract is Ownable, ReentrancyGuard, Initializable {
+contract StakingContract is OwnableUpgradeable, ReentrancyGuard {
     using SafeMath for uint256; // Using SafeMath for safe arithmetic operations
 
     // Flag to pause staking
@@ -122,16 +121,20 @@ contract StakingContract is Ownable, ReentrancyGuard, Initializable {
     // _minimumStake = 100000000000000000000
     // _frequency = 31536000
     // uint16 _apy, uint256 _minimumStake, uint256 _frequency
-    constructor(
+
+    function initialize(
         uint16 _apy,
         uint256 _minimumStake,
         uint256 _frequency,
-        address _liquidityPool
-    ) {
+        address _liquidityPool,
+        address _owner
+    ) external initializer {
         apy.push(APY(_apy, uint32(block.timestamp)));
         minimumStake = _minimumStake;
         frequency = _frequency;
         liquidityPool = ILiquidityPool(_liquidityPool);
+        __Ownable_init();
+        transferOwnership(_owner);
     }
 
     fallback() external payable {}
