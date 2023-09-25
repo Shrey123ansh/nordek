@@ -18,14 +18,15 @@ contract StakingTest is Test {
         // frequency = 365 days
 
         liquidityPool = new LiquidityPool();
-        vm.deal(address(liquidityPool),100);
+        vm.deal(address(liquidityPool), 100);
 
-        stakingContract = new StakingContract(
-            18,
-            100000000000000000000,
-            31536000,
-            address(liquidityPool)
-        );
+        // stakingContract = new StakingContract(
+        //     18,
+        //     100000000000000000000,
+        //     31536000,
+        //     address(liquidityPool)
+        // );
+        stakingContract = new StakingContract();
     }
 
     function test_StakingNRK(address user) public {

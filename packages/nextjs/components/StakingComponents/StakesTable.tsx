@@ -48,6 +48,8 @@ export const StakesTable = () => {
     account: address,
   });
 
+
+
   //console.log("PLATFORM DETAILS", platformDetails);
 
   const stakesFetcher = async () => {
@@ -127,6 +129,7 @@ export const StakesTable = () => {
     console.log("Called mutation");
     try {
       await saveStakeToDb(newStake);
+      console.log("successfully saved to db")
       mutateStakes();
     } catch (e) {
       console.log("Error in saving new stake", e);

@@ -4,6 +4,7 @@ out = 'out'
 auto_detect_solc = true
 libs = ['lib']
 fs_permissions = [{ access = "read-write", path = "./"}]
+FOUNDRY_OPTIMIZER_RUNS = 100000
 
 [rpc_endpoints]
 default_network = "http://127.0.0.1:8545"
