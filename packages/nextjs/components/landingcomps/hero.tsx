@@ -12,11 +12,10 @@ const Hero: React.FC = () => {
           <div className="flex flex-col items-start space-y-4 w-full">
             <p className="font-[LexendTera] text-[27.97px] heroText font-bold">NORSWAP</p>
             <p className=" font-[Kanit]text-[25px] md:text-[30px] lg:text-[40px] font-[500]">
-              The Portal to DeFi: Mint
+              The Gateway to Your Finance World
             </p>
             <p className=" font-[Kanit] text-[13px] md:text-[16px] lg:text-[20px] ">
-              All in one decentralized exchange for leveraging diversified funds across ecosystems, with the speed of
-              Fantom Opera
+              Enabling cross ecosystem financial actions by lightning speed blockchain - Nordek
             </p>
 
             {/* Border div */}
