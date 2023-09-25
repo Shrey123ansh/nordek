@@ -12,9 +12,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
         const { stakedAt, stakedAmount, address, hash, slotId } = req.body;
         const existingStake = await db.collection("stakes").findOne({ stakedAt, stakedAmount, address, hash, slotId });
+        console.log("EXISTING STAKE", existingStake);
         if (!existingStake) {
           await db.collection("stakes").insertOne({ stakedAt, stakedAmount, address, hash, slotId });
+          console.log("API STAKES SAVING");
           return res.status(200).json({ message: `New Stake Saved`, ok: true });
+        } else {
+          return res.status(200).json({ message: `Already exists`, ok: true });
         }
       } catch (e) {
         console.error("Error:", e);

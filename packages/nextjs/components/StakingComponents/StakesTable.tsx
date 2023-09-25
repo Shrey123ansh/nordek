@@ -209,7 +209,7 @@ export const StakesTable = () => {
         const { user, amount, stakeTime, slotId } = log.args;
         console.log("📡 Staked", user, amount, stakeTime, slotId);
 
-        if (user && amount != undefined && stakeTime != undefined) {
+        if (user === address && amount != undefined && stakeTime != undefined) {
           console.log("saving new stake");
           const newStake: stakesType = {
             stakedAt: stakeTime,
@@ -236,7 +236,7 @@ export const StakesTable = () => {
         const { user, amount, unstakeTime, _slotId, rewardsLeft } = log.args;
         console.log("📡 Unstaked", user, amount, unstakeTime, _slotId, rewardsLeft);
 
-        if (user != undefined && amount != undefined && _slotId != undefined && rewardsLeft != undefined) {
+        if (user === address && amount != undefined && _slotId != undefined && rewardsLeft != undefined) {
           if (stakes != undefined) {
             try {
               const topSlotId = stakes[0].slotId;
@@ -320,7 +320,7 @@ export const StakesTable = () => {
       logs.map(log => {
         const { user, totalAmount, rewards, unstakeTime } = log.args;
         console.log("📡 Unstaked", user, totalAmount, rewards, unstakeTime);
-        if (user && totalAmount && unstakeTime && rewards != undefined) {
+        if (user === address && totalAmount && unstakeTime && rewards != undefined) {
           removeAllStakesMutation(user);
           notification.error(<div> Unstaked All: {formatEther(totalAmount)} </div>);
           notification.success(<div> Claimed {formatEther(rewards)} </div>);
@@ -338,7 +338,7 @@ export const StakesTable = () => {
         const { user, totalReward, timeOfClaim, slotId, rewardsLeft } = log.args;
         console.log("📡 Claimed", user, totalReward, timeOfClaim, slotId, rewardsLeft);
 
-        if (user && timeOfClaim && totalReward != undefined) {
+        if (user === address && timeOfClaim && totalReward != undefined) {
           const updates = {
             totalRewards: Number(totalReward),
           };
@@ -361,7 +361,7 @@ export const StakesTable = () => {
         const { user, totalReward, timeOfClaim } = log.args;
         console.log("📡 Claimed", user, totalReward, timeOfClaim);
 
-        if (user && timeOfClaim && totalReward != undefined) {
+        if (user === address && timeOfClaim && totalReward != undefined) {
           const updates = {
             totalRewards: Number(totalReward),
           };
@@ -385,7 +385,7 @@ export const StakesTable = () => {
         console.log("📡 Restaked", user, amount, stakeTime, slotId, rewardsLeft);
 
         console.log("RESTAKED", user && stakeTime);
-        if (user && stakeTime && amount != undefined) {
+        if (user === address && stakeTime && amount != undefined) {
           const updatedStake = {
             newStakedAmount: Number(amount),
             newStakedAt: Number(stakeTime),
@@ -419,7 +419,7 @@ export const StakesTable = () => {
         const { user, restakedAmount, timeStamp } = log.args;
         console.log("📡 Restaked", user, restakedAmount, timeStamp);
 
-        if (user && timeStamp && restakedAmount != undefined) {
+        if (user === address && timeStamp && restakedAmount != undefined) {
           const updateSlots = async () => {
             try {
               const slots = await readContract({

@@ -55,7 +55,7 @@ export const StakeInfo = () => {
       data: `${userStakes} NRK`,
     },
     {
-      text: "Total Value",
+      text: "User Total Value",
       data: `$ ${parseUSD(tvl)}`,
     },
     // {
