@@ -11,6 +11,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     case "POST":
       try {
         const { stakedAt, stakedAmount, address, hash, slotId } = req.body;
+        db.collection("stakes").createIndex(
+          {
+            stakedAt: 1,
+            stakedAmount: 1,
+            address: 1,
+            hash: 1,
+            slotId: 1,
+          },
+          {
+            unique: true,
+          },
+        );
         const existingStake = await db.collection("stakes").findOne({ stakedAt, stakedAmount, address, hash, slotId });
         console.log("EXISTING STAKE", existingStake);
         if (!existingStake) {
