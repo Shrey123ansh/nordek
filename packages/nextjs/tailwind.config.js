@@ -8,6 +8,7 @@ module.exports = {
     themes: [
       {
         scaffoldEth: {
+          
           primary: "#642EFF",
           "primary-content": "#212638",
           secondary: "#DAE8FF",
@@ -63,6 +64,15 @@ module.exports = {
             filter: "drop-shadow(0px 4px 24px rgba(0, 0, 0, 0.20))",
             backdropFilter: "blur(23px)",
           },
+          ".heroShades": {
+            background: "#5B24A2",
+            
+          },
+          ".heroText": {
+            color: "#5B24A2",
+            
+          },
+          
         },
       },
       {
@@ -122,6 +132,14 @@ module.exports = {
             stroke: "#CDD5FE",
             filter: "drop-shadow(0px 4px 24px rgba(0, 0, 0, 0.20))",
             backdropFilter: "blur(23px)",
+          },
+          ".heroShades": {
+            background: "#A259FF",
+            
+          },
+          ".heroText": {
+            color: "#A259FF",
+            
           },
         },
       },

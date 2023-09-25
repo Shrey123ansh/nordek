@@ -2,9 +2,8 @@
 
 pragma solidity ^0.8.20;
 
-import "openzeppelin/access/Ownable.sol";
+import "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "openzeppelin/security/ReentrancyGuard.sol";
-import "openzeppelin/proxy/transparent/TransparentUpgradeableProxy.sol";
 import "./ILiquidityPool.sol";
 
 /**
@@ -12,7 +11,7 @@ import "./ILiquidityPool.sol";
  * @author https://anmol-dhiman.netlify.app/
  * @notice Provide NRK tokens only to verified address
  */
-contract LiquidityPool is Ownable, ReentrancyGuard, ILiquidityPool {
+contract LiquidityPool is OwnableUpgradeable, ReentrancyGuard, ILiquidityPool {
     event ContractVerified(address contractAddress, uint32 timeStamp);
     event AccessedFunds(
         address contractAddress,
@@ -30,6 +29,15 @@ contract LiquidityPool is Ownable, ReentrancyGuard, ILiquidityPool {
     modifier isVerified() {
         require(verifiedContract[msg.sender], "contract is not verified");
         _;
+    }
+
+    /**
+     * @dev Proxy initializer function sets new owner other than admin
+     * @param _owner The owner of this contract
+     */
+    function initialize(address _owner) external payable initializer {
+        __Ownable_init();
+        transferOwnership(_owner);
     }
 
     /**
