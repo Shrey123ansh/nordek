@@ -17,8 +17,9 @@ import type { NextPage } from "next";
 const Liqudity: NextPage = () => {
   return (
     <>
-      <div className="flex justify-center my-auto">
-        <h1 className="text-4xl italic font-bold"> Coming Soon.... </h1>
+      <div className="flex my-auto flex-col mx-auto w-[screen] h-[screen] lg:w-[50%] p-8 lg:p-20">
+        <img src="/loadingPage.svg" alt="Loading" className="w-[100%]" />
+        <h1 className="text-xl md:text-2xl lg:text-4xl italic font-bold mx-auto m-8"> Coming Soon.... </h1>
       </div>
     </>
   );

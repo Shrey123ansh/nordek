@@ -48,8 +48,6 @@ export const StakesTable = () => {
     account: address,
   });
 
-
-
   //console.log("PLATFORM DETAILS", platformDetails);
 
   const stakesFetcher = async () => {
@@ -128,7 +126,7 @@ export const StakesTable = () => {
   const addStakesMutation = async newStake => {
     try {
       await saveStakeToDb(newStake);
-      console.log("successfully saved to db")
+      console.log("successfully saved to db");
       mutateStakes();
     } catch (e) {
       console.log("Error in saving new stake", e);
@@ -467,7 +465,7 @@ export const StakesTable = () => {
   const tableSize = "whitespace-nowrap px-2 py-2 text-sm md:text-base lg:px-4 lg:py-4";
 
   return (
-    <section className="mt-8 w-full">
+    <section className="mt-8 w-full mb-12">
       <GradientComponent>
         <div className="relative p-8 flex flex-col space-y-2 bg-custom-gradient rounded-2xl w-full">
           <div className="flex flex-col lg:flex-row justify-between mb-4 space-y-4 lg:space-y-0">
