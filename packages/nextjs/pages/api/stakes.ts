@@ -11,9 +11,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     case "POST":
       try {
         const { stakedAt, stakedAmount, address, hash, slotId } = req.body;
-        console.log("Running save req");
-        await db.collection("stakes").insertOne({ stakedAt, stakedAmount, address, hash, slotId });
-        return res.status(200).json({ message: `New Stake Saved`, ok: true });
+        const existingStake = await db.collection("stakes").findOne({ stakedAt, stakedAmount, address, hash, slotId });
+        if (!existingStake) {
+          await db.collection("stakes").insertOne({ stakedAt, stakedAmount, address, hash, slotId });
+          return res.status(200).json({ message: `New Stake Saved`, ok: true });
+        }
       } catch (e) {
         console.error("Error:", e);
         return res.status(500).json({ error: `Internal Server Error ${e}` });
