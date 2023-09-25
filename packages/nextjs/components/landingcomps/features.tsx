@@ -1,18 +1,27 @@
 import React from "react";
-
+import { useRouter } from "next/router";
 const Features: React.FC = () => {
-    const data = [
-        {
-          icon: "/assets/features1.png",
-          title: "Swap Tokens",
-          description: "Trade tokens with limit orders at the lowest fees. Turn on Expert Mode to view live charts!"
-        },
-        {
-          icon: "/assets/features2.png",
-          title: "Manage Liquidity",
-          description: "Be part of the ecosystem by contributing liquidity to the pool for everyone to swap, and in return, earn fees from your contribution!"
-        }
-      ];
+  const router = useRouter();
+const data = [
+  {
+    icon: "/assets/features1.png",
+    title: "Swap Tokens",
+    description: "Trade tokens with limit orders at the lowest fees. Turn on Expert Mode to view live charts!",
+    route: "/swap"
+  },
+  {
+    icon: "/assets/features2.png",
+    title: "Manage Liquidity",
+    description: "Be part of the ecosystem by contributing liquidity to the pool for everyone to swap, and in return, earn fees from your contribution!",
+    route: "/liquidity"
+  },
+  {
+    icon: "/assets/features3.png",
+    title: "Stake NRK",
+    description: "Embark on Your Staking Journey with NRK Tokens – Amplify Your Assets Today!",
+    route: "/stake"
+  }
+];
       
   return (
     <div className="w-full ">
@@ -23,31 +32,33 @@ const Features: React.FC = () => {
           background: "var(--Glassmorphism-card, linear-gradient(131deg, rgba(255, 255, 255, 0.10) -2.89%, rgba(255, 255, 255, 0.00) 99.1%))",
         }}
       >
-        <div className="w-[69%] flex flex-col justify-between md:flex-row gap-[2rem]"> 
-        {data.map((item, index) => (
-          <div key={index} className="flex flex-col items-center space-y-2 md:w-1/3">
-            <img src={item.icon} alt="icon" className="w-[60%] h-[40%]" />
-            <h2
-              className="text-center text-[#C9C7C5] text-lg leading-[30px] font-kanit"
-              style={{
-                fontSize: "20px",
-                fontWeight: 400,
-              }}
-            >
-              {item.title}
-            </h2>
-            <p
-              className="text-center text-[#C9C7C5] text-base leading-[20px] font-kanit"
-              style={{
-                fontSize: "14px",
-                fontWeight: 400,
-              }}
-            >
-              {item.description}
-            </p>
-          </div>
-        ))}
-        </div>
+       <div className="w-[95%] flex flex-col justify-between md:flex-row gap-[2rem] xl:w-[85%]"> 
+  {data.map((item, index) => (
+    <div key={index} 
+         className="flex flex-col items-center space-y-2 md:w-1/3 cursor-pointer transform transition-transform duration-200 hover:scale-105" 
+         onClick={() => router.push(item.route)}>
+      <img src={item.icon} alt="icon" className="w-[60%] h-[40%]" />
+      <h2
+        className="text-center text-[#C9C7C5] text-lg leading-[30px] font-kanit"
+        style={{
+          fontSize: "20px",
+          fontWeight: 400,
+        }}
+      >
+        {item.title}
+      </h2>
+      <p
+        className="text-center text-[#C9C7C5] text-base leading-[20px] font-kanit"
+        style={{
+          fontSize: "14px",
+          fontWeight: 400,
+        }}
+      >
+        {item.description}
+      </p>
+    </div>
+  ))}
+</div>
       </div>
     </div>
 
