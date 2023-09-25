@@ -29,7 +29,7 @@ const StakeBox = () => {
     if (isStaking) {
       setStakeAmount(Number(balance?.toFixed(4)));
     } else {
-      setStakeAmount(Number(formatEther(userTotalStakes)).toFixed(4));
+      setStakeAmount(Number(formatEther(userTotalStakes)).toFixed(8));
     }
   }
 
