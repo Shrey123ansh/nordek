@@ -18,7 +18,7 @@ const data = [
   {
     icon: "/assets/features3.png",
     title: "Stake NRK",
-    description: "Embark on Your Staking Journey with NRK Tokens – Amplify Your Assets Today!",
+    description: "Embark on your staking journey with NRK Tokens – Amplify your assets yoday!",
     route: "/stake"
   }
 ];
