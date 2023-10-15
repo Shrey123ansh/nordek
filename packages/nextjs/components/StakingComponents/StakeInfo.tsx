@@ -24,6 +24,7 @@ export const StakeInfo = () => {
   //const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(2) : "";
 
   const userStakes = userTotalStakes ? formatEther(userTotalStakes) : "0";
+
   const configuredNetwork = getTargetNetwork();
   const client = usePublicClient({ chainId: configuredNetwork.id });
 
@@ -40,6 +41,7 @@ export const StakeInfo = () => {
       const NRKTokendata = await getTokenData("nordek", "usd");
       if (NRKTokendata) {
         const tvlVal = NRKTokendata?.usd * Number(userStakes);
+
         setTvl(tvlVal);
       } else {
         setTvl(0);

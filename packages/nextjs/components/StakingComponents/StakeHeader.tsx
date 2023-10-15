@@ -14,7 +14,6 @@ const StakeHeader: React.FC = () => {
   const totalNRKStaked = Number(data?.formatted);
 
   useEffect(() => {
-    console.log("Updaing tvl");
     const updateTVL = async () => {
       const NRKTokendata = await getTokenData("nordek", "usd");
       if (NRKTokendata) {
