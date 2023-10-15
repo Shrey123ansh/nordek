@@ -1,14 +1,13 @@
-// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.20;
 
-pragma solidity =0.6.12;
-
+import "./interfaces/IUniswapV2ERC20.sol";
 import "./libraries/SafeMath.sol";
 
-contract UniswapV2ERC20 {
+contract UniswapV2ERC20 is IUniswapV2ERC20 {
     using SafeMath for uint;
 
-    string public constant name = "Nroswap LP";
-    string public constant symbol = "NRKLP";
+    string public constant name = "Uniswap V2";
+    string public constant symbol = "UNI-V2";
     uint8 public constant decimals = 18;
     uint public totalSupply;
     mapping(address => uint) public balanceOf;
@@ -23,7 +22,7 @@ contract UniswapV2ERC20 {
     event Approval(address indexed owner, address indexed spender, uint value);
     event Transfer(address indexed from, address indexed to, uint value);
 
-    constructor() public {
+    constructor() {
         uint chainId;
         assembly {
             chainId := chainid()
@@ -79,7 +78,7 @@ contract UniswapV2ERC20 {
         address to,
         uint value
     ) external returns (bool) {
-        if (allowance[from][msg.sender] != uint(-1)) {
+        if (allowance[from][msg.sender] != type(uint).max) {
             allowance[from][msg.sender] = allowance[from][msg.sender].sub(
                 value
             );
