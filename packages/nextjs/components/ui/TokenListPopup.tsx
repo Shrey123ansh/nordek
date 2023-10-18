@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { tokenType } from "~~/data/data";
@@ -23,7 +24,6 @@ const getTokenList = async () => {
 
 const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setToken }) => {
   const [tokens, setTokens] = useState<tokenType[] | undefined>(undefined); // Initialize tokens as undefined
-  if (!isOpen) return null;
 
   useEffect(() => {
     const fetchTokens = async () => {
@@ -59,6 +59,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
     );
   };
 
+  if (!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="fixed inset-0 bg-gray-800 opacity-50" onClick={onClose}></div>

@@ -28,6 +28,7 @@ function getAbiOfContract(contractName) {
 }
 
 function main() {
+  console.log("into the generate to abi file")
   const current_path_to_broadcast = path.join(
     __dirname,
     "..",
@@ -67,7 +68,7 @@ function main() {
     transactionsCreate.forEach((transaction) => {
       allGeneratedContracts[chain][0]["contracts"][
         deployments[chain][transaction.contractAddress] ||
-          transaction.contractName
+        transaction.contractName
       ] = {
         address: transaction.contractAddress,
         abi: getAbiOfContract(transaction.contractName),
