@@ -42,6 +42,25 @@ export default function LiquidityMain() {
   const token0AmountNumber: number = Number(token0Amount)
   const token1AmountNumber: number = Number(token1Amount)
 
+  const { data: pc, isFetched } = useScaffoldContractRead({
+    contractName: "UniswapV2Factory",
+    functionName: "getPair",
+    args: [token0.address, token1.address],
+    account: account,
+
+  });
+
+  useEffect(() => {
+    setPairContract(pc)
+    if (pc === address0) {
+      setShare(100)
+    }
+    if (pc !== address0) {
+      setShare(0)
+    }
+  }, [isFetched])
+
+
 
   const { writeAsync: addLiquidityETHToken0 } = useScaffoldContractWrite({
     contractName: "UniswapV2Router02",
@@ -62,8 +81,15 @@ export default function LiquidityMain() {
       setToken0Amount(0)
       setToken1Amount(0)
       setUpdate(update + 1)
-    }
+    },
+    onError(error, variables, context) {
+      console.log("error " + error)
+      console.log("variables " + variables)
+      console.log("context " + context)
+    },
   });
+
+
   const { writeAsync: addLiquidityETHToken1 } = useScaffoldContractWrite({
     contractName: "UniswapV2Router02",
     functionName: "addLiquidityETH",
@@ -109,7 +135,6 @@ export default function LiquidityMain() {
     }
   });
 
-
   const handleAddLiquidity = async () => {
     const nrkAddress: string = localTokens.NRK.address
     if (token0.address === nrkAddress || token1.address === nrkAddress) {
@@ -123,7 +148,9 @@ export default function LiquidityMain() {
             functionName: 'approve',
             args: [routerContract.address, parseEther(`${token1Amount}`)],
           })
+
           await addLiquidityETHToken0()
+
         } catch (error) { }
       } else if (token1.address === nrkAddress) {
         try {
@@ -160,6 +187,7 @@ export default function LiquidityMain() {
       } catch (error) { }
       await addLiquidity()
     }
+
   };
 
 
@@ -176,35 +204,45 @@ export default function LiquidityMain() {
       setToken1(token)
     }
   }
+  const getPairAddress = async () => {
+    console.log("pair contract function")
+    try {
+      const pairAddress = await readContract({
+        address: factoryContract?.address,
+        abi: factoryContract?.abi,
+        functionName: 'getPair',
+        args: [token0.address, token1.address],
+        account: account
+      })
+      console.log("pair contrat from toggle" + pairAddress)
+
+      setPairContract(pairAddress)
+      if (pairAddress === address0) {
+        setShare(100)
+      }
+      if (pairAddress !== address0) {
+        setShare(0)
+      }
+
+    } catch (error) {
+
+    }
+  }
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+
+  //     console.log("get pair called initally ")
+  //     getPairAddress()
+  //   }, 2000)
+  // }, [])
 
 
   useEffect(() => {
-    const getPairAddress = async () => {
-      try {
-        const pairAddress = await readContract({
-          address: factoryContract?.address,
-          abi: factoryContract?.abi,
-          functionName: 'getPair',
-          args: [token0.address, token1.address],
-          account: account
-        })
-        console.log("pair contrat from toggle" + pairAddress)
-
-        setPairContract(pairAddress)
-        if (pairContract === address0) {
-          setShare(100)
-        }
-        if (pairContract !== address0) {
-          setShare(0)
-        }
-
-      } catch (error) {
-
-      }
-    }
+    console.log("pair contract getting ")
     getPairAddress()
+  }, [token0, token1, update])
 
-  }, [token0, token1])
 
 
   useEffect(() => {
