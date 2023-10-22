@@ -127,13 +127,11 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
         status: "added",
       })
 
-      const fetchTokens = async () => {
-        const tokenList = await getTokenList();
-        console.log("TOKEN LIST", tokenList);
-        setToken(tokenList)
-      };
 
-      fetchTokens();
+      const tokenList = await getTokenList();
+      console.log("TOKEN LIST", tokenList);
+      setToken(tokenList)
+
     } catch (error) {
       console.log(error);
     }
@@ -217,9 +215,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
               {
                 newToken.name !== "" && newToken.symbol !== "" && <div
 
-                  className="flex items-center justify-between p-4 bg-base-300 hover:bg-base-100 text-white cursor-pointer"
-                  onClick={() => { }}
-                >
+                  className="flex items-center justify-between p-4 bg-base-300 hover:bg-base-100 text-white cursor-pointer">
                   <div className="flex items-center space-x-4 mr-20">
                     <img src={tokens[0].logo} className="w-6 h-6 rounded-full" alt={newToken.symbol} />
                     <span>{newToken.symbol}</span>
