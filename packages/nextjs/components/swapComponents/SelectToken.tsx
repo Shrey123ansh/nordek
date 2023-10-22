@@ -6,8 +6,8 @@ import { tokenType } from "~~/data/data";
 type SwapFooterProps = {
   token: tokenType;
   setToken: React.Dispatch<React.SetStateAction<tokenType>>;
-  tokenAmount: number;
-  setTokenAmount: React.Dispatch<React.SetStateAction<number>>;
+  tokenAmount: Number;
+  setTokenAmount: (value: Number) => void
 };
 
 const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount }: SwapFooterProps) => {
@@ -35,7 +35,7 @@ const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount }: SwapFoote
         />
       </div>
       <label className="label block w-full text-right">
-        <span className="label-text-alt">$23</span>
+        <span className="label-text-alt">-</span>
       </label>
       <hr className="bg-white w-full " />
       <div className="flex justify-between">

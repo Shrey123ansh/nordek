@@ -41,6 +41,7 @@ export const StakesTable = () => {
   const [selectedSlot, setSelectedSlot] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const { data: deployedContractInfo } = useDeployedContractInfo("StakingContract");
+  const { data: deployedContractData } = useDeployedContractInfo("UniswapV2Factory");
 
   const { data: frequency, isLoading: isFrequency } = useScaffoldContractRead({
     contractName: "StakingContract",
@@ -48,7 +49,7 @@ export const StakesTable = () => {
     account: address,
   });
 
-  //console.log("PLATFORM DETAILS", platformDetails);
+
 
   const stakesFetcher = async () => {
     const data = await getStakes(address || "");
@@ -61,6 +62,8 @@ export const StakesTable = () => {
     console.log("LOADED PLATFORM DATA", data);
     return data;
   };
+
+
 
   const {
     data: platformDetails,

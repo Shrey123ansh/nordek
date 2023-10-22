@@ -7,7 +7,7 @@ export const Swap2: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpertTogg
   // Define states for decimal numbers
 
   return (
-    <div className={expertToggle ? "" : `p-6 border-2 rounded-2xl`}>
+    <div className={expertToggle ? "" : `p-6 border-2 rounded-2xl mb-32 `}>
       <div
         className={
           `flex flex-col space-y-4 items-center ` +

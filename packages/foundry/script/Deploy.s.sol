@@ -8,6 +8,7 @@ import "openzeppelin/proxy/transparent/TransparentUpgradeableProxy.sol";
 import {UniswapV2Factory} from "../contracts/UniswapV2Factory.sol";
 import {UniswapV2Router02} from "../contracts/UniswapV2Router02.sol";
 import {WNRK} from "../contracts/WNRK.sol";
+import {PracticeSupplyERC20} from "../contracts/PracticeSupplyERC20.sol";
 
 contract DeployScript is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);
@@ -24,6 +25,7 @@ contract DeployScript is ScaffoldETHDeploy {
     TransparentUpgradeableProxy stakingContractProxy;
     UniswapV2Factory factory;
     UniswapV2Router02 router;
+    PracticeSupplyERC20 practiceERC20;
     WNRK wnrk;
 
     function run() external {
@@ -46,6 +48,7 @@ contract DeployScript is ScaffoldETHDeploy {
         wnrk = new WNRK();
         router = new UniswapV2Router02(address(factory), address(wnrk));
 
+        practiceERC20 = new PracticeSupplyERC20();
         console.logString(
             string.concat(
                 "factory contract deployed at: ",
@@ -62,6 +65,12 @@ contract DeployScript is ScaffoldETHDeploy {
             string.concat(
                 "router contract deployed at: ",
                 vm.toString(address(router))
+            )
+        );
+        console.logString(
+            string.concat(
+                "PracticeERC20 contract deployed at: ",
+                vm.toString(address(practiceERC20))
             )
         );
         vm.stopBroadcast();

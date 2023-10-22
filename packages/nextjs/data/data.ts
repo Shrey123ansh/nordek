@@ -27,8 +27,15 @@ export const localTokens = {
     logo: "https://picsum.photos/200",
     name: "nordek",
     symbol: "NRK",
-    address: "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
+    address: "0xCc4a8fF59FCF84850a5496e57F70bAE5d4Ab4c16",
   },
+  PNRK: {
+    logo: "https://picsum.photos/200",
+    name: "Practice ERC20",
+    symbol: "PNRK",
+    address: "0x33b1B5Aa9Aa4Da83a332F0bC5cAC6A903FDE5d92",
+  }
+
   // Add more token objects as needed
 };
 
@@ -38,6 +45,7 @@ export type tokenType = {
   symbol: string;
   address: string;
 };
+
 export type tradeData = {
   _id: string;
   usd: number;

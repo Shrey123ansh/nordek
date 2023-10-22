@@ -8,14 +8,15 @@ interface SettingsPopupProps {
   isOpen: boolean;
   onClose: () => void;
   setSlippageValue: (value: number) => void;
+  slippage: Number
 }
 
-const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlippageValue }) => {
+const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlippageValue, slippage }) => {
   const handleSlippage = (value: number) => {
     setSlippageValue(value);
   };
 
-  const [selectedSlippage, setSelectedSlippage] = useState(0.1);
+  const [selectedSlippage, setSelectedSlippage] = useState(slippage);
   const slippageValues = [0.1, 0.5, 1];
 
   const handleSlippageClick = (value: number) => {

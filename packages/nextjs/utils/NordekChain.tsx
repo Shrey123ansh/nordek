@@ -10,8 +10,8 @@ export const nordek = {
     symbol: "NRK",
   },
   rpcUrls: {
-    public: { http: ["https://mainnet-rpc.nordekscan.com/"] },
-    default: { http: ["https://mainnet-rpc.nordekscan.com/"] },
+    public: { http: ["https://mainnet-rpc.nordekscan.com"] },
+    default: { http: ["https://mainnet-rpc.nordekscan.com"] },
   },
   blockExplorers: {
     etherscan: { name: "NordekScan", url: "https://nordekscan.com/" },

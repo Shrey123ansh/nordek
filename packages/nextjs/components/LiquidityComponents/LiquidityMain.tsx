@@ -1,40 +1,211 @@
 //import PriceComponent from "./PriceBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SelectToken from "../swapComponents/SelectToken";
 import LiquidityFooter from "./LiquidityFooter";
 import SlippageDetails from "./SlippageDetails";
-import { parseEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import { localTokens, tokenType } from "~~/data/data";
-import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { readContract } from '@wagmi/core'
+import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
+import { nordek } from "~~/utils/NordekChain";
+import { writeContract } from '@wagmi/core'
+import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
+
+
 
 export default function LiquidityMain() {
-  const [token0Amount, setToken0Amount] = useState<number>(0.0);
-  const [token1Amount, setToken1Amount] = useState<number>(0.0);
-  const { address } = useAccount();
-  const [token0, setToken0] = useState<tokenType>(localTokens.ETH);
-  const [token1, setToken1] = useState<tokenType>(localTokens.NRK);
+  const [token0Amount, setToken0Amount] = useState<Number>(0.0);
+  const [token1Amount, setToken1Amount] = useState<Number>(0.0);
+  const { address: account } = useAccount();
+  const [token0, setToken0] = useState<tokenType>(localTokens.NRK);
+  const [token1, setToken1] = useState<tokenType>(localTokens.PNRK);
+  const [pairContract, setPairContract] = useState("0x0000000000000000000000000000000000000000")
+  const [reserveA, setReserve1] = useState(0)
+  const [reserveB, setReserve2] = useState(0)
+  const { data: routerContract } = useDeployedContractInfo("UniswapV2Router02");
 
-  const handleAddLiquidity = () => {
-    console.log("Swapped");
+
+  const handleAddLiquidity = async () => {
+    const nrkAddress: string = localTokens.NRK.address
+    if (token0.address === nrkAddress || token1.address === nrkAddress) {
+      // one of the token is native NRK token 
+      // addLiquidityETH
+      if (token0.address === nrkAddress) {
+        try {
+          await writeContract({
+            address: token1.address,
+            abi: erc20ABI.abi,
+            functionName: 'approve',
+            args: [routerContract.address, parseEther(`${token1Amount}`)],
+          })
+        } catch (error) { }
+      } else {
+        try {
+          await writeContract({
+            address: token0.address,
+            abi: erc20ABI.abi,
+            functionName: 'approve',
+            args: [routerContract.address, parseEther(`${token0Amount}`)],
+          })
+        } catch (error) { }
+      }
+
+    }
+    else {
+      // addLiquidity 
+      try {
+        await writeContract({
+          address: token0.address,
+          abi: erc20ABI.abi,
+          functionName: 'approve',
+          args: [routerContract.address, parseEther(`${token0Amount}`)],
+        })
+      } catch (error) { }
+      try {
+
+        await writeContract({
+          address: token1.address,
+          abi: erc20ABI.abi,
+          functionName: 'approve',
+          args: [routerContract.address, parseEther(`${token1Amount}`)],
+        })
+      } catch (error) { }
+
+      try {
+
+      } catch (error) { }
+    }
   };
+
+
+
+  const { data: factoryContract } = useDeployedContractInfo("UniswapV2Factory")
+
+  const setTokenA = (token: tokenType) => {
+    if (token.address !== token1.address) {
+      setToken0(token)
+    }
+  }
+  const setTokenB = (token: tokenType) => {
+    if (token.address !== token0.address) {
+      setToken1(token)
+    }
+  }
+
+
+  useEffect(() => {
+    const getPairAddress = async () => {
+      try {
+        const pairAddress = await readContract({
+          address: factoryContract?.address,
+          abi: factoryContract?.abi,
+          functionName: 'getPair',
+          args: [token0.address, token1.address],
+          account: account
+        })
+        console.log("pair contrat from toggle" + pairAddress)
+
+        setPairContract(pairAddress)
+
+      } catch (error) {
+
+      }
+    }
+    getPairAddress()
+
+  }, [token0, token1])
+
+
+  useEffect(() => {
+    const getData = async () => {
+      if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
+        console.log(pairContract)
+        const reserves = await readContract({
+          address: pairContract,
+          abi: pairABI.abi,
+          functionName: "getReserves",
+          account: account,
+          chainId: nordek.id
+        })
+        const tokenA = await readContract({
+          address: pairContract,
+          abi: pairABI.abi,
+          functionName: "token0",
+          account: account,
+          chainId: nordek.id
+        })
+
+        const reserve1 = Number(formatEther(reserves[0]))
+        const reserve2 = Number(formatEther(reserves[1]))
+        console.log("reserve 1 " + reserve1)
+        console.log("reserve 2 " + reserve2)
+        console.log(tokenA)
+        if (tokenA === token0.address) {
+          setReserve1(reserve1)
+          setReserve2(reserve2)
+        } else if (tokenA === token1.address) {
+          setReserve2(reserve1)
+          setReserve1(reserve2)
+        }
+
+
+
+
+
+      }
+    }
+    getData()
+  }, [pairContract])
+
+
+
+
+
+
+
+  const setTokenAmount0Override = (value: Number) => {
+    if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
+      setToken0Amount(value)
+      setToken1Amount((Number(value) * reserveB) / reserveA)
+    } else {
+      setToken0Amount(value)
+    }
+  }
+  const setTokenAmount1Override = (value: Number) => {
+    if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
+      setToken1Amount(value)
+      setToken0Amount((Number(value) * reserveA) / reserveB)
+    }
+    else {
+      setToken1Amount(value)
+    }
+  }
 
   return (
     <div className="flex flex-col items-center justify-between w-full">
+      {
+        pairContract === "0x0000000000000000000000000000000000000000" &&
+        <div className="flex flex-col items-center  " >
+          <div>Supply equal value parts of two different tokens.</div>
+          <div className="w-[300px] my-4 text-center  " >You are the first liquidity provider.The ratio of tokens you add will set the price of this pool.</div>
+        </div>
+      }
       <SelectToken
         token={token0}
-        setToken={setToken0}
+        setToken={setTokenA}
         tokenAmount={token0Amount}
-        setTokenAmount={setToken0Amount}
+        setTokenAmount={setTokenAmount0Override}
       ></SelectToken>
       <SelectToken
         token={token1}
-        setToken={setToken1}
+        setToken={setTokenB}
         tokenAmount={token1Amount}
-        setTokenAmount={setToken1Amount}
+        setTokenAmount={setTokenAmount1Override}
       ></SelectToken>
-      <LiquidityFooter handleAddLiquidity={handleAddLiquidity}></LiquidityFooter>
+      <LiquidityFooter handleAddLiquidity={handleAddLiquidity} pairContract={pairContract} token1={token0} token2={token1} reserve1={reserveA} reserve2={reserveB}  ></LiquidityFooter>
       {/* <PriceComponent price={0}></PriceComponent> */}
     </div>
   );
