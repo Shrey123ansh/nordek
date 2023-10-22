@@ -13,10 +13,12 @@ import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
 import { nordek } from "~~/utils/NordekChain";
 import { writeContract } from '@wagmi/core'
 import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
+import { updateUserData } from "../StakingComponents/APICallFunctions";
 
 
 
 export default function LiquidityMain() {
+  const address0 = "0x0000000000000000000000000000000000000000"
   const [token0Amount, setToken0Amount] = useState<Number>(0);
   const [token1Amount, setToken1Amount] = useState<Number>(0);
   const { address: account } = useAccount();
@@ -32,8 +34,11 @@ export default function LiquidityMain() {
   const token1Min = Number(token1Amount) - ((Number(token1Amount) * slippage) / 100)
   const currentDate = new Date();
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
-
-
+  const [share, setShare] = useState(0)
+  const [tokenAFromContract, setTokenAFromContract] = useState(address0)
+  const [lpTokens, setLPTokens] = useState("-")
+  const [pairTotalSupply, setPairTotalSupply] = useState(0)
+  const [kLast, setKLast] = useState(0)
   const token0AmountNumber: number = Number(token0Amount)
   const token1AmountNumber: number = Number(token1Amount)
 
@@ -80,9 +85,6 @@ export default function LiquidityMain() {
       setUpdate(update + 1)
     }
   });
-
-
-
   const { writeAsync: addLiquidity, isLoading, isMining } = useScaffoldContractWrite({
     contractName: "UniswapV2Router02",
     functionName: "addLiquidity",
@@ -189,6 +191,12 @@ export default function LiquidityMain() {
         console.log("pair contrat from toggle" + pairAddress)
 
         setPairContract(pairAddress)
+        if (pairContract === address0) {
+          setShare(100)
+        }
+        if (pairContract !== address0) {
+          setShare(0)
+        }
 
       } catch (error) {
 
@@ -217,12 +225,10 @@ export default function LiquidityMain() {
           account: account,
           chainId: nordek.id
         })
-
+        setTokenAFromContract(String(tokenA))
         const reserve1 = Number(formatEther(reserves[0]))
         const reserve2 = Number(formatEther(reserves[1]))
-        console.log("reserve 1 " + reserve1)
-        console.log("reserve 2 " + reserve2)
-        console.log(tokenA)
+
         if (tokenA === token0.address) {
           setReserve1(reserve1)
           setReserve2(reserve2)
@@ -230,11 +236,27 @@ export default function LiquidityMain() {
           setReserve2(reserve1)
           setReserve1(reserve2)
         }
-
-
-
-
-
+        const totalSupply = await readContract({
+          address: pairContract,
+          abi: pairABI.abi,
+          functionName: "totalSupply",
+          account: account,
+          chainId: nordek.id
+        })
+        const supply = Number(formatEther(BigInt(Number(totalSupply))))
+        setPairTotalSupply(supply)
+        // setPairTotalSupply(Number(formatEther(BigInt(totalSupply))))
+        var kLastValue = await readContract({
+          address: pairContract,
+          abi: pairABI.abi,
+          functionName: "kLast",
+          account: account,
+          chainId: nordek.id
+        })
+        // setKLast(Number(formatEther(BigInt(Number(kLastValue)))))
+        kLastValue = BigInt(Number(kLastValue)) / BigInt(10 ** 36)
+        // console.log(kLastValue)
+        setKLast(Number(kLastValue))
       }
     }
     getData()
@@ -242,7 +264,46 @@ export default function LiquidityMain() {
 
 
 
+  useEffect(() => {
+    if (pairContract !== address0) {
+      setShare(((Number(token0Amount) * 100) / reserveA).toFixed(3))
 
+      // calculating lp tokens user will get 
+
+      var reserve0 = 0;
+      var reserve1 = 0;
+      var amount0: Number = 0;
+      var amount1: Number = 0;
+      if (tokenAFromContract === token0.address) {
+        reserve0 = reserveA
+        reserve1 = reserveB
+        amount0 = token0Amount
+        amount1 = token1Amount
+      }
+      else {
+        reserve0 = reserveB
+        reserve1 = reserveA
+        amount0 = token1Amount
+        amount1 = token0Amount
+      }
+      const rootK = Math.sqrt((reserve0 + amount0) * (reserve1 + amount1))
+      const rootKLast = Math.sqrt(kLast)
+
+      const numerator = pairTotalSupply * (rootK - rootKLast)
+      const denominator = rootK * 5 + rootKLast
+      const feeMinted = numerator / denominator
+      console.log(feeMinted)
+      const updatedSupply = pairTotalSupply + feeMinted
+      var liquidity = 0
+      const value1 = ((Number(amount0) * updatedSupply) / reserve0)
+      const value2 = ((Number(amount1) * updatedSupply) / reserve1)
+
+      liquidity = value1 > value2 ? value2 : value1
+
+      setLPTokens(String(liquidity.toFixed(3)))
+    }
+
+  }, [token0Amount, token1Amount])
 
 
 
@@ -253,6 +314,7 @@ export default function LiquidityMain() {
     } else {
       setToken0Amount(value)
     }
+    setLPTokens("-")
   }
   const setTokenAmount1Override = (value: Number) => {
     if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
@@ -262,6 +324,7 @@ export default function LiquidityMain() {
     else {
       setToken1Amount(value)
     }
+    setLPTokens("-")
   }
 
   return (
@@ -285,7 +348,7 @@ export default function LiquidityMain() {
         tokenAmount={token1Amount}
         setTokenAmount={setTokenAmount1Override}
       ></SelectToken>
-      <LiquidityFooter handleAddLiquidity={handleAddLiquidity} pairContract={pairContract} token1={token0} token2={token1} reserve1={reserveA} reserve2={reserveB} slippage={slippage} setSlippage={setSlippage}  ></LiquidityFooter>
+      <LiquidityFooter handleAddLiquidity={handleAddLiquidity} pairContract={pairContract} token1={token0} token2={token1} reserve1={reserveA} reserve2={reserveB} slippage={slippage} setSlippageValue={setSlippage} share={share} lpTokens={lpTokens}></LiquidityFooter>
       {/* <PriceComponent price={0}></PriceComponent> */}
     </div>
   );
