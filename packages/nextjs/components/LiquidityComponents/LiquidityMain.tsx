@@ -21,7 +21,7 @@ export default function LiquidityMain() {
   const [token1Amount, setToken1Amount] = useState<Number>(0.0);
   const { address: account } = useAccount();
   const [token0, setToken0] = useState<tokenType>(localTokens.NRK);
-  const [token1, setToken1] = useState<tokenType>(localTokens.PNRK);
+  const [token1, setToken1] = useState<tokenType>(localTokens.PERC);
   const [pairContract, setPairContract] = useState("0x0000000000000000000000000000000000000000")
   const [reserveA, setReserve1] = useState(0)
   const [reserveB, setReserve2] = useState(0)

@@ -26,8 +26,3 @@ export const Select: React.FC<SelectProps> = ({ setToken, token }) => {
   );
 };
 
-// {options.map(token => (
-//   <option key={token.address} value={token.address} className="text-xs ">
-//     {token.symbol}
-//   </option>
-// ))}
