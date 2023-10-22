@@ -12,15 +12,12 @@ type DetailsType = {
   token2: tokenType,
   reserve1: Number,
   reserve2: Number,
-
+  share: Number,
+  lpTokens: string
 }
 
-const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 = 0 }: DetailsType) => {
+const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 = 0, share = 0, lpTokens = "-" }: DetailsType) => {
   // Define state for each div
-  const { address: account } = useAccount()
-  const [token0Amount, setToken0Amount] = useState(0);
-  const [token1Amount, setToken1Amount] = useState(0);
-  const [shareOfPool, setShareOfPool] = useState(0);
   const [LPTokens, setLPTokens] = useState(0);
   console.log("pair contract address " + pairContract)
 
@@ -42,12 +39,12 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
 
       <div className="flex justify-between">
         <span> Share of Pool </span>
-        <span className="font-bold"> {shareOfPool} </span>
+        <span className="font-bold">{`${share}%`} </span>
       </div>
 
       <div className="flex justify-between">
         <span> Lp Tokens </span>
-        <span className="font-bold"> {LPTokens} </span>
+        <span className="font-bold"> {`${lpTokens}`} </span>
       </div>
       <hr className="" />
     </div>

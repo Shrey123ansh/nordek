@@ -45,6 +45,7 @@ contract DeployScript is ScaffoldETHDeploy {
         address setter = vm.addr(deployerPrivateKey);
         // _staking(admin, owner);
         factory = new UniswapV2Factory(setter);
+        factory.setFeeTo(setter);
         wnrk = new WNRK();
         router = new UniswapV2Router02(address(factory), address(wnrk));
 

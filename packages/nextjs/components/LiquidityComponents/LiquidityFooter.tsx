@@ -10,11 +10,15 @@ type LiquidityFooterProps = {
   token1: tokenType,
   token2: tokenType,
   reserve1: Number,
-  reserve2: Number
+  reserve2: Number,
+  slippage: Number,
+  setSlippageValue: (value: Number) => void,
+  share: Number,
+  lpTokens: string
 };
 
-const LiquidityFooter = ({ handleAddLiquidity, pairContract, token1, token2, reserve1, reserve2 }: LiquidityFooterProps) => {
-  const [slippageValue, setSlippageValue] = useState(0.5); // Initial slippage value (2% in this example)
+const LiquidityFooter = ({ handleAddLiquidity, pairContract, token1, token2, reserve1, reserve2, slippage, setSlippageValue, share, lpTokens }: LiquidityFooterProps) => {
+  // Initial slippage value (2% in this example)
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handlePopup = () => {
@@ -27,15 +31,15 @@ const LiquidityFooter = ({ handleAddLiquidity, pairContract, token1, token2, res
         <div>
           <span className="text-sm">Slippage</span>
 
-          <span className="ml-2 font-semibold text-secondary">{slippageValue}%</span>
+          <span className="ml-2 font-semibold text-secondary">{`${slippage}%`}</span>
         </div>
         <button className="ml-2 hover:text-secondary" onClick={handlePopup}>
           Edit
         </button>
       </div>
-      <SlippageDetails pairContract={pairContract} token1={token1} token2={token2} reserve1={reserve1} reserve2={reserve2} ></SlippageDetails>
+      <SlippageDetails lpTokens={lpTokens} pairContract={pairContract} token1={token1} token2={token2} reserve1={reserve1} reserve2={reserve2} share={share}></SlippageDetails>
 
-      <SettingsPopup isOpen={isPopupOpen} onClose={handlePopup} setSlippageValue={setSlippageValue} slippage={slippageValue} ></SettingsPopup>
+      <SettingsPopup isOpen={isPopupOpen} onClose={handlePopup} setSlippageValue={setSlippageValue} slippage={slippage} ></SettingsPopup>
       <br />
       <ActionButton
         text="Add Liquidity"
