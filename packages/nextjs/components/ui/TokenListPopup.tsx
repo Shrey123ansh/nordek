@@ -17,7 +17,6 @@ interface TokenListPopupProps {
 const getTokenList = async () => {
   const response = await fetch("http://localhost:3000/api/swapSupportedTokenList");
 
-  console.log(response)
   if (!response.ok) {
     // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
