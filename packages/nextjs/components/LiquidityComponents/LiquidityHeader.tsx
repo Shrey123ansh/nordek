@@ -10,13 +10,13 @@ export default function LiquidityHeader() {
   return (
     <div className="flex justify-center w-full space-between">
       <button
-        className={`appearance-none mr-8 ${liqudityMode === "Supply" ? "text-blue-500" : ""}`}
+        className={` appearance-none mr-8 pb-2 ${liqudityMode === "Supply" ? "text-blue-500" : ""} ${liqudityMode === "Supply" ? "border-b-2 border-blue-500" : ""}`}
         onClick={() => handleCurrencySelect("Supply")}
       >
         + Supply
       </button>
       <button
-        className={`appearance-none ml-8 ${liqudityMode === "Positions" ? "text-blue-500" : ""}`}
+        className={`appearance-none ml-8 pb-2 ${liqudityMode === "Positions" ? "text-blue-500" : ""} ${liqudityMode === "Positions" ? "border-b-2 border-blue-500" : ""}`}
         onClick={() => handleCurrencySelect("Positions")}
       >
         Positions

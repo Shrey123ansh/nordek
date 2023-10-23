@@ -24,7 +24,7 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
 
 
   return (
-    <div className="flex flex-col space-y-1">
+    <div className="flex flex-col space-y-1 text-[#8F8F8F]">
       <div className="">
         <div>
           1 {token1.symbol} = {reserve1 !== 0 && reserve2 !== 0 ? Number(reserve2) / Number(reserve1) : 0} {token2.symbol}{" "}

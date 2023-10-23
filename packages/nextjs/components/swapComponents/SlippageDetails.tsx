@@ -32,7 +32,7 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
 
 
   return (
-    <div className="flex flex-col space-y-1">
+    <div className="flex flex-col space-y-1 text-[#8F8F8F]  ">
  
     
 

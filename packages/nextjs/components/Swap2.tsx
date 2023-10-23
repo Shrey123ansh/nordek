@@ -7,11 +7,11 @@ export const Swap2: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpertTogg
   // Define states for decimal numbers
 
   return (
-    <div className={expertToggle ? "" : `p-6 border-2 rounded-2xl mb-32 `}>
+    <div className={expertToggle ? "" : `p-6 border-2 rounded-2xl mb-32 bg-[#E2D4FF]`}>
       <div
         className={
           `flex flex-col space-y-4 items-center ` +
-          (expertToggle ? `h-[500px] overflow-y-auto overflow-hidden` : `px-16 pt-6 px-20 rounded-xl bg-base-300`)
+          (expertToggle ? `h-[500px] overflow-y-auto overflow-hidden` : `px-16 pt-6 px-12 rounded-xl bg-gradient-to-r `)
         }
       >
         {expertToggle ? (
