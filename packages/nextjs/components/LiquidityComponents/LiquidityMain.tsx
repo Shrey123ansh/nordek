@@ -229,13 +229,6 @@ export default function LiquidityMain() {
     }
   }
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-
-  //     console.log("get pair called initally ")
-  //     getPairAddress()
-  //   }, 2000)
-  // }, [])
 
 
   useEffect(() => {

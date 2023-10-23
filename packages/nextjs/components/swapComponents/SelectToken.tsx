@@ -28,7 +28,7 @@ const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount }: SwapFoote
           type="number"
           placeholder="0.0"
           value={tokenAmount?.toString()}
-          className="input input-sm input-ghost max-w-md text-right rounded-none leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="input input-sm input-ghost max-w-md text-right rounded-none focus:outline-none bg-transparent leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           onChange={e => {
             setTokenAmount(Number(e.target.value));
           }}
@@ -37,7 +37,7 @@ const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount }: SwapFoote
       <label className="label block w-full text-right">
         <span className="label-text-alt">-</span>
       </label>
-      <hr className="bg-white w-full " />
+      <hr className="bg-white w-full" />
       <div className="flex justify-between">
         <span>Balance</span>
         <span>0.00</span>

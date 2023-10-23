@@ -18,7 +18,7 @@ interface TokenListPopupProps {
 const getTokenList = async () => {
   const response = await fetch("http://localhost:3000/api/swapSupportedTokenList");
 
-  console.log(response);
+  console.log(response)
   if (!response.ok) {
     // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
@@ -194,7 +194,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
           <label className="bg-white rounded-md my-2 flex justify-between items-center p-2">
             
             <input
-              className="bg-white rounded-md  outline-none placeholer:text-secondary placeholder:text-base w-full"
+              className="bg-transparent rounded-md  outline-none placeholer:text-secondary  placeholder:text-base w-full"
               placeholder="Search By Name or Address"
               type="text"
             ></input>
