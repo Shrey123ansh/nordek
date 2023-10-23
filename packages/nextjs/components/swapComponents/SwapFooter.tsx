@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 import SettingsPopup from "../ui/SettingsPopup";
 import ActionButton from "../ui/actionButton";
+import SlippageDetails from "./SlippageDetails";
 import ConnectWalletButton from "./ConnectWalletButton";
 import { tokenType } from "~~/data/data";
 
 type SwapFooterProps = {
   handleSwap: () => void;
+  pairContract: string,
+  token1: tokenType,
+  token2: tokenType,
+  reserve1: Number,
+  reserve2: Number
 };
 
-const SwapFooter = ({ handleSwap }: SwapFooterProps) => {
-  const [slippageValue, setSlippageValue] = useState(2); // Initial slippage value (2% in this example)
+const SwapFooter = ({ handleSwap, pairContract, token1, token2, reserve1, reserve2 }: SwapFooterProps) => {
+  const [slippageValue, setSlippageValue] = useState(0.05); // Initial slippage value (2% in this example)
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -18,8 +24,8 @@ const SwapFooter = ({ handleSwap }: SwapFooterProps) => {
   };
 
   return (
-    <div className="flex flex-col w-full text-sm">
-      <div className="flex justify-between items-center mb-2 mx-2">
+    <div className="flex flex-col w-full px-2 text-sm ">
+      <div className="flex justify-between items-center mb-2 ">
         <div>
           <span className="text-sm">Slippage</span>
 
@@ -29,7 +35,7 @@ const SwapFooter = ({ handleSwap }: SwapFooterProps) => {
           Edit
         </button>
       </div>
-
+      <SlippageDetails  pairContract={pairContract} token1={token1} token2={token2} reserve1={reserve1} reserve2={reserve2} ></SlippageDetails>
       <ActionButton
         text="Swap"
         onClick={() => {
@@ -37,7 +43,7 @@ const SwapFooter = ({ handleSwap }: SwapFooterProps) => {
         }}
       ></ActionButton>
 
-      <SettingsPopup isOpen={isPopupOpen} onClose={handlePopup} setSlippageValue={setSlippageValue}></SettingsPopup>
+      <SettingsPopup isOpen={isPopupOpen} onClose={handlePopup} setSlippageValue={setSlippageValue} slippage={slippageValue}></SettingsPopup>
     </div>
   );
 };
