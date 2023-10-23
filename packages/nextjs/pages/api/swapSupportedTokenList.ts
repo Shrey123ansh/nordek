@@ -31,13 +31,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(500).json({ error: `Internal Server Error ${e}` });
       }
 
-
     case "GET":
-
       const swapSupportedTokenList = await db.collection(collectionName).find({}).sort({ symbol: -1 }).toArray();
-
       res.status(200).json({ swapSupportedTokenList });
-
+      break;
 
     case "DELETE":
       try {
@@ -57,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } catch (error) {
         console.error("Error:", error);
         return res.status(500).json({ error: "Internal Server Error" });
-      }
+      } 
   }
 
 }
