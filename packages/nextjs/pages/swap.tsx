@@ -36,7 +36,6 @@ const Swap: NextPage<any> = props => {
   useEffect(() => {
     const updatePrice = async () => {
       const data = await getTokenData(chartToken.name, "usd");
-
       setPriceData(data);
     };
     updatePrice();
@@ -117,21 +116,21 @@ const Swap: NextPage<any> = props => {
 };
 
 export default Swap;
-export async function getServerSideProps() {
-  try {
-    const client = await clientPromise;
-    const db = client.db("Norswap");
+// export async function getServerSideProps() {
+//   try {
+//     const client = await clientPromise;
+//     const db = client.db("Norswap");
 
-    const trades = await db.collection("trades").find({}).sort({ time: -1 }).limit(10).toArray();
-    const liquidityHistory = await db.collection("liquidityHistory").find({}).sort({ time: -1 }).limit(10).toArray();
-    return {
-      props: {
-        trades: JSON.parse(JSON.stringify(trades)),
-        liquidityHistory: JSON.parse(JSON.stringify(liquidityHistory)),
-      },
-    };
-  } catch (e) {
-    console.log("ERROR");
-    console.error(e);
-  }
-}
+//     const trades = await db.collection("trades").find({}).sort({ time: -1 }).limit(10).toArray();
+//     const liquidityHistory = await db.collection("liquidityHistory").find({}).sort({ time: -1 }).limit(10).toArray();
+//     return {
+//       props: {
+//         trades: JSON.parse(JSON.stringify(trades)),
+//         liquidityHistory: JSON.parse(JSON.stringify(liquidityHistory)),
+//       },
+//     };
+//   } catch (e) {
+//     console.log("ERROR");
+//     console.error(e);
+//   }
+// }
