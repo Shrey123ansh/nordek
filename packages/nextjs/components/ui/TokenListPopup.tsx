@@ -15,19 +15,7 @@ interface TokenListPopupProps {
   setToken: (value: tokenType) => void;
 }
 
-const getTokenList = async () => {
-  const response = await fetch("http://localhost:3000/api/swapSupportedTokenList");
 
-  console.log(response)
-  if (!response.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  } else {
-    const data = await response.json();
-    console.log(data);
-    return data.swapSupportedTokenList;
-  }
-};
 
 const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setToken }) => {
   const [tokens, setTokens] = useState<tokenType[] | undefined>(undefined); // Initialize tokens as undefined
@@ -47,9 +35,12 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
   useEffect(() => {
     const fetchTokens = async () => {
-      const tokenList = await getTokenList();
-      console.log("TOKEN LIST", tokenList);
-      setTokens(tokenList);
+      try {
+        const response = await axios.get("/api/swapSupportedTokenList");
+        setTokens(response.data.swapSupportedTokenList);
+      } catch (error) {
+
+      }
     };
 
     fetchTokens();
@@ -118,9 +109,6 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
         status: "added",
       });
 
-      const tokenList = await getTokenList();
-      console.log("TOKEN LIST", tokenList);
-      setToken(tokenList);
     } catch (error) {
       console.log(error);
     }
