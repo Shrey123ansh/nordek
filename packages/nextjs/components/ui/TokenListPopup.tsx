@@ -7,7 +7,7 @@ import axios from "axios";
 import { useAccount, useBalance } from "wagmi";
 import { tokenType } from "~~/data/data";
 import { useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
-import {BsSearch} from 'react-icons/bs';
+import { BsSearch } from 'react-icons/bs';
 
 interface TokenListPopupProps {
   isOpen: boolean;
@@ -192,11 +192,15 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
           </div>
 
           <label className="bg-white rounded-md my-2 flex justify-between items-center p-2">
-            
+
             <input
               className="bg-transparent rounded-md  outline-none placeholer:text-secondary  placeholder:text-base w-full"
               placeholder="Search By Name or Address"
               type="text"
+              onChange={event => {
+                setSearchValue(event.target.value);
+                onAddressInput(event.target.value);
+              }}
             ></input>
             <span>
               <BsSearch className="text-lg text-gray" />
@@ -205,7 +209,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
           {heading === heading2 && (
             <>
-              <div className="flex  w-full ">
+              {/* <div className="flex  w-full ">
                 <input
                   type="text"
                   className=" my-4  py-2 w-full px-2 "
@@ -216,7 +220,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
                     onAddressInput(event.target.value);
                   }}
                 />
-              </div>
+              </div> */}
               {loadingToken && <div className="text-white font-bold mt-4">Loading...</div>}
               {newToken.name !== "" && newToken.symbol !== "" && (
                 <div className="flex items-center justify-between p-4 bg-base-300 hover:bg-base-100 text-white cursor-pointer">

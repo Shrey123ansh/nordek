@@ -4,6 +4,7 @@ import SelectToken from "../swapComponents/SelectToken";
 import LiquidityFooter from "./LiquidityFooter";
 import SlippageDetails from "./SlippageDetails";
 import { formatEther, parseEther } from "viem";
+import { Liquidity } from "~~/pages/api/liquidity";
 import { useAccount } from "wagmi";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import { localTokens, tokenType } from "~~/data/data";
@@ -14,6 +15,7 @@ import { nordek } from "~~/utils/NordekChain";
 import { writeContract } from '@wagmi/core'
 import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
 import { updateUserData } from "../StakingComponents/APICallFunctions";
+import axios from "axios";
 
 
 
@@ -77,7 +79,8 @@ export default function LiquidityMain() {
     onBlockConfirmation: (txnReceipt) => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await addToDataBase()
       setToken0Amount(0)
       setToken1Amount(0)
       setUpdate(update + 1)
@@ -88,8 +91,6 @@ export default function LiquidityMain() {
       console.log("context " + context)
     },
   });
-
-
   const { writeAsync: addLiquidityETHToken1 } = useScaffoldContractWrite({
     contractName: "UniswapV2Router02",
     functionName: "addLiquidityETH",
@@ -105,7 +106,8 @@ export default function LiquidityMain() {
     onBlockConfirmation: (txnReceipt) => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await addToDataBase()
       setToken0Amount(0)
       setToken1Amount(0)
       setUpdate(update + 1)
@@ -128,12 +130,60 @@ export default function LiquidityMain() {
     onBlockConfirmation: (txnReceipt) => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await addToDataBase()
       setToken0Amount(0)
       setToken1Amount(0)
       setUpdate(update + 1)
     }
   });
+
+
+
+  const addToDataBase = async () => {
+    const liquidity: Liquidity = {
+      token0: token0.address,
+      token1: token1.address,
+      token0Amount: token0Amount,
+      token1Amount: token1Amount,
+      pairContract: pairContract,
+      user: account,
+      lpTokens: Number(lpTokens)
+    }
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "JWT fefege...",
+    };
+    try {
+      const response = await axios.post("/api/liquidity", liquidity, {
+        headers: headers,
+      });
+
+      console.log(response);
+      console.log("added to database ");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // liquidity position finding function 
+  useEffect(() => {
+    // const getData = async () => {
+    //   const apiUrl = `api/liquidity?address=0x501e0636c64b28840e0C38409Beb87d6BdfA835A`;
+    //   try {
+    //     const response = await axios.get(apiUrl);
+    //     console.log("user liquidity data")
+    //     console.log(response.data[0].user)
+    //     console.log(JSON.stringify(response.data))
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
+    // getData()
+
+  }, [])
+
 
   const handleAddLiquidity = async () => {
     const nrkAddress: string = localTokens.NRK.address
@@ -367,6 +417,7 @@ export default function LiquidityMain() {
           <div className="w-[300px] my-4 text-center  " >You are the first liquidity provider.The ratio of tokens you add will set the price of this pool.</div>
         </div>
       }
+
       <SelectToken
         token={token0}
         setToken={setTokenA}
