@@ -142,8 +142,8 @@ export default function LiquidityMain() {
 
   const addToDataBase = async () => {
     const liquidity: Liquidity = {
-      token0: token0.address,
-      token1: token1.address,
+      token0: token0,
+      token1: token1,
       token0Amount: token0Amount,
       token1Amount: token1Amount,
       pairContract: pairContract,
@@ -167,22 +167,6 @@ export default function LiquidityMain() {
     }
   }
 
-  // liquidity position finding function 
-  useEffect(() => {
-    // const getData = async () => {
-    //   const apiUrl = `api/liquidity?address=0x501e0636c64b28840e0C38409Beb87d6BdfA835A`;
-    //   try {
-    //     const response = await axios.get(apiUrl);
-    //     console.log("user liquidity data")
-    //     console.log(response.data[0].user)
-    //     console.log(JSON.stringify(response.data))
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // }
-    // getData()
-
-  }, [])
 
 
   const handleAddLiquidity = async () => {

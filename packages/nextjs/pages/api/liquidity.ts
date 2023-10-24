@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { tokenType } from "~~/data/data";
 import clientPromise from "~~/lib/mongoDb";
 
 export type Liquidity = {
-    token0: string,
-    token1: string,
+    token0: tokenType,
+    token1: tokenType,
     token0Amount: Number,
     token1Amount: Number,
     lpTokens: Number,
@@ -59,13 +60,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         case "GET":
             const { address } = req.query
-            const userLiquidityValues = await db.collection(collectionName).find({ user: address as string }).sort({ symbol: -1 }).toArray();
+            const userLiquidityValues = await db.collection(collectionName).find({ user: address as string }).toArray();
             res.status(200).json({ userLiquidityValues });
             break;
         // when user removes the portion of liquidity 
         case "PUT":
             try {
                 const liquidity: Liquidity = req.body;
+                console.log("liquidty from put " + JSON.stringify(liquidity))
                 const filter = {
                     user: liquidity.user,
                     pairContract: liquidity.pairContract,
@@ -97,13 +99,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // when user totally removes the liquidity 
         case "DELETE":
             try {
-                const { pairContract, userAddress } = req.body;
+                const { pairContract, userAddress } = req.query;
+                console.log("delete request pair contract " + pairContract)
+                console.log("delete request user address " + userAddress)
                 // console.log(" token address " + JSON.stringify(address))
                 if (!userAddress && !pairContract) {
                     return res.status(400).json({ error: "pair contract or user address parameter is missing" });
                 }
 
-                const result = await db.collection(collectionName).deleteOne({ address: address as string, pairContract: pairContract as string });
+                const result = await db.collection(collectionName).deleteOne({ user: userAddress as string, pairContract: pairContract as string });
 
                 if (result.deletedCount > 0) {
                     return res.status(200).json({ message: `${pairContract} liquidity removed` });

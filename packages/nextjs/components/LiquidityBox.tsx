@@ -11,23 +11,23 @@ export const LiquidityBox = () => {
           <br />
         </div> */}
 
-          <Tabs isFitted>
-            <TabList>
-              <Tab>+ Supply</Tab>
-              <Tab>Positions</Tab>
-              
-            </TabList>
+        <Tabs isFitted>
+          <TabList>
+            <Tab>+ Supply</Tab>
+            <Tab>Positions</Tab>
 
-            <TabPanels>
-              <TabPanel>
-                    <LiquidityMain></LiquidityMain>
-              </TabPanel>
-              <TabPanel>
-                    <LiquidityPositions></LiquidityPositions>
-                
-              </TabPanel>
-            </TabPanels>
-</Tabs>
+          </TabList>
+
+          <TabPanels>
+            <TabPanel>
+              <LiquidityMain></LiquidityMain>
+            </TabPanel>
+            <TabPanel>
+              <LiquidityPositions></LiquidityPositions>
+
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
 
         <br />
       </div>
