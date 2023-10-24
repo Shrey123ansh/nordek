@@ -6,6 +6,7 @@ import NextNProgress from "nextjs-progressbar";
 import { Toaster } from "react-hot-toast";
 import { useDarkMode } from "usehooks-ts";
 import { WagmiConfig } from "wagmi";
+import { ChakraProvider } from '@chakra-ui/react'
 import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
@@ -49,7 +50,9 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
         >
           <Header isDarkTheme={isDarkTheme} />
           <main className="relative flex flex-col flex-1">
-            <Component {...pageProps} />
+            <ChakraProvider>
+              <Component {...pageProps} />
+            </ChakraProvider>
           </main>
           <Footer />
         </div>
