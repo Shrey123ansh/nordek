@@ -168,7 +168,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 ">
+    <div className="fixed inset-0 flex  items-center justify-center z-50 ">
       <div className="fixed inset-0 bg-gray-800 opacity-50 " onClick={onCloseOverride}></div>
       <div className="relative z-10  rounded-lg shadow-lg p-6 max-h-[500px] min-w-[450px] bg-gradient-to-r bg-base-300">
         <div className="flex  flex-col ">
@@ -249,7 +249,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
             </div>
           )}
           <div>
-            <div className="   text-left mt-8   text-primary-content font-bold text-[15px] ">
+            <div className="   text-left mt-8 text-primary-content font-bold text-[15px] ">
               <button onClick={onFotterClick}>{fotter}</button>
             </div>
           </div>
