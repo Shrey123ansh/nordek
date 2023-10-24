@@ -19,7 +19,7 @@ const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount }: SwapFoote
     //     Option: CustomOption,
     //   }}
     // />
-    <div className=" flex flex-col mb-4 bg-gradient-to-r from-[#141414] to-[#593FB1] px-4 py-2 rounded-lg text-white  text-sm">
+    <div className=" flex flex-col mb-4 shadow-md bg-gradient-to-r from-[#141414] to-[#593FB1] px-4 py-2 rounded-lg text-white  text-sm">
       <span className="mb-4">From</span>
       <div className="flex items-center">
         <Select setToken={setToken} token={token}></Select>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SettingsPopup from "../ui/SettingsPopup";
 import ActionButton from "../ui/actionButton";
 import SlippageDetails from "./SlippageDetails";
+import PositionSlippageDetails from './PositionSlippageDetails'
 import { tokenType } from "~~/data/data";
 
 type LiquidityFooterProps = {
@@ -37,16 +38,23 @@ const LiquidityFooter = ({ handleAddLiquidity, pairContract, token1, token2, res
           Edit
         </button>
       </div>
-      <SlippageDetails lpTokens={lpTokens} pairContract={pairContract} token1={token1} token2={token2} reserve1={reserve1} reserve2={reserve2} share={share}></SlippageDetails>
+      <PositionSlippageDetails lpTokens={lpTokens} pairContract={pairContract} token1={token1} token2={token2} reserve1={reserve1} reserve2={reserve2} share={share}></PositionSlippageDetails>
 
       <SettingsPopup isOpen={isPopupOpen} onClose={handlePopup} setSlippageValue={setSlippageValue} slippage={slippage} ></SettingsPopup>
       <br />
-      <ActionButton
-        text="Add Liquidity"
-        onClick={() => {
-          handleAddLiquidity();
-        }}
-      ></ActionButton>
+      <div className="flex justify-evenly w-full">
+        <ActionButton
+            text="Withdraw"
+            // onClick={() => withdrawFunc()}
+        >
+
+        </ActionButton>
+        <ActionButton
+            text="Cancel"
+        >
+
+        </ActionButton>
+      </div>
       
     </div>
   );
