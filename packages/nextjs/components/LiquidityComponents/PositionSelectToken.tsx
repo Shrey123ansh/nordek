@@ -14,10 +14,9 @@ import { writeContract } from '@wagmi/core'
 import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
 import { RiArrowDropDownLine, RiArrowDropUpLine } from "react-icons/ri";
 
-import 'toolcool-range-slider';
+// import 'toolcool-range-slider';
 import { RangeSlider } from 'toolcool-range-slider';
 import { FaArrowDownLong } from "react-icons/fa6";
-import ActionButton from "../ui/actionButton";
 
 
 
@@ -25,7 +24,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
 
   const { data: routerContract } = useDeployedContractInfo("UniswapV2Router02");
   const nrkAddress: string = localTokens.NRK.address
-  const sliderRef = useRef<RangeSlider>(null);
+  const sliderRef = useRef(null);
 
   const [percentage, setPercentage] = useState(0);
   const [value, setValue] = useState<Number>(liqudity.lpTokens)
@@ -157,20 +156,20 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
     }
   }
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const slider = sliderRef.current;
+  //   const slider = sliderRef.current;
 
-    const onChange = (evt: Event) => {
-      const customEvent = evt as CustomEvent;
-      setPercentage(customEvent.detail.value)
-    };
+  //   const onChange = (evt: Event) => {
+  //     const customEvent = evt as CustomEvent;
+  //     setPercentage(customEvent.detail.value)
+  //   };
 
-    slider?.addEventListener('change', onChange);
+  //   slider?.addEventListener('change', onChange);
 
 
 
-  }, []);
+  // }, []);
 
   const setSliderValue = (value: Number) => {
     sliderRef.current.setAttribute("value", `${value}`)
@@ -310,20 +309,19 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
               {`${percentage}%`}
             </div>
             <div className="mt-4" >
-              <tc-range-slider ref={sliderRef} slider-width="100%" pointer-shadow="0 0 5px #DAE8FF"    ></tc-range-slider>
-
+              <input type="range" onChange={(e) => setPercentage(e.target.value)} value={percentage} className=" w-full h-1 outline-none slider " pointer-shadow="0 0 5px #DAE8FF" />
             </div>
             <div className=" flex flex-row items-center justify-between w-full mt-4 " >
-              <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(25); setSliderValue(25) }} >
+              <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(25) }} >
                 25%
               </button>
-              <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(50); setSliderValue(50) }}>
+              <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(50) }}>
                 50%
               </button>
-              <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(75); setSliderValue(75) }} >
+              <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(75) }} >
                 75%
               </button>
-              <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(100); setSliderValue(100) }} >
+              <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(100) }} >
                 100%
               </button>
             </div>
@@ -332,7 +330,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
           <div className="bg-gradient-to-r from-[#141414] to-[#593FB1] rounded-lg p-4">
             <div className="flex flex-row items-center justify-between " >
               <div>
-                {token0WithdrawMin}
+                {token0Withdraw}
               </div>
               <div className="flex flex-row items-center  " >
                 <img src={liqudity.token0.logo} className="w-6 h-6 rounded-full mr-2 " />
@@ -341,7 +339,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
             </div>
             <div className="flex flex-row items-center justify-between mt-4 " >
               <div>
-                {token1WithdrawMin}
+                {token1Withdraw}
               </div>
               <div className="flex flex-row items-center  " >
                 <img src={liqudity.token1.logo} className="w-6 h-6 rounded-full mr-2 " />
@@ -350,6 +348,8 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
             </div>
 
           </div>
+
+
           <button className="btn btn-sm btn-outline btn-accent my-4 w-full" onClick={handleWithdraw}>
             Remove Liquidity
           </button>

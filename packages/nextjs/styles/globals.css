@@ -4,6 +4,7 @@
 @import "tailwindcss/utilities";
 
 @layer base {
+
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -43,29 +44,45 @@ p {
 
 /* Firefox */
 * {
-  scrollbar-width:10px;
+  scrollbar-width: 10px;
   /* scrollbar-color: var(--secondary) var(--primary); */
-  scrollbar-color:white;
+  scrollbar-color: white;
 }
 
 /* Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
   width: 5px;
-  
+
 }
 
 *::-webkit-scrollbar-track {
-  scrollbar-width:thin;
+  scrollbar-width: thin;
   /* scrollbar-color: var(--secondary) var(--primary); */
-  scrollbar-color:white;
+  scrollbar-color: white;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color:white;
+  background-color: white;
   border-radius: 14px;
   border: 3px solid var(--primary);
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--tertiary);
+}
+
+.slider::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  cursor: pointer;
+
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: white;
+
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  border-radius: 5px;
 }

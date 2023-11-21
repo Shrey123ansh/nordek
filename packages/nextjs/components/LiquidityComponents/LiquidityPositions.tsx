@@ -14,9 +14,6 @@ export default function LiquidityPositions() {
   const [userLiquidity, setUserLiquidity] = useState<Liquidity[]>([])
 
 
-
-
-
   useEffect(() => {
     console.log("fetching data ....")
     const getUserLiquidity = async () => {
