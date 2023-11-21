@@ -37,6 +37,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
     const fetchTokens = async () => {
       try {
         const response = await axios.get("/api/swapSupportedTokenList");
+
         setTokens(response.data.swapSupportedTokenList);
       } catch (error) {
 

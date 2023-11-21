@@ -16,37 +16,62 @@ type DetailsType = {
   lpTokens: string
 }
 
-const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 = 0, share = 0, lpTokens = "-" }: DetailsType) => {
-  // Define state for each div
-  const [LPTokens, setLPTokens] = useState(0);
-  console.log("pair contract address " + pairContract)
+const SlippageDetails = ({ token1, token2, reserve1 = 0, reserve2 = 0, share = 0, lpTokens = "-" }: DetailsType) => {
+
+  const [token1PerToken2, setToken1PerToken2] = useState(0)
+  const [token2PerToken1, setToken2PerToken1] = useState(0)
+  useEffect(() => {
+    const value1 = reserve1 !== 0 && reserve2 !== 0 ? Number(reserve2) / Number(reserve1) : 0
+    const value2 = reserve1 !== 0 && reserve2 !== 0 ? Number(reserve1) / Number(reserve2) : 0
+    setToken1PerToken2(value1.toFixed(4))
+    setToken2PerToken1(value2.toFixed(4))
+  }, [reserve1, reserve2, token1, token2])
 
 
 
   return (
-    <div className="flex flex-col space-y-1 text-[#8F8F8F]">
-      <div className="">
-        <div>
-          1 {token1.symbol} = {reserve1 !== 0 && reserve2 !== 0 ? Number(reserve2) / Number(reserve1) : 0} {token2.symbol}{" "}
+
+
+    <div className="shadow-md bg-gradient-to-r from-[#141414] to-[#593FB1] rounded-lg mt-4   font-medium    " >
+
+      <div className="px-4 pt-4  text-[10px]" >
+        PRICES AND POOL SHARE
+      </div>
+      <div className="flex flex-row items-center justify-between mt-4  p-4 " >
+
+        {/* token1 per token2  */}
+        <div className="flex flex-col items-center justify-center  " >
+          <div className=" text-base " >
+            {token1PerToken2}
+          </div>
+          <div className=" mt-2 text-sm " >
+            {`${token1.symbol} per ${token2.symbol}`}
+          </div>
+        </div>
+
+
+        {/* token2 per token1  */}
+        <div className="flex flex-col items-center justify-center" >
+          <div className=" text-base ">
+            {token2PerToken1}
+          </div>
+          <div className=" mt-2 text-sm " >
+            {`${token2.symbol} per ${token1.symbol}`}
+          </div>
+        </div>
+
+
+        {/* share of pool */}
+        <div className="flex flex-col items-center justify-center" >
+          <div className=" text-base ">
+            {share}
+          </div>
+          <div className=" mt-2 text-sm " >
+            Share of pool
+          </div>
         </div>
       </div>
 
-      <div className="">
-        <div>
-          1 {token2.symbol} = {reserve1 !== 0 && reserve2 !== 0 ? Number(reserve1) / Number(reserve2) : 0} {token1.symbol}{" "}
-        </div>
-      </div>
-
-      <div className="flex justify-between">
-        <span> Share of Pool </span>
-        <span className="font-bold">{`${share}%`} </span>
-      </div>
-
-      <div className="flex justify-between">
-        <span> Lp Tokens </span>
-        <span className="font-bold"> {`${lpTokens}`} </span>
-      </div>
-      <hr className="" />
     </div>
   );
 };

@@ -32,9 +32,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
     case "GET":
-      const swapSupportedTokenList = await db.collection(collectionName).find({}).sort({ symbol: -1 }).toArray();
-      res.status(200).json({ swapSupportedTokenList });
-      break;
+      const swapSupportedTokenList = await db.collection(collectionName).find({}).toArray();
+      return res.status(200).json({ swapSupportedTokenList });
 
     case "DELETE":
       try {

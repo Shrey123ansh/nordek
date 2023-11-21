@@ -7,14 +7,14 @@ export const Swap2: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpertTogg
   // Define states for decimal numbers
 
   return (
-    <div className={expertToggle ? "" : `p-6 border-2 rounded-2xl mb-32 bg-[#E2D4FF]`}>
+    <div className={expertToggle ? "" : `p-4 border-2 rounded-2xl mb-32 bg-[#E2D4FF] w-[500px]  `}>
       <div
         className={
-          `flex flex-col space-y-4 items-center ` +
-          (expertToggle ? `h-[500px] overflow-y-auto overflow-hidden` : `px-16 pt-6 px-12 rounded-xl bg-gradient-to-r `)
+          `flex flex-col space-y-4   ` +
+          (expertToggle ? `h-[500px] overflow-y-auto overflow-hidden` : ` pt-6 px-12 rounded-xl bg-gradient-to-r `)
         }
       >
-        {expertToggle ? (
+        {/* {expertToggle ? (
           <div className="w-full bg-[#5F29A5] p-2 text-center font-sm"> Market</div>
         ) : (
           <div>
@@ -22,7 +22,11 @@ export const Swap2: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpertTogg
             <br />
             <ExpertToggle expertToggle={expertToggle} setExpertToggle={setExpertToggle}></ExpertToggle>
           </div>
-        )}
+        )} */}
+        <div  >
+          <div className=" font-bold text-2xl    " >Swap</div>
+          <div className="  font-normal text-sm   " >Trade tokens in an instant</div>
+        </div>
         <SwapMain></SwapMain>
         <br />
       </div>

@@ -14,6 +14,8 @@ import uniswapv2paircontractABI from "../../../foundry/out/UniswapV2Pair.sol/Uni
 import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { nordek } from "~~/utils/NordekChain";
 import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
+import { fetchBalance } from '@wagmi/core'
+
 
 
 export default function SwapMain() {
@@ -35,7 +37,8 @@ export default function SwapMain() {
   const [reserveA, setReserve1] = useState(0)
   const [reserveB, setReserve2] = useState(0)
   const { address: account, isConnected } = useAccount();
-  const { data: factoryContractData } = useDeployedContractInfo("UniswapV2Factory");
+  const [balance0, setBalance0] = useState(0)
+  const [balance1, setBalance1] = useState(0)
 
   const currentDate = new Date();
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
@@ -58,6 +61,64 @@ export default function SwapMain() {
       setShare(0)
     }
   }, [isFetched, isFetching])
+
+  useEffect(() => {
+    const getBalance = async () => {
+      console.log("fetching....")
+      try {
+        const nrkAddress = localTokens.NRK.address
+        if (token0.address === nrkAddress || token1.address === nrkAddress) {
+
+          const balanceNRK = await fetchBalance({
+            address: account,
+          })
+          if (token0.address === nrkAddress) {
+            const balanceB = await readContract({
+              address: token1.address,
+              abi: erc20ABI.abi,
+              functionName: 'balanceOf',
+              args: [account],
+              account: account
+            })
+            setBalance0(Number(balanceNRK.formatted))
+            setBalance1(Number(formatEther(balanceB)))
+
+          } else {
+            const balanceA = await readContract({
+              address: token0.address,
+              abi: erc20ABI.abi,
+              functionName: 'balanceOf',
+              args: [account],
+              account: account
+            })
+            setBalance0(Number(formatEther(balanceA)))
+            setBalance1(Number(balanceNRK.formatted))
+          }
+        } else {
+          const balanceA = await readContract({
+            address: token0.address,
+            abi: erc20ABI.abi,
+            functionName: 'balanceOf',
+            args: [account],
+            account: account
+          })
+          const balanceB = await readContract({
+            address: token1.address,
+            abi: erc20ABI.abi,
+            functionName: 'balanceOf',
+            args: [account],
+            account: account
+          })
+          setBalance0(Number(formatEther(balanceA)))
+          setBalance1(Number(formatEther(balanceB)))
+        }
+      } catch (e) {
+        console.log(e)
+      }
+
+    }
+    getBalance()
+  }, [token0, token1, account])
 
   const getData = async () => {
     if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
@@ -333,28 +394,25 @@ export default function SwapMain() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-between w-full">
-      {/* {
-        pairContract === "0x0000000000000000000000000000000000000000" &&
-        <div className="flex flex-col items-center  " >
-          <div>Supply equal value parts of two different tokens.</div>
-          <div className="w-[300px] my-4 text-center  " >You are the first liquidity provider.The ratio of tokens you add will set the price of this pool.</div>
-        </div>
-      } */}
+    <div className="flex flex-col">
       <SelectToken
         token={token0}
         setToken={setTokenA}
         tokenAmount={token0Amount}
         setTokenAmount={setTokenAmount0Override}
+        title="From"
+        balance={balance0}
       ></SelectToken>
-      <div className="w-6 h-6 flex items-center justify-center text-white rounded-full mb-4">
-        <ArrowDownIcon className="font-bold" />
-      </div>
+      <button className="w-full h-6 flex flex-row items-center justify-center text-white rounded-full " onClick={() => { setToken0(token1); setToken1(token0); setReserve1(reserveB); setReserve2(reserveA) }}   >
+        <ArrowDownIcon className="font-bold w-6 h-6 " />
+      </button>
       <SelectToken
         token={token1}
         setToken={setTokenB}
         tokenAmount={token1Amount}
         setTokenAmount={setTokenAmount1Override}
+        title="To"
+        balance={balance1}
       ></SelectToken>
       <SwapFooter handleSwap={handleSwap}
         pairContract={pairContract}
@@ -365,7 +423,6 @@ export default function SwapMain() {
         slippage={slippage}
         setSLippage={setSlippage}
         minimumPrice={Number(token1Amount) - ((Number(token1Amount) * slippage) / 100)}></SwapFooter>
-      {/* <PriceComponent price={0}></PriceComponent> */}
     </div >
   );
 }

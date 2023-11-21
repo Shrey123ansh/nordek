@@ -16,7 +16,10 @@ import { writeContract } from '@wagmi/core'
 import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
 import { updateUserData } from "../StakingComponents/APICallFunctions";
 import axios from "axios";
-
+import TokenListPopup from "../ui/TokenListPopup";
+import { Select } from "../Select/Select";
+import { MdArrowDropDown } from "react-icons/md";
+import { fetchBalance } from '@wagmi/core'
 
 
 export default function LiquidityMain() {
@@ -43,6 +46,8 @@ export default function LiquidityMain() {
   const [kLast, setKLast] = useState(0)
   const token0AmountNumber: number = Number(token0Amount)
   const token1AmountNumber: number = Number(token1Amount)
+  const [balance0, setBalance0] = useState(0)
+  const [balance1, setBalance1] = useState(0)
 
   const { data: pc, isFetched } = useScaffoldContractRead({
     contractName: "UniswapV2Factory",
@@ -171,6 +176,7 @@ export default function LiquidityMain() {
 
   const handleAddLiquidity = async () => {
     const nrkAddress: string = localTokens.NRK.address
+    if (token0Amount === 0 || token1Amount === 0) return
     if (token0.address === nrkAddress || token1.address === nrkAddress) {
       // one of the token is native NRK token 
       // addLiquidityETH
@@ -239,6 +245,8 @@ export default function LiquidityMain() {
     }
   }
   const getPairAddress = async () => {
+    setToken0Amount(0)
+    setToken1Amount(0)
     console.log("pair contract function")
     try {
       const pairAddress = await readContract({
@@ -253,6 +261,8 @@ export default function LiquidityMain() {
       setPairContract(pairAddress)
       if (pairAddress === address0) {
         setShare(100)
+        setReserve1(0)
+        setReserve2(0)
       }
       if (pairAddress !== address0) {
         setShare(0)
@@ -328,6 +338,65 @@ export default function LiquidityMain() {
   }, [pairContract, update])
 
 
+  useEffect(() => {
+    const getBalance = async () => {
+      console.log("fetching....")
+      try {
+        const nrkAddress = localTokens.NRK.address
+        if (token0.address === nrkAddress || token1.address === nrkAddress) {
+
+          const balanceNRK = await fetchBalance({
+            address: account,
+          })
+          if (token0.address === nrkAddress) {
+            const balanceB = await readContract({
+              address: token1.address,
+              abi: erc20ABI.abi,
+              functionName: 'balanceOf',
+              args: [account],
+              account: account
+            })
+            setBalance0(Number(balanceNRK.formatted))
+            setBalance1(Number(formatEther(balanceB)))
+
+          } else {
+            const balanceA = await readContract({
+              address: token0.address,
+              abi: erc20ABI.abi,
+              functionName: 'balanceOf',
+              args: [account],
+              account: account
+            })
+            setBalance0(Number(formatEther(balanceA)))
+            setBalance1(Number(balanceNRK.formatted))
+          }
+        } else {
+          const balanceA = await readContract({
+            address: token0.address,
+            abi: erc20ABI.abi,
+            functionName: 'balanceOf',
+            args: [account],
+            account: account
+          })
+          const balanceB = await readContract({
+            address: token1.address,
+            abi: erc20ABI.abi,
+            functionName: 'balanceOf',
+            args: [account],
+            account: account
+          })
+          setBalance0(Number(formatEther(balanceA)))
+          setBalance1(Number(formatEther(balanceB)))
+        }
+      } catch (e) {
+        console.log(e)
+      }
+
+    }
+    getBalance()
+  }, [token0, token1, account])
+
+
 
   useEffect(() => {
     if (pairContract !== address0) {
@@ -393,29 +462,109 @@ export default function LiquidityMain() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-between w-full">
+    <div className="flex flex-col w-full  ">
       {
         pairContract === "0x0000000000000000000000000000000000000000" &&
-        <div className="flex flex-col items-center  " >
-          <div>Supply equal value parts of two different tokens.</div>
-          <div className="w-[300px] my-4 text-center  " >You are the first liquidity provider.The ratio of tokens you add will set the price of this pool.</div>
+        <div className=" text-sm  text-center  font-bold mb-4 " >
+          ! NO PAIR EXISTS FOR THESE TWO TOKENS !
         </div>
       }
 
-      <SelectToken
-        token={token0}
-        setToken={setTokenA}
-        tokenAmount={token0Amount}
-        setTokenAmount={setTokenAmount0Override}
-      ></SelectToken>
-      <SelectToken
-        token={token1}
-        setToken={setTokenB}
-        tokenAmount={token1Amount}
-        setTokenAmount={setTokenAmount1Override}
-      ></SelectToken>
+
+
+      <div className=" text-[10px] font-semibold  " >CHOOSE TOKEN PAIR</div>
+      <div className="flex flex-row items-center w-full  justify-between mt-4  " >
+        <div className="w-full mr-4 " >
+          {/* <Select setToken={setTokenA} token={token0} /> */}
+          <LiquidityTokenSelectButton setToken={setTokenA} token={token0} />
+        </div>
+        <div className=" font-bold text-lg " >+</div>
+        <div className="w-full ml-4 " >
+          {/* <Select setToken={setTokenB} token={token1} /> */}
+          <LiquidityTokenSelectButton setToken={setTokenB} token={token1} />
+        </div>
+      </div>
+
+
+
+      <div className=" text-[10px] font-semibold mt-8 " >DEPOSIT AMOUNT</div>
+      <TokenAmountEntry tokenAmount={token0Amount} setTokenAmount={setTokenAmount0Override} token={token0} balance={balance0} />
+
+      <TokenAmountEntry tokenAmount={token1Amount} setTokenAmount={setTokenAmount1Override} token={token1} balance={balance1} />
+
+
       <LiquidityFooter handleAddLiquidity={handleAddLiquidity} pairContract={pairContract} token1={token0} token2={token1} reserve1={reserveA} reserve2={reserveB} slippage={slippage} setSlippageValue={setSlippage} share={share} lpTokens={lpTokens}></LiquidityFooter>
-      {/* <PriceComponent price={0}></PriceComponent> */}
     </div>
+  );
+}
+
+
+
+
+const TokenAmountEntry = ({ setTokenAmount, tokenAmount, token, balance }: { balance: Number, setTokenAmount: (value: Number) => void, tokenAmount: Number, token: tokenType }) => {
+  return (
+    <div className="mt-4   " >
+      <div className="flex flex-row items-center  justify-between" >
+        <div className="flex flex-row items-center" >
+          <img src={token.logo} className="w-6 h-6 rounded-full mr-2" />
+          <div className=" font-semibold   " >
+            {token.symbol}
+          </div>
+        </div>
+        <div className="font-semibold text-sm"  >{`Balance : ${balance}`}</div>
+      </div>
+
+      <div className=" flex flex-col  shadow-md bg-gradient-to-r from-[#141414] to-[#593FB1] rounded-lg px-4 py-4 mb-4 mt-4  " >
+        <input
+          type="number"
+          placeholder="0"
+          value={tokenAmount?.toString()}
+          className="input input-sm pr-0 bg-transparent w-full text-lg  font-semibold  input-ghost max-w-md text-right rounded-none focus:outline-none leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          onChange={e => {
+            const value = Number(e.target.value)
+            if (value < 0) {
+              return
+            }
+            setTokenAmount(value);
+          }}
+        />
+        <button className=" self-end font-semibold   bg-secondary rounded-full px-2 mt-2   " onClick={() => {
+          // 0.01% buffer for gas fee 
+          var _balance = Number(balance) - (Number(balance) / 10000)
+          setTokenAmount(_balance)
+        }}  >Max</button>
+      </div>
+
+
+    </div>
+  );
+}
+
+
+
+
+
+const LiquidityTokenSelectButton = ({ setToken, token }: {
+  setToken: () => void,
+  token: tokenType
+}) => {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const handlePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
+
+  return (
+    <button className="rounded-full flex flex-row bg-white   items-center   text-gray-800 text-xs py-1 px-4 w-full " onClick={handlePopup} >
+      <div className="flex flex-row  flex-1" >
+        <div className="flex items-center font-semibold text-base  justify-between space-x-4  ">
+          {" "}
+          <img src={token.logo} className="w-6 h-6 rounded-full mr-2" /> {token.symbol}
+
+        </div>
+        <TokenListPopup isOpen={isPopupOpen} onClose={handlePopup} setToken={setToken}></TokenListPopup>
+      </div>
+      <MdArrowDropDown className="text-gray-800  " size={15} />
+    </button>
   );
 }

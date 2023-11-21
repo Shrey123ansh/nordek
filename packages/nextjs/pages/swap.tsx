@@ -47,7 +47,7 @@ const Swap: NextPage<any> = props => {
         className={
           expertToggle
             ? `flex items-center flex-col flex-grow pt-10 mt-4`
-            : `flex items-center flex-col justify-center mx-auto mt-4`
+            : `flex items-center flex-col justify-center  mx-auto mt-4`
         }
       >
         <div className="px-0 flex w-full h-full justify-between">
@@ -103,21 +103,3 @@ const Swap: NextPage<any> = props => {
 };
 
 export default Swap;
-// export async function getServerSideProps() {
-//   try {
-//     const client = await clientPromise;
-//     const db = client.db("Norswap");
-
-//     const trades = await db.collection("trades").find({}).sort({ time: -1 }).limit(10).toArray();
-//     const liquidityHistory = await db.collection("liquidityHistory").find({}).sort({ time: -1 }).limit(10).toArray();
-//     return {
-//       props: {
-//         trades: JSON.parse(JSON.stringify(trades)),
-//         liquidityHistory: JSON.parse(JSON.stringify(liquidityHistory)),
-//       },
-//     };
-//   } catch (e) {
-//     console.log("ERROR");
-//     console.error(e);
-//   }
-// }

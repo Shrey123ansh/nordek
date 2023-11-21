@@ -17,15 +17,11 @@ type DetailsType = {
 }
 
 const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 = 0, minimumPrice = 0 }: DetailsType) => {
-  // Define state for each div
+
   const { address: account } = useAccount()
   const [toggleBtn, setToggleBtn] = useState(false);
   const [token0Amount, setToken0Amount] = useState(0);
   const [token1Amount, setToken1Amount] = useState(0);
-  //   const [shareOfPool, setShareOfPool] = useState(0);
-  //   const [amountReceived, setAmountReceived] = useState(0);
-  //   const [LPTokens, setLPTokens] = useState(0);
-  console.log("pair contract address " + pairContract)
 
   const toggleBtnFunction = () => {
     setToggleBtn(!toggleBtn);
@@ -33,9 +29,9 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
 
 
   return (
-    <div className="flex flex-col space-y-1 text-[#8F8F8F]  ">
- 
-    
+    <div className="flex flex-col space-y-1  ">
+
+
 
       <div className="flex justify-between">
         <span> Price </span>
@@ -61,11 +57,7 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
           </button>
         </div>
       </div>
-      {/* 
-      <div className="flex justify-between">
-        <span> Share of Pool </span>
-        <span className="font-bold"> {shareOfPool} </span>
-      </div> */}
+
 
       <div className="flex justify-between">
         <span> Minimum Received </span>
@@ -73,12 +65,8 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
       </div>
 
 
-      {/* 
-      <div className="flex justify-between">
-        <span> Gas Fee </span>
-        <span className="font-bold"> 0.1 NRK </span>
-      </div> */}
-      <hr className="" />
+
+
     </div>
   );
 };

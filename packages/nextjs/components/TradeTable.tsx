@@ -71,7 +71,7 @@ function TradeHistory({ trades, tableHead }: any) {
 }
 // @ts-ignore
 
-export default function TradeTable({ trades, tableHead }: any) {
+export default function TradeTable({ trades = [], tableHead }: any) {
   //const { eth, currency } = Global.useContainer();
   //   const calculateTradeCost = (cost: number): string => {
   //     // Calculate trade cost

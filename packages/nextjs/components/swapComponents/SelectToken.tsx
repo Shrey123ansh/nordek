@@ -1,5 +1,3 @@
-import { useState } from "react";
-import Image from "next/image";
 import { Select } from "../Select/Select";
 import { tokenType } from "~~/data/data";
 
@@ -7,42 +5,44 @@ type SwapFooterProps = {
   token: tokenType;
   setToken: React.Dispatch<React.SetStateAction<tokenType>>;
   tokenAmount: Number;
-  setTokenAmount: (value: Number) => void
+  setTokenAmount: (value: Number) => void,
+  title: string,
+  balance: number
 };
 
-const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount }: SwapFooterProps) => {
+const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount, title, balance }: SwapFooterProps) => {
   return (
-    // <select
-    //   options={options}
-    //   styles={customStyles}
-    //   components={{
-    //     Option: CustomOption,
-    //   }}
-    // />
-    <div className=" flex flex-col mb-4 shadow-md bg-gradient-to-r from-[#141414] to-[#593FB1] px-4 py-2 rounded-lg text-white  text-sm">
-      <span className="mb-4">From</span>
-      <div className="flex items-center">
-        <Select setToken={setToken} token={token}></Select>
 
+
+    <div className=" shadow-md bg-gradient-to-r from-[#141414] to-[#593FB1] rounded-lg px-4 py-2 mb-4 mt-4 " >
+      <div className="mb-4 font-semibold " >{title}</div>
+      <div className=" flex flex-row items-center  justify-between  " >
+        <Select setToken={setToken} token={token}></Select>
         <input
           type="number"
-          placeholder="0.0"
+          placeholder="0"
           value={tokenAmount?.toString()}
-          className="input input-sm input-ghost max-w-md text-right rounded-none focus:outline-none bg-transparent leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="input   input-sm pr-0 bg-transparent  font-semibold  input-ghost max-w-md text-right rounded-none focus:outline-none   leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           onChange={e => {
-            setTokenAmount(Number(e.target.value));
+            const value = Number(e.target.value)
+            if (value < 0) {
+              return
+            }
+            setTokenAmount(value);
           }}
         />
       </div>
-      <label className="label block w-full text-right">
-        <span className="label-text-alt">-</span>
-      </label>
-      <hr className="bg-white w-full" />
-      <div className="flex justify-between">
+      <div className="flex flex-row items-center  justify-between mt-4 font-semibold  text-sm ">
         <span>Balance</span>
-        <span>0.00</span>
+        <span>{balance}</span>
       </div>
     </div>
+
+
+
+
+
+
   );
 };
 

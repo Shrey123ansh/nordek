@@ -27,7 +27,10 @@ const StakeBox = () => {
 
   function setStakeAmountMax() {
     if (isStaking) {
-      setStakeAmount(Number(balance?.toFixed(4)));
+      var _balance = balance
+      // 0.01% buffer 
+      _balance = _balance - (_balance / 10000)
+      setStakeAmount(Number(_balance));
     } else {
       setStakeAmount(Number(formatEther(userTotalStakes)).toFixed(8));
     }
@@ -92,12 +95,6 @@ const StakeBox = () => {
     } else {
       await handleUnstaking();
     }
-    // const res = await fetch("http://localhost:3000/api/stakes", {
-    //   method: "POST",
-    //   body: JSON.stringify(stakeData),
-    // });
-
-    // save data to database
   };
 
   const { data: minStake, isLoading: isMinStake } = useScaffoldContractRead({
