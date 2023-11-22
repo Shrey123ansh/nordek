@@ -555,16 +555,18 @@ const LiquidityTokenSelectButton = ({ setToken, token }: {
   };
 
   return (
-    <button className="rounded-full flex flex-row bg-white  items-center   text-gray-800 text-xs py-1 px-4 w-full " onClick={handlePopup} >
-      <div className="flex flex-row flex-1 " >
-        <div className="flex items-center font-semibold text-base  justify-between   ">
-          {" "}
-          <img src={token.logo} className="w-6 h-6 rounded-full mr-2" /> {token.symbol}
+    <>
+      <button className="rounded-full flex flex-row bg-white  items-center   text-gray-800 text-xs py-1 px-4 w-full " onClick={handlePopup} >
+        <div className="flex flex-row flex-1 " >
+          <div className="flex items-center font-semibold text-base  justify-between   ">
+            {" "}
+            <img src={token.logo} className="w-6 h-6 rounded-full mr-2" /> {token.symbol}
 
+          </div>
         </div>
-        <TokenListPopup isOpen={isPopupOpen} onClose={handlePopup} setToken={setToken}></TokenListPopup>
-      </div>
-      <MdArrowDropDown className="text-gray-800  invisible lg:visible   " size={15} />
-    </button>
+        <MdArrowDropDown className="text-gray-800  invisible lg:visible   " size={15} />
+      </button>
+      <TokenListPopup isOpen={isPopupOpen} onClose={handlePopup} setToken={setToken}></TokenListPopup>
+    </>
   );
 }

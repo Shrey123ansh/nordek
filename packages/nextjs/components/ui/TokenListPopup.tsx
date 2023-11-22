@@ -158,7 +158,8 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center z-50 ">
-      <div className="fixed inset-0 bg-gray-800 opacity-50   " onClick={onCloseOverride}></div>
+      <div className="fixed inset-0 bg-gray-800 opacity-50 "
+        onClick={onCloseOverride}></div>
       <div className="relative z-10  rounded-lg shadow-lg p-6 max-h-[500px] w-[350px] lg:w-[450px] bg-gradient-to-r bg-base-300">
         <div className="flex  flex-col ">
           {/* header part  */}
@@ -198,18 +199,6 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
           {heading === heading2 && (
             <>
-              {/* <div className="flex  w-full ">
-                <input
-                  type="text"
-                  className=" my-4  py-2 w-full px-2 "
-                  placeholder="Search by Address"
-                  value={searchValue}
-                  onChange={event => {
-                    setSearchValue(event.target.value);
-                    onAddressInput(event.target.value);
-                  }}
-                />
-              </div> */}
               {loadingToken && <div className="text-white font-bold mt-4">Loading...</div>}
               {newToken.name !== "" && newToken.symbol !== "" && (
                 <div className="flex items-center justify-between p-4 bg-base-300 hover:bg-base-100 text-white cursor-pointer">
