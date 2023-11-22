@@ -42,13 +42,13 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
             toggleBtn ? (
               <div className="">
                 <div>
-                  1 {token1.symbol} = {reserve1 !== 0 && reserve2 !== 0 ? Number(reserve2) / Number(reserve1) : 0} {token2.symbol}{" "}
+                  1 {token1.symbol} = {reserve1 !== 0 && reserve2 !== 0 ? (Number(reserve2) / Number(reserve1)).toFixed(4) : 0} {token2.symbol}{" "}
                 </div>
               </div>
             ) : (
               <div className="">
                 <div>
-                  1 {token2.symbol} = {reserve1 !== 0 && reserve2 !== 0 ? Number(reserve1) / Number(reserve2) : 0} {token1.symbol}{" "}
+                  1 {token2.symbol} = {reserve1 !== 0 && reserve2 !== 0 ? (Number(reserve1) / Number(reserve2)).toFixed(4) : 0} {token1.symbol}{" "}
                 </div>
               </div>
             )}

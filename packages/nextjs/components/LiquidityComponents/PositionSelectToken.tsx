@@ -143,6 +143,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
   }
 
   const handleWithdraw = async () => {
+    if (percentage === 0) return
     await writeContract({
       address: liqudity.pairContract,
       abi: pairABI.abi,
@@ -177,7 +178,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
 
 
   return (
-    // <div className=" flex flex-col mb-4 shadow-md bg-gradient-to-r from-[#141414] to-[#593FB1] px-4 py-2 rounded-lg text-white text-sm">
+    // <div className=" flex flex-col mb-4 shadow-md bg-swap-gradient px-4 py-2 rounded-lg text-white text-sm">
 
     //   <span className="">Withdraw</span>
     //   <div className="flex items-center">
@@ -242,19 +243,19 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
 
     <>
 
-      <div className="bg-gradient-to-r from-[#141414] to-[#593FB1] rounded-lg px-4 py-4 mb-4" >
+      <div className="bg-swap-gradient rounded-lg px-4 py-4 mb-4" >
 
         <div className="flex flex-row w-full  items-center justify-between  " >
-          <div className="flex flex-row items-center font-medium ml-2 " >
+          <div className="flex flex-row items-center font-medium ml-2  text-sm lg:text-base " >
 
-            <img src={liqudity.token0.logo} className="w-6 h-6 rounded-full    mr-2   " />
-            <img src={liqudity.token1.logo} className="w-6 h-6 rounded-full   absolute -ml-3 " />
+            <img src={liqudity.token0.logo} className=" w-4 h-4 lg:w-6 lg:h-6 rounded-full    mr-2   " />
+            <img src={liqudity.token1.logo} className="w-4 h-4 lg:w-6 lg:h-6 rounded-full   absolute -ml-3 " />
             {`${liqudity.token0.symbol}/${liqudity.token1.symbol}`}
           </div>
-          <button className="flex flex-row items-center  bg-secondary rounded-full px-4  text-sm font-medium " onClick={() => { setOpen(!open); setRemove(false) }} >
+          <button className="flex flex-row items-center  bg-secondary rounded-full px-2 lg:px-4 lg:py-1  text-xs  lg:text-sm font-medium " onClick={() => { setOpen(!open); setRemove(false) }} >
             Manage
-            {open ? <RiArrowDropUpLine size={30} className="ml-2" />
-              : <RiArrowDropDownLine size={30} className="ml-2" />}
+            {open ? <RiArrowDropUpLine className="ml-2 " />
+              : <RiArrowDropDownLine className="ml-2" />}
 
           </button>
 
@@ -276,7 +277,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
               <div className="flex flex-row items-center justify-between  font-normal text-sm mt-2 " >
                 <div>{`Pooled ${liqudity.token0.symbol}`}</div>
                 <div className="flex flex-row items-center" >
-                  {liqudity.token0Amount}
+                  {liqudity.token0Amount.toFixed(2)}
                   <img src={liqudity.token0.logo} className="w-4 h-4 rounded-full ml-2 " />
                 </div>
               </div>
@@ -284,7 +285,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
               <div className="flex flex-row items-center justify-between  font-normal text-sm mt-2  " >
                 <div>{`Pooled ${liqudity.token1.symbol}`}</div>
                 <div className="flex flex-row items-center" >
-                  {liqudity.token1Amount}
+                  {liqudity.token1Amount.toFixed(2)}
                   <img src={liqudity.token0.logo} className="w-4 h-4 rounded-full ml-2 " />
                 </div>
               </div>
@@ -304,7 +305,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
       {remove &&
         <div className="mt-2" >
           <div className=" text-[10px] font-semibold  " >REMOVE LIQUIDITY</div>
-          <div className="bg-gradient-to-r from-[#141414] to-[#593FB1] rounded-lg p-4 mt-2" >
+          <div className="bg-swap-gradient rounded-lg p-4 mt-2" >
             <div className=" text-6xl font-bold " >
               {`${percentage}%`}
             </div>
@@ -312,7 +313,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
               <input type="range" onChange={(e) => setPercentage(e.target.value)} value={percentage} className=" w-full h-1 outline-none slider " pointer-shadow="0 0 5px #DAE8FF" />
             </div>
             <div className=" flex flex-row items-center justify-between w-full mt-4 " >
-              <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(25) }} >
+              {/* <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(25) }} >
                 25%
               </button>
               <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(50) }}>
@@ -323,14 +324,26 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
               </button>
               <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(100) }} >
                 100%
+              </button> */}
+              <button className=" bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 " onClick={() => { setPercentage(25) }} >
+                25%
+              </button>
+              <button className=" bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2" onClick={() => { setPercentage(50) }} >
+                50%
+              </button>
+              <button className=" bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2" onClick={() => { setPercentage(75) }} >
+                75%
+              </button>
+              <button className=" bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2" onClick={() => { setPercentage(100) }} >
+                100%
               </button>
             </div>
           </div>
           <FaArrowDownLong className="w-full items-center my-4" />
-          <div className="bg-gradient-to-r from-[#141414] to-[#593FB1] rounded-lg p-4">
+          <div className="bg-swap-gradient rounded-lg p-4">
             <div className="flex flex-row items-center justify-between " >
               <div>
-                {token0Withdraw}
+                {token0Withdraw === 0 ? 0 : token0Withdraw.toFixed(4)}
               </div>
               <div className="flex flex-row items-center  " >
                 <img src={liqudity.token0.logo} className="w-6 h-6 rounded-full mr-2 " />
@@ -339,7 +352,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
             </div>
             <div className="flex flex-row items-center justify-between mt-4 " >
               <div>
-                {token1Withdraw}
+                {token1Withdraw === 0 ? 0 : token1Withdraw.toFixed(4)}
               </div>
               <div className="flex flex-row items-center  " >
                 <img src={liqudity.token1.logo} className="w-6 h-6 rounded-full mr-2 " />

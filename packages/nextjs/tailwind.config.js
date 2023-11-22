@@ -8,7 +8,7 @@ module.exports = {
     themes: [
       {
         scaffoldEth: {
-          
+
           primary: "#642EFF",
           "primary-content": "#212638",
           secondary: "#DAE8FF",
@@ -21,11 +21,14 @@ module.exports = {
           "base-200": "#f4f8ff",
           "base-300": "#ffffff",
           "base-content": "#212638",
+          "toright": "#fff",
+          "torightgradient": "#fff",
 
           info: "#642EFF",
           success: "#34EEB6",
           warning: "#FFCF72",
           error: "#FF8863",
+
 
           "--rounded-btn": "9999rem",
 
@@ -40,6 +43,12 @@ module.exports = {
           ".tooltip": {
             "--tooltip-tail": "6px",
           },
+
+          "--swap-gradient": "linear-gradient(to right, #E2D4FF, #FFFFFF)",
+          ".bg-swap-gradient": {
+            background: "var(--swap-gradient)",
+          },
+
 
           ".bg-shadow-color": {
             backgroundColor: "var(--shadow-color)", // Use the CSS variable
@@ -66,13 +75,13 @@ module.exports = {
           },
           ".heroShades": {
             background: "#5B24A2",
-            
+
           },
           ".heroText": {
             color: "#5B24A2",
-            
+
           },
-          
+
         },
       },
       {
@@ -89,11 +98,18 @@ module.exports = {
           "base-200": "#060203",
           "base-300": "#141414",
           "base-content": "#FFFFFF",
+          "toright": "#141414",
+          "torightgradient": "#593FB1",
 
           info: "#385183",
           success: "#34EEB6",
           warning: "#FFCF72",
           error: "#FF8863",
+
+          "--swap-gradient": "linear-gradient(to right, #141414, #593FB1)",
+          ".bg-swap-gradient": {
+            background: "var(--swap-gradient)",
+          },
 
           "--rounded-btn": "9999rem",
 
@@ -135,11 +151,11 @@ module.exports = {
           },
           ".heroShades": {
             background: "#A259FF",
-            
+
           },
           ".heroText": {
             color: "#A259FF",
-            
+
           },
         },
       },

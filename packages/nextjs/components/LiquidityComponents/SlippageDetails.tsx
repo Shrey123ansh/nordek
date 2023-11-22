@@ -23,6 +23,11 @@ const SlippageDetails = ({ token1, token2, reserve1 = 0, reserve2 = 0, share = 0
   useEffect(() => {
     const value1 = reserve1 !== 0 && reserve2 !== 0 ? Number(reserve2) / Number(reserve1) : 0
     const value2 = reserve1 !== 0 && reserve2 !== 0 ? Number(reserve1) / Number(reserve2) : 0
+    if (value1 === 0 && value2 === 0) {
+      setToken1PerToken2(0)
+      setToken2PerToken1(0)
+      return
+    }
     setToken1PerToken2(value1.toFixed(4))
     setToken2PerToken1(value2.toFixed(4))
   }, [reserve1, reserve2, token1, token2])
@@ -32,12 +37,12 @@ const SlippageDetails = ({ token1, token2, reserve1 = 0, reserve2 = 0, share = 0
   return (
 
 
-    <div className="shadow-md bg-gradient-to-r from-[#141414] to-[#593FB1] rounded-lg mt-4   font-medium    " >
+    <div className="shadow-md bg-swap-gradient rounded-lg mt-4   font-medium    " >
 
       <div className="px-4 pt-4  text-[10px]" >
         PRICES AND POOL SHARE
       </div>
-      <div className="flex flex-row items-center justify-between mt-4  p-4 " >
+      <div className=" grid grid-cols-2 justify-center   lg:flex lg:flex-row items-center lg:justify-between  mt-4  p-4 " >
 
         {/* token1 per token2  */}
         <div className="flex flex-col items-center justify-center  " >
@@ -62,7 +67,7 @@ const SlippageDetails = ({ token1, token2, reserve1 = 0, reserve2 = 0, share = 0
 
 
         {/* share of pool */}
-        <div className="flex flex-col items-center justify-center" >
+        <div className="flex flex-col items-center mt-4 lg:mt-0  w-[200px]  lg:w-fit   justify-center" >
           <div className=" text-base ">
             {share}
           </div>

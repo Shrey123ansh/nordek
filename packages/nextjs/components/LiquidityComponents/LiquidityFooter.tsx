@@ -18,7 +18,7 @@ type LiquidityFooterProps = {
 };
 
 const LiquidityFooter = ({ handleAddLiquidity, pairContract, token1, token2, reserve1, reserve2, slippage, setSlippageValue, share, lpTokens }: LiquidityFooterProps) => {
-  // Initial slippage value (2% in this example)
+
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handlePopup = () => {

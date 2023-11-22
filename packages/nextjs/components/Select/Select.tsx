@@ -18,13 +18,14 @@ export const Select: React.FC<SelectProps> = ({ setToken, token }) => {
 
   return (
 
-    <div className="rounded-full bg-white inline-block text-gray-800 text-xs py-1 px-4 " >
-      <button className="flex items-center font-semibold text-base  justify-between space-x-4" onClick={handlePopup}>
-        {" "}
-        <img src={token.logo} className="w-6 h-6 rounded-full mr-2" /> {token.symbol}
-      </button>
+    <button className=" flex flex-row items-center font-semibold lg:text-base text-sm rounded-full bg-white  text-gray-800 px-4 pr-6 py-1  " onClick={handlePopup}>
+
+      <img src={token.logo} className="lg:w-6 lg:h-6 w-4 h-4 rounded-full mr-1 " />
+      <div>
+        {token.symbol}
+      </div>
       <TokenListPopup isOpen={isPopupOpen} onClose={handlePopup} setToken={setToken}></TokenListPopup>
-    </div>
+    </button>
   );
 };
 

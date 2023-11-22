@@ -20,8 +20,8 @@ const configuredNetwork = getTargetNetwork();
 const { onlyLocalBurnerWallet } = scaffoldConfig;
 
 // We always want to have mainnet enabled (ENS resolution, ETH price, etc). But only once.
-const maybeEnablesChains = [Chains.mainnet, Chains.goerli, nordek, nordekTestnet];
-export const enabledChains = [Chains.foundry, ...maybeEnablesChains];
+const maybeEnablesChains = [nordek];
+export const enabledChains = [...maybeEnablesChains];
 
 /**
  * Chains for the app
@@ -39,8 +39,8 @@ export const appChains = configureChains(
     // Sets pollingInterval if using chain's other than local hardhat chain
     ...(configuredNetwork.id !== Chains.hardhat.id
       ? {
-          pollingInterval: scaffoldConfig.pollingInterval,
-        }
+        pollingInterval: scaffoldConfig.pollingInterval,
+      }
       : {}),
   },
 );

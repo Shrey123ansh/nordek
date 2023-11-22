@@ -158,8 +158,8 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center z-50 ">
-      <div className="fixed inset-0 bg-gray-800 opacity-50 " onClick={onCloseOverride}></div>
-      <div className="relative z-10  rounded-lg shadow-lg p-6 max-h-[500px] min-w-[450px] bg-gradient-to-r bg-base-300">
+      <div className="fixed inset-0 bg-gray-800 opacity-50   " onClick={onCloseOverride}></div>
+      <div className="relative z-10  rounded-lg shadow-lg p-6 max-h-[500px] w-[350px] lg:w-[450px] bg-gradient-to-r bg-base-300">
         <div className="flex  flex-col ">
           {/* header part  */}
           <div className="flex flex-row justify-between  items-center  ">
@@ -233,7 +233,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
           )}
           {/* token list part  */}
           {heading == heading1 && (
-            <div className=" flex flex-col max-h-[300px] overflow-y-scroll ">
+            <div className=" flex flex-col max-h-[300px]  overflow-y-scroll ">
               <ListComponent />
             </div>
           )}

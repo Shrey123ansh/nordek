@@ -511,10 +511,10 @@ const TokenAmountEntry = ({ setTokenAmount, tokenAmount, token, balance }: { bal
             {token.symbol}
           </div>
         </div>
-        <div className="font-semibold text-sm"  >{`Balance : ${balance}`}</div>
+        <div className="font-semibold text-sm"  >{`Balance : ${balance === 0 ? 0 : balance.toFixed(4)}`}</div>
       </div>
 
-      <div className=" flex flex-col  shadow-md bg-gradient-to-r from-[#141414] to-[#593FB1] rounded-lg px-4 py-4 mb-4 mt-4  " >
+      <div className=" flex flex-col  shadow-md  bg-swap-gradient rounded-lg px-4 py-4 mb-4 mt-4  " >
         <input
           type="number"
           placeholder="0"
@@ -555,16 +555,16 @@ const LiquidityTokenSelectButton = ({ setToken, token }: {
   };
 
   return (
-    <button className="rounded-full flex flex-row bg-white   items-center   text-gray-800 text-xs py-1 px-4 w-full " onClick={handlePopup} >
-      <div className="flex flex-row  flex-1" >
-        <div className="flex items-center font-semibold text-base  justify-between space-x-4  ">
+    <button className="rounded-full flex flex-row bg-white  items-center   text-gray-800 text-xs py-1 px-4 w-full " onClick={handlePopup} >
+      <div className="flex flex-row flex-1 " >
+        <div className="flex items-center font-semibold text-base  justify-between   ">
           {" "}
           <img src={token.logo} className="w-6 h-6 rounded-full mr-2" /> {token.symbol}
 
         </div>
         <TokenListPopup isOpen={isPopupOpen} onClose={handlePopup} setToken={setToken}></TokenListPopup>
       </div>
-      <MdArrowDropDown className="text-gray-800  " size={15} />
+      <MdArrowDropDown className="text-gray-800  invisible lg:visible   " size={15} />
     </button>
   );
 }
