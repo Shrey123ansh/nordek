@@ -52,7 +52,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
     functionName: "removeLiquidityETHSupportingFeeOnTransferTokens",
     args: [
       liqudity.token0.address === nrkAddress ? liqudity.token1.address : nrkAddress,
-      parseEther(`${value}`),
+      parseEther(`${(Number(value) * percentage) / 100}`),
       liqudity.token0.address === nrkAddress ? parseEther(`${token1WithdrawMin}`) : parseEther(`${token0WithdrawMin}`),
       liqudity.token0.address === nrkAddress ? parseEther(`${token0WithdrawMin}`) : parseEther(`${token1WithdrawMin}`),
       account,
@@ -144,12 +144,16 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
 
   const handleWithdraw = async () => {
     if (percentage === 0) return
+    var _value = (Number(value) * percentage) / 100
+    console.log("pair contract  value  " + liqudity.pairContract)
     await writeContract({
       address: liqudity.pairContract,
       abi: pairABI.abi,
       functionName: 'approve',
-      args: [routerContract.address, parseEther(`${value}`)]
+      args: [routerContract.address, parseEther(`${_value}`)]
     })
+    console.log("token 1 withdraw amount " + token0WithdrawMin)
+    console.log("token 2 withdraw amount " + token1WithdrawMin)
     if (liqudity.token0.address === nrkAddress || liqudity.token1.address === nrkAddress) {
       await removeLiqudityETH()
     } else {
@@ -157,20 +161,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
     }
   }
 
-  // useEffect(() => {
 
-  //   const slider = sliderRef.current;
-
-  //   const onChange = (evt: Event) => {
-  //     const customEvent = evt as CustomEvent;
-  //     setPercentage(customEvent.detail.value)
-  //   };
-
-  //   slider?.addEventListener('change', onChange);
-
-
-
-  // }, []);
 
   const setSliderValue = (value: Number) => {
     sliderRef.current.setAttribute("value", `${value}`)
@@ -178,69 +169,6 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
 
 
   return (
-    // <div className=" flex flex-col mb-4 shadow-md bg-swap-gradient px-4 py-2 rounded-lg text-white text-sm">
-
-    //   <span className="">Withdraw</span>
-    //   <div className="flex items-center">
-    //     <div>
-    //       <div className="font-bold">
-    //         <span>{liqudity.token0.symbol}</span> -
-    //         <span>{liqudity.token1.symbol}</span>
-    //       </div>
-    //     </div>
-
-    //     <input
-    //       type="number"
-    //       placeholder="0.0"
-    //       value={Number(value)}
-    //       className="input input-sm input-ghost max-w-md text-right rounded-none focus:outline-none bg-transparent leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-    //       onChange={e => {
-    //         const val: number = Number(e.target.value)
-    //         if (val <= Number(liqudity.lpTokens)) {
-    //           setValue(val)
-    //           setPercentage((val * 100) / Number(liqudity.lpTokens))
-    //         }
-    //       }}
-    //     />
-
-    //   </div>
-    //   <label className="label block w-full text-right">
-    //     <span className="label-text-alt">-</span>
-    //   </label>
-    //   <hr className="bg-white w-full" />
-
-    //   <div className="py-1">
-    //     <div className="flex items-center justify-between">
-    //       <span>By Percentage</span>
-    //       <input
-    //         type="number"
-    //         step="0.1"
-    //         min={1}
-    //         max={100}
-    //         value={percentage}
-    //         className="input input-sm input-ghost max-w-md text-right rounded-none focus:outline-none bg-transparent leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-    //         onChange={(e) => { setPercentageExtension(Number(e.target.value)) }}
-    //       ></input>
-    //     </div>
-
-    //     <div className="flex justify-end gap-4">
-    //       <span onClick={() => setPercentageExtension(Number(25))} className="cursor-pointer hover:text-gray-400">25%</span>
-    //       <span onClick={() => setPercentageExtension(Number(50))} className="cursor-pointer hover:text-gray-400">50%</span>
-    //       <span onClick={() => setPercentageExtension(Number(75))} className="cursor-pointer hover:text-gray-400">75%</span>
-    //       <span onClick={() => setPercentageExtension(Number(100))} className="cursor-pointer hover:text-gray-400">MAX</span>
-    //     </div>
-
-    //   </div>
-    //   <hr className="bg-white w-full" />
-
-    //   <div className="flex justify-between">
-    //     <span>Balance</span>
-    //     <span>{Number(liqudity.lpTokens)}</span>
-    //   </div>
-
-    //   <LiquidityFooter liquidity={liqudity} percentage={percentage} withdraw={handleWithdraw} slippage={slippage} setSlippage={setSlippage} />
-    // </div>
-
     <>
 
       <div className="bg-swap-gradient rounded-lg px-4 py-4 mb-4" >
