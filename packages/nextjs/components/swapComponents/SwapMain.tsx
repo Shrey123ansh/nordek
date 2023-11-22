@@ -359,7 +359,7 @@ export default function SwapMain() {
       const amountInWithFee = value * 997
       const numerator = amountInWithFee * reserveB
       const denominator = reserveA * 1000 + amountInWithFee
-      setToken1Amount(numerator / denominator)
+      setToken1Amount(Number((numerator / denominator).toFixed(4)))
 
 
     } else {
@@ -367,19 +367,18 @@ export default function SwapMain() {
     }
   }
   const setTokenAmount1Override = (value) => {
-    setToken1Amount(value)
-    console.log("value " + value)
+
     const numerator = reserveA * value * 1000
     const denominator = (reserveB - value) * 997
-    console.log("numberator " + numerator)
-    console.log("denominator " + denominator)
-    console.log("reservea " + reserveA)
-    console.log("reserveb " + reserveB)
-    console.log("token1 amount " + value)
-    if (numerator !== 0 && denominator !== 0)
-      setToken0Amount((numerator / denominator))
+
+    if (numerator !== 0 && denominator !== 0) {
+      const _val = Number((numerator / denominator).toFixed(4))
+      if (_val < 0) return
+      setToken0Amount(_val)
+    }
     else
       setToken0Amount(0)
+    setToken1Amount(value)
   }
 
   const setTokenA = (token: tokenType) => {

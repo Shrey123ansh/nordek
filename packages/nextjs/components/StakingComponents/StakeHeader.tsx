@@ -10,7 +10,24 @@ const StakeHeader: React.FC = () => {
     address: deployedContract?.address,
   });
 
+  function convertToInternationalCurrencySystem(labelValue: Number) {
 
+    // Nine Zeroes for Billions
+    return Math.abs(Number(labelValue)) >= 1.0e+9
+
+      ? (Math.abs(Number(labelValue)) / 1.0e+9).toFixed(0) + "B"
+      // Six Zeroes for Millions 
+      : Math.abs(Number(labelValue)) >= 1.0e+6
+
+        ? (Math.abs(Number(labelValue)) / 1.0e+6).toFixed(0) + "M"
+        // Three Zeroes for Thousands
+        : Math.abs(Number(labelValue)) >= 1.0e+3
+
+          ? (Math.abs(Number(labelValue)) / 1.0e+3).toFixed(0) + "K"
+
+          : Math.abs(Number(labelValue));
+
+  }
 
 
   const [tvl, setTvl] = useState(0);
@@ -26,6 +43,7 @@ const StakeHeader: React.FC = () => {
         setTvl(0);
       }
     };
+
 
     updateTVL();
   }, [totalNRKStaked, isLoading]);
@@ -44,7 +62,7 @@ const StakeHeader: React.FC = () => {
         <div className=" w-[100%] lg:w-[30%] h-[45%]  lg:h-[65%]  bg-cover bg-no-repeat   rounded-[15px]  stakeHeader ">
           <div className="flex flex-col p-[1rem] lg:p-[3rem] justify-between items-center rounded-[15px] ">
             <div className="text-[20px] md:text-[50px] lg:text-[60px] xl:text-[70px] font-[600]">
-              {"$" + parseUSD(tvl)}
+              {"$" + convertToInternationalCurrencySystem(tvl)}
             </div>
             <div className="text-[15px] md:text-[18px] lg:text-[21px] xl:text-[22px] text-center">
               Total Value Locked

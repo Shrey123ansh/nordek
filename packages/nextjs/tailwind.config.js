@@ -11,7 +11,7 @@ module.exports = {
 
           primary: "#642EFF",
           "primary-content": "#212638",
-          secondary: "#DAE8FF",
+          secondary: "#000",
           "secondary-content": "#212638",
           accent: "#642EFF",
           "accent-content": "#212638",
@@ -89,6 +89,7 @@ module.exports = {
           primary: "#642EFF",
           "primary-content": "#FFFFFF",
           secondary: "#A259FF",
+
           "secondary-content": "#F991CC",
           accent: "#642EFF",
           "accent-content": "#FFFFFF",

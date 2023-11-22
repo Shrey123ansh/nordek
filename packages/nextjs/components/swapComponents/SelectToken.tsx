@@ -28,6 +28,7 @@ const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount, title, bala
             if (value < 0) {
               return
             }
+
             setTokenAmount(value);
           }}
         />

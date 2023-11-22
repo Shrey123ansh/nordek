@@ -20,7 +20,7 @@ import { FaArrowDownLong } from "react-icons/fa6";
 
 
 
-const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
+const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity: Liquidity, updateOnRemove: (value: bool) => void, onRemove: bool }) => {
 
   const { data: routerContract } = useDeployedContractInfo("UniswapV2Router02");
   const nrkAddress: string = localTokens.NRK.address
@@ -68,6 +68,8 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
         console.log("update value from db")
         await updateLiquidity()
       }
+
+      updateOnRemove(!onRemove)
 
     }
   });
@@ -124,7 +126,7 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
       token1Amount: Number(liqudity.token1Amount) - token1Withdraw,
       pairContract: liqudity.pairContract,
       user: account,
-      lpTokens: Number(liqudity.lpTokens) - Number(value)
+      lpTokens: Number(liqudity.lpTokens) - Number((Number(value) * percentage) / 100)
     }
 
     const headers = {
@@ -143,22 +145,25 @@ const PositionSelectToken = ({ liqudity }: { liqudity: Liquidity }) => {
   }
 
   const handleWithdraw = async () => {
-    if (percentage === 0) return
-    var _value = (Number(value) * percentage) / 100
-    console.log("pair contract  value  " + liqudity.pairContract)
-    await writeContract({
-      address: liqudity.pairContract,
-      abi: pairABI.abi,
-      functionName: 'approve',
-      args: [routerContract.address, parseEther(`${_value}`)]
-    })
-    console.log("token 1 withdraw amount " + token0WithdrawMin)
-    console.log("token 2 withdraw amount " + token1WithdrawMin)
-    if (liqudity.token0.address === nrkAddress || liqudity.token1.address === nrkAddress) {
-      await removeLiqudityETH()
-    } else {
-      await removeLiquidity()
-    }
+
+    try {
+      if (percentage === 0) return
+      var _value = (Number(value) * percentage) / 100
+      console.log("pair contract  value  " + liqudity.pairContract)
+      await writeContract({
+        address: liqudity.pairContract,
+        abi: pairABI.abi,
+        functionName: 'approve',
+        args: [routerContract.address, parseEther(`${_value}`)]
+      })
+      console.log("token 1 withdraw amount " + token0WithdrawMin)
+      console.log("token 2 withdraw amount " + token1WithdrawMin)
+      if (liqudity.token0.address === nrkAddress || liqudity.token1.address === nrkAddress) {
+        await removeLiqudityETH()
+      } else {
+        await removeLiquidity()
+      }
+    } catch (e) { }
   }
 
 
