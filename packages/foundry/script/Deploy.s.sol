@@ -5,8 +5,8 @@ import "./DeployHelpers.s.sol";
 import "../contracts/StakingContract.sol";
 import "../contracts/LiquidityPool.sol";
 import "openzeppelin/proxy/transparent/TransparentUpgradeableProxy.sol";
-import {UniswapV2Factory} from "../contracts/UniswapV2Factory.sol";
-import {UniswapV2Router02} from "../contracts/UniswapV2Router02.sol";
+import {NordekV2Factory} from "../contracts/NordekV2Factory.sol";
+import {NordekV2Router02} from "../contracts/NordekV2Router02.sol";
 import {WNRK} from "../contracts/WNRK.sol";
 import {PracticeSupplyERC20} from "../contracts/PracticeSupplyERC20.sol";
 
@@ -23,8 +23,8 @@ contract DeployScript is ScaffoldETHDeploy {
     LiquidityPool liquidityPool;
     TransparentUpgradeableProxy liquidityPoolProxy;
     TransparentUpgradeableProxy stakingContractProxy;
-    UniswapV2Factory factory;
-    UniswapV2Router02 router;
+    NordekV2Factory factory;
+    NordekV2Router02 router;
     PracticeSupplyERC20 practiceERC20;
     WNRK wnrk;
 
@@ -44,10 +44,10 @@ contract DeployScript is ScaffoldETHDeploy {
         vm.startBroadcast(deployerPrivateKey);
         address setter = vm.addr(deployerPrivateKey);
         // _staking(admin, owner);
-        factory = new UniswapV2Factory(setter);
+        factory = new NordekV2Factory(setter);
         factory.setFeeTo(setter);
         wnrk = new WNRK();
-        router = new UniswapV2Router02(address(factory), address(wnrk));
+        router = new NordekV2Router02(address(factory), address(wnrk));
 
         practiceERC20 = new PracticeSupplyERC20();
         console.logString(
@@ -80,7 +80,7 @@ contract DeployScript is ScaffoldETHDeploy {
 
     function test() public {}
 
-    // function _uniswapV2(address setter) internal {
+    // function _NordekV2(address setter) internal {
 
     // }
 

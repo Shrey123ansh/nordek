@@ -62,38 +62,26 @@ export default function SwapMain() {
     }
   }, [isFetched, isFetching])
 
-  useEffect(() => {
-    const getBalance = async () => {
-      console.log("fetching....")
-      try {
-        const nrkAddress = localTokens.NRK.address
-        if (token0.address === nrkAddress || token1.address === nrkAddress) {
+  const getBalance = async () => {
+    console.log("fetching....")
+    try {
+      const nrkAddress = localTokens.NRK.address
+      if (token0.address === nrkAddress || token1.address === nrkAddress) {
 
-          const balanceNRK = await fetchBalance({
-            address: account,
+        const balanceNRK = await fetchBalance({
+          address: account,
+        })
+        if (token0.address === nrkAddress) {
+          const balanceB = await readContract({
+            address: token1.address,
+            abi: erc20ABI.abi,
+            functionName: 'balanceOf',
+            args: [account],
+            account: account
           })
-          if (token0.address === nrkAddress) {
-            const balanceB = await readContract({
-              address: token1.address,
-              abi: erc20ABI.abi,
-              functionName: 'balanceOf',
-              args: [account],
-              account: account
-            })
-            setBalance0(Number(balanceNRK.formatted))
-            setBalance1(Number(formatEther(balanceB)))
+          setBalance0(Number(balanceNRK.formatted))
+          setBalance1(Number(formatEther(balanceB)))
 
-          } else {
-            const balanceA = await readContract({
-              address: token0.address,
-              abi: erc20ABI.abi,
-              functionName: 'balanceOf',
-              args: [account],
-              account: account
-            })
-            setBalance0(Number(formatEther(balanceA)))
-            setBalance1(Number(balanceNRK.formatted))
-          }
         } else {
           const balanceA = await readContract({
             address: token0.address,
@@ -102,21 +90,33 @@ export default function SwapMain() {
             args: [account],
             account: account
           })
-          const balanceB = await readContract({
-            address: token1.address,
-            abi: erc20ABI.abi,
-            functionName: 'balanceOf',
-            args: [account],
-            account: account
-          })
           setBalance0(Number(formatEther(balanceA)))
-          setBalance1(Number(formatEther(balanceB)))
+          setBalance1(Number(balanceNRK.formatted))
         }
-      } catch (e) {
-        console.log(e)
+      } else {
+        const balanceA = await readContract({
+          address: token0.address,
+          abi: erc20ABI.abi,
+          functionName: 'balanceOf',
+          args: [account],
+          account: account
+        })
+        const balanceB = await readContract({
+          address: token1.address,
+          abi: erc20ABI.abi,
+          functionName: 'balanceOf',
+          args: [account],
+          account: account
+        })
+        setBalance0(Number(formatEther(balanceA)))
+        setBalance1(Number(formatEther(balanceB)))
       }
-
+    } catch (e) {
+      console.log(e)
     }
+
+  }
+  useEffect(() => {
     getBalance()
   }, [token0, token1, account])
 
@@ -239,12 +239,14 @@ export default function SwapMain() {
       BigInt(unixTimestampInSeconds + 300)
     ],
     value: `${token0Amount}`,
-    onBlockConfirmation: (txnReceipt) => {
+    onBlockConfirmation: async (txnReceipt) => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
+      await getBalance()
     },
     onSuccess: () => {
       setToken0Amount(0)
       setToken1Amount(0)
+
     },
   });
 

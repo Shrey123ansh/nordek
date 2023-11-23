@@ -23,13 +23,9 @@ const SlippageDetails = ({ token1, token2, reserve1 = 0, reserve2 = 0, share = 0
   useEffect(() => {
     const value1 = reserve1 !== 0 && reserve2 !== 0 ? Number(reserve2) / Number(reserve1) : 0
     const value2 = reserve1 !== 0 && reserve2 !== 0 ? Number(reserve1) / Number(reserve2) : 0
-    if (value1 === 0 && value2 === 0) {
-      setToken1PerToken2(0)
-      setToken2PerToken1(0)
-      return
-    }
-    setToken1PerToken2(value1.toFixed(4))
-    setToken2PerToken1(value2.toFixed(4))
+
+    setToken1PerToken2(Number(value1.toFixed(4).replace(/[.,]00$/, "")))
+    setToken2PerToken1(Number(value2.toFixed(4).replace(/[.,]00$/, "")))
   }, [reserve1, reserve2, token1, token2])
 
 

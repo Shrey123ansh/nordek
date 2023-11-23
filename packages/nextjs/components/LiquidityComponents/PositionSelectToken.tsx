@@ -204,13 +204,13 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
 
               <div className="flex flex-row items-center justify-between  font-normal text-sm  " >
                 <div>Your total pool tokens:</div>
-                <div>{liqudity.lpTokens}</div>
+                <div>{liqudity.lpTokens.toFixed(2).replace(/[.,]00$/, "")}</div>
               </div>
 
               <div className="flex flex-row items-center justify-between  font-normal text-sm mt-2 " >
                 <div>{`Pooled ${liqudity.token0.symbol}`}</div>
                 <div className="flex flex-row items-center" >
-                  {liqudity.token0Amount.toFixed(2)}
+                  {liqudity.token0Amount.toFixed(2).replace(/[.,]00$/, "")}
                   <img src={liqudity.token0.logo} className="w-4 h-4 rounded-full ml-2 " />
                 </div>
               </div>
@@ -218,7 +218,7 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
               <div className="flex flex-row items-center justify-between  font-normal text-sm mt-2  " >
                 <div>{`Pooled ${liqudity.token1.symbol}`}</div>
                 <div className="flex flex-row items-center" >
-                  {liqudity.token1Amount.toFixed(2)}
+                  {liqudity.token1Amount.toFixed(2).replace(/[.,]00$/, "")}
                   <img src={liqudity.token0.logo} className="w-4 h-4 rounded-full ml-2 " />
                 </div>
               </div>

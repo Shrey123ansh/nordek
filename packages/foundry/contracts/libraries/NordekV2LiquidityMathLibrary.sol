@@ -1,15 +1,15 @@
 pragma solidity ^0.8.20;
- 
-import '../interfaces/IUniswapV2Pair.sol';
-import '../interfaces/IUniswapV2Factory.sol'; 
-import './Babylonian.sol';
-import './FullMath.sol'; 
+
+import "../interfaces/INordekV2Pair.sol";
+import "../interfaces/INordekV2Factory.sol";
+import "./Babylonian.sol";
+import "./FullMath.sol";
 import "./SafeMath.sol";
-import "./UniswapV2Library.sol";
+import "./NordekV2Library.sol";
 
 // library containing some math for dealing with the liquidity shares of a pair, e.g. computing their exact value
 // in terms of the underlying tokens
-library UniswapV2LiquidityMathLibrary {
+library NordekV2LiquidityMathLibrary {
     using SafeMath for uint256;
 
     // computes the direction and magnitude of the profit-maximizing trade
@@ -50,7 +50,7 @@ library UniswapV2LiquidityMathLibrary {
         uint256 truePriceTokenB
     ) internal view returns (uint256 reserveA, uint256 reserveB) {
         // first get reserves before the swap
-        (reserveA, reserveB) = UniswapV2Library.getReserves(
+        (reserveA, reserveB) = NordekV2Library.getReserves(
             factory,
             tokenA,
             tokenB
@@ -58,7 +58,7 @@ library UniswapV2LiquidityMathLibrary {
 
         require(
             reserveA > 0 && reserveB > 0,
-            "UniswapV2ArbitrageLibrary: ZERO_PAIR_RESERVES"
+            "NordekV2ArbitrageLibrary: ZERO_PAIR_RESERVES"
         );
 
         // then compute how much to swap to arb to the true price
@@ -75,7 +75,7 @@ library UniswapV2LiquidityMathLibrary {
 
         // now affect the trade to the reserves
         if (aToB) {
-            uint amountOut = UniswapV2Library.getAmountOut(
+            uint amountOut = NordekV2Library.getAmountOut(
                 amountIn,
                 reserveA,
                 reserveB
@@ -83,7 +83,7 @@ library UniswapV2LiquidityMathLibrary {
             reserveA += amountIn;
             reserveB -= amountOut;
         } else {
-            uint amountOut = UniswapV2Library.getAmountOut(
+            uint amountOut = NordekV2Library.getAmountOut(
                 amountIn,
                 reserveB,
                 reserveA
@@ -132,15 +132,15 @@ library UniswapV2LiquidityMathLibrary {
         address tokenB,
         uint256 liquidityAmount
     ) internal view returns (uint256 tokenAAmount, uint256 tokenBAmount) {
-        (uint256 reservesA, uint256 reservesB) = UniswapV2Library.getReserves(
+        (uint256 reservesA, uint256 reservesB) = NordekV2Library.getReserves(
             factory,
             tokenA,
             tokenB
         );
-        IUniswapV2Pair pair = IUniswapV2Pair(
-            UniswapV2Library.pairFor(factory, tokenA, tokenB)
+        INordekV2Pair pair = INordekV2Pair(
+            NordekV2Library.pairFor(factory, tokenA, tokenB)
         );
-        bool feeOn = IUniswapV2Factory(factory).feeTo() != address(0);
+        bool feeOn = INordekV2Factory(factory).feeTo() != address(0);
         uint kLast = feeOn ? pair.kLast() : 0;
         uint totalSupply = pair.totalSupply();
         return
@@ -164,9 +164,9 @@ library UniswapV2LiquidityMathLibrary {
         uint256 truePriceTokenB,
         uint256 liquidityAmount
     ) internal view returns (uint256 tokenAAmount, uint256 tokenBAmount) {
-        bool feeOn = IUniswapV2Factory(factory).feeTo() != address(0);
-        IUniswapV2Pair pair = IUniswapV2Pair(
-            UniswapV2Library.pairFor(factory, tokenA, tokenB)
+        bool feeOn = INordekV2Factory(factory).feeTo() != address(0);
+        INordekV2Pair pair = INordekV2Pair(
+            NordekV2Library.pairFor(factory, tokenA, tokenB)
         );
         uint kLast = feeOn ? pair.kLast() : 0;
         uint totalSupply = pair.totalSupply();

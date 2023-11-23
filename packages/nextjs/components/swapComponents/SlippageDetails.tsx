@@ -61,7 +61,7 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
 
       <div className="flex justify-between">
         <span> Minimum Received </span>
-        <span className="font-bold"> {`${minimumPrice.toFixed(4)}`} </span>
+        <span className="font-bold"> {`${minimumPrice.toFixed(4).replace(/[.,]0000$/, "")}`} </span>
       </div>
 
 

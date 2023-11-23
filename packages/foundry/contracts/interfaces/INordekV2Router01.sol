@@ -1,6 +1,6 @@
 pragma solidity ^0.8.20;
 
-interface IUniswapV2Router01 {
+interface INordekV2Router01 {
     function addLiquidity(
         address tokenA,
         address tokenB,

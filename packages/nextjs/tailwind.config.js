@@ -11,7 +11,7 @@ module.exports = {
 
           primary: "#642EFF",
           "primary-content": "#212638",
-          secondary: "#000",
+          secondary: "#FFF",
           "secondary-content": "#212638",
           accent: "#642EFF",
           "accent-content": "#212638",
@@ -23,6 +23,8 @@ module.exports = {
           "base-content": "#212638",
           "toright": "#fff",
           "torightgradient": "#fff",
+
+
 
           info: "#642EFF",
           success: "#34EEB6",
@@ -49,6 +51,10 @@ module.exports = {
             background: "var(--swap-gradient)",
           },
 
+          "--setting-gradient": "linear-gradient(to right, #E2D4FF,#FFFFFF)",
+          ".bg-setting-gradient": {
+            background: "var(--setting-gradient)"
+          },
 
           ".bg-shadow-color": {
             backgroundColor: "var(--shadow-color)", // Use the CSS variable
@@ -90,7 +96,9 @@ module.exports = {
           "primary-content": "#FFFFFF",
           secondary: "#A259FF",
 
-          "secondary-content": "#F991CC",
+
+
+          "secondary-content": "#A259FF",
           accent: "#642EFF",
           "accent-content": "#FFFFFF",
           neutral: "#",
@@ -111,6 +119,12 @@ module.exports = {
           ".bg-swap-gradient": {
             background: "var(--swap-gradient)",
           },
+
+          "--setting-gradient": "linear-gradient(to right, #2D124F,#1B013B)",
+          ".bg-setting-gradient": {
+            background: "var(--setting-gradient)"
+          },
+
 
           "--rounded-btn": "9999rem",
 

@@ -81,8 +81,9 @@ export default function LiquidityMain() {
       BigInt(unixTimestampInSeconds + 300)
     ],
     value: `${token0AmountNumber}`,
-    onBlockConfirmation: (txnReceipt) => {
+    onBlockConfirmation: async (txnReceipt) => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
+      await getBalance()
     },
     onSuccess: async () => {
       await addToDataBase()
@@ -108,8 +109,9 @@ export default function LiquidityMain() {
       BigInt(unixTimestampInSeconds + 300)
     ],
     value: `${token1AmountNumber}`,
-    onBlockConfirmation: (txnReceipt) => {
+    onBlockConfirmation: async (txnReceipt) => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
+      await getBalance()
     },
     onSuccess: async () => {
       await addToDataBase()
@@ -132,8 +134,9 @@ export default function LiquidityMain() {
       BigInt(unixTimestampInSeconds + 300)
     ],
 
-    onBlockConfirmation: (txnReceipt) => {
+    onBlockConfirmation: async (txnReceipt) => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
+      await getBalance()
     },
     onSuccess: async () => {
       await addToDataBase()
@@ -338,38 +341,26 @@ export default function LiquidityMain() {
   }, [pairContract, update])
 
 
-  useEffect(() => {
-    const getBalance = async () => {
-      console.log("fetching....")
-      try {
-        const nrkAddress = localTokens.NRK.address
-        if (token0.address === nrkAddress || token1.address === nrkAddress) {
+  const getBalance = async () => {
+    console.log("fetching....")
+    try {
+      const nrkAddress = localTokens.NRK.address
+      if (token0.address === nrkAddress || token1.address === nrkAddress) {
 
-          const balanceNRK = await fetchBalance({
-            address: account,
+        const balanceNRK = await fetchBalance({
+          address: account,
+        })
+        if (token0.address === nrkAddress) {
+          const balanceB = await readContract({
+            address: token1.address,
+            abi: erc20ABI.abi,
+            functionName: 'balanceOf',
+            args: [account],
+            account: account
           })
-          if (token0.address === nrkAddress) {
-            const balanceB = await readContract({
-              address: token1.address,
-              abi: erc20ABI.abi,
-              functionName: 'balanceOf',
-              args: [account],
-              account: account
-            })
-            setBalance0(Number(balanceNRK.formatted))
-            setBalance1(Number(formatEther(balanceB)))
+          setBalance0(Number(balanceNRK.formatted))
+          setBalance1(Number(formatEther(balanceB)))
 
-          } else {
-            const balanceA = await readContract({
-              address: token0.address,
-              abi: erc20ABI.abi,
-              functionName: 'balanceOf',
-              args: [account],
-              account: account
-            })
-            setBalance0(Number(formatEther(balanceA)))
-            setBalance1(Number(balanceNRK.formatted))
-          }
         } else {
           const balanceA = await readContract({
             address: token0.address,
@@ -378,21 +369,33 @@ export default function LiquidityMain() {
             args: [account],
             account: account
           })
-          const balanceB = await readContract({
-            address: token1.address,
-            abi: erc20ABI.abi,
-            functionName: 'balanceOf',
-            args: [account],
-            account: account
-          })
           setBalance0(Number(formatEther(balanceA)))
-          setBalance1(Number(formatEther(balanceB)))
+          setBalance1(Number(balanceNRK.formatted))
         }
-      } catch (e) {
-        console.log(e)
+      } else {
+        const balanceA = await readContract({
+          address: token0.address,
+          abi: erc20ABI.abi,
+          functionName: 'balanceOf',
+          args: [account],
+          account: account
+        })
+        const balanceB = await readContract({
+          address: token1.address,
+          abi: erc20ABI.abi,
+          functionName: 'balanceOf',
+          args: [account],
+          account: account
+        })
+        setBalance0(Number(formatEther(balanceA)))
+        setBalance1(Number(formatEther(balanceB)))
       }
-
+    } catch (e) {
+      console.log(e)
     }
+
+  }
+  useEffect(() => {
     getBalance()
   }, [token0, token1, account])
 
@@ -400,7 +403,7 @@ export default function LiquidityMain() {
 
   useEffect(() => {
     if (pairContract !== address0) {
-      setShare(((Number(token0Amount) * 100) / reserveA).toFixed(3))
+      setShare(Number(((Number(token0Amount) * 100) / reserveA).toFixed(2).replace(/[.,]00$/, "")))
 
       // calculating lp tokens user will get 
 
@@ -442,18 +445,35 @@ export default function LiquidityMain() {
 
 
   const setTokenAmount0Override = (value: Number) => {
+    if (Number(value) > balance0) return
     if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
+      var _amount1 = (Number(value) * reserveB) / reserveA
+      if (_amount1 > balance1) {
+        var _amount0 = (Number(balance1) * reserveA) / reserveB
+        setToken0Amount(_amount0)
+        setToken1Amount(balance1)
+        return
+      }
       setToken0Amount(value)
-      setToken1Amount((Number(value) * reserveB) / reserveA)
+      setToken1Amount(_amount1)
     } else {
       setToken0Amount(value)
     }
     setLPTokens("-")
   }
   const setTokenAmount1Override = (value: Number) => {
+    if (Number(value) > balance1) return
     if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
+      var _amount0 = (Number(value) * reserveA) / reserveB
+      if (_amount0 > balance0) {
+        var _amount1 = (Number(balance0) * reserveB) / reserveA
+
+        setToken0Amount(balance0)
+        setToken1Amount(_amount1)
+        return
+      }
+      setToken0Amount(_amount0)
       setToken1Amount(value)
-      setToken0Amount((Number(value) * reserveA) / reserveB)
     }
     else {
       setToken1Amount(value)
@@ -518,7 +538,7 @@ const TokenAmountEntry = ({ setTokenAmount, tokenAmount, token, balance }: { bal
         <input
           type="number"
           placeholder="0"
-          value={tokenAmount?.toString()}
+          value={tokenAmount.toFixed(4).replace(/[.,]0000$/, "")?.toString()}
           className="input input-sm pr-0 bg-transparent w-full text-lg  font-semibold  input-ghost max-w-md text-right rounded-none focus:outline-none leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           onChange={e => {
             const value = Number(e.target.value)

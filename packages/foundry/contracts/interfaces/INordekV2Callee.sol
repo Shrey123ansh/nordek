@@ -1,7 +1,7 @@
 pragma solidity ^0.8.20;
 
-interface IUniswapV2Callee {
-    function uniswapV2Call(
+interface INordekV2Callee {
+    function NordekV2Call(
         address sender,
         uint amount0,
         uint amount1,

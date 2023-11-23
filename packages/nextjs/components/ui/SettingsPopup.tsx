@@ -20,6 +20,9 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
   const slippageValues = [0.1, 0.5, 1];
 
   const handleSlippageClick = (value: number) => {
+    if (value > 5) return
+    const decimalCount = (value.toString().split('.')[1] || '').length;
+    if (decimalCount > 4) return
     setSelectedSlippage(value);
     handleSlippage(value);
   };
@@ -31,10 +34,10 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="fixed inset-0 bg-gradient-to-r from-[#2D124F] to-[#1B013B] opacity-50" onClick={onClose}></div>
-      <div className="relative z-10 bg-gradient-to-r from-[#2D124F] to-[#1B013B] p-4 rounded shadow-lg ">
+      <div className="fixed inset-0 bg-gray-800 opacity-50  " onClick={onClose}></div>
+      <div className="relative z-10 bg-setting-gradient p-4 rounded shadow-lg ">
         <div className="flex justify-center items-center text-center">
-          <div className="text-xl text-center font-bold">Settings</div>
+          <div className="text-xl text-center font-bold text- ">Settings</div>
 
           <button className="absolute top-0 right-0 m-2 p-2 text-white-600 hover:text-gray-400" onClick={onClose}>
             <svg
@@ -48,24 +51,26 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
             </svg>
           </button>
         </div>
-        <hr className="my-4 border-t border-gray-300" />
+        <hr className="my-4 border-t border-primary" />
 
         {/* <TransactionSpeed></TransactionSpeed> */}
         <SwapModes></SwapModes>
-        <hr className="my-4 border-t border-gray-300" />
+        <hr className="my-4 border-t border-primary" />
+
         <RPCComponent connected={true} rpcName={"Public"} rpcLink={"https://rpc.nordek.chain"}></RPCComponent>
-        <hr className="my-4 border-t border-gray-300" />
+        <hr className="my-4 border-t border-primary" />
+
         <div className="flex flex-col">
-          <h1 className="mb-4">TRADING</h1>
+          <h1 className="mb-4 font-medium ">TRADING</h1>
           <div className="flex justify-between">
             <div className="flex flex-col">
-              <h1 className="mb-4 text-gray-400"> Slippage Tollerance</h1>
+              <h1 className="mb-4 text-gray-400 font-medium "> Slippage Tollerance</h1>
               <ul className="flex list-none space-x-4">
                 {slippageValues.map(value => (
                   <li
                     key={value}
                     onClick={() => handleSlippageClick(value)}
-                    className={selectedSlippage === value ? "text-blue-500" : ""}
+                    className={selectedSlippage === value ? "text-blue-500 " : " cursor-pointer font-medium"}
                   >
                     {value}%
                   </li>
@@ -75,15 +80,16 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
             <input
               type="number"
               placeholder="0"
-              className="px-2 py-2 bg-purple-800 rounded-lg text-right appearance-none"
+              className="px-2 py-2 bg-transparent rounded-lg text-right appearance-none"
               value={selectedSlippage}
               onChange={e => handleSlippageClick(Number(e.target.value))}
             />
           </div>
         </div>
-        <hr className="my-4 border-t border-gray-300" />
+        <hr className="my-4 border-t border-primary" />
+
         <div className="mt-4 mb-4">
-          <h1 className="mb-4">Approved Amounts</h1>
+          <h1 className="mb-4 font-medium ">Approved Amounts</h1>
           <div className="mt-4">
             <label className="inline-flex items-center">
               <input
@@ -95,7 +101,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
                 className="form-checkbox h-5 w-5 text-blue-600 border border-purple-600"
               />
 
-              <span className="ml-2 text-white text-sm">Infinite for approval that cost gas</span>
+              <span className="ml-2   text-sm">Infinite for approval that cost gas</span>
             </label>
           </div>
           <div className="mt-4">
@@ -109,12 +115,11 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
                 className="form-checkbox h-5 w-5 text-blue-600 border border-purple-600"
               />
 
-              <span className="ml-2 text-white text-sm">Infinite for approval that dont cost gas</span>
+              <span className="ml-2  text-sm">Infinite for approval that dont cost gas</span>
             </label>
           </div>
         </div>
-        <hr className="my-4 border-t border-gray-300" />
-        {/* <SwapSettings></SwapSettings> */}
+
       </div>
     </div>
   );

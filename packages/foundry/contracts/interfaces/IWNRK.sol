@@ -1,6 +1,6 @@
 pragma solidity ^0.8.20;
 
-interface IWETH {
+interface IWNRK {
     function deposit() external payable;
 
     function transfer(address to, uint value) external returns (bool);

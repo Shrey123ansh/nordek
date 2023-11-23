@@ -30,7 +30,7 @@ const LiquidityFooter = ({ handleAddLiquidity, pairContract, token1, token2, res
       <div className="flex flex-row justify-between items-center font-medium " >
         <div className="flex flex-row" >
           <div className="mr-2" >Slippage</div>
-          <div className=" text-secondary " >{slippage}%</div>
+          <div className="  text-secondary-content  " >{Number(slippage)}%</div>
         </div>
         <button className=" hover:text-secondary" onClick={handlePopup}>
           Edit

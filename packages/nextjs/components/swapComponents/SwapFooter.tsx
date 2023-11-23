@@ -30,7 +30,7 @@ const SwapFooter = ({ handleSwap, pairContract, token1, token2, reserve1, reserv
       <div className="flex flex-row justify-between items-center mb-1 " >
         <div className="flex flex-row" >
           <div className="mr-2" >Slippage</div>
-          <div className=" text-secondary " >{slippageValue}%</div>
+          <div className="  text-secondary-content   " >{slippageValue}%</div>
         </div>
         <button className=" hover:text-secondary" onClick={handlePopup}>
           Edit

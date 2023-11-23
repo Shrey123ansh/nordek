@@ -1,8 +1,8 @@
 pragma solidity ^0.8.20;
 
-import "./IUniswapV2ERC20.sol";
+import "./INordekV2ERC20.sol";
 
-interface IUniswapV2Pair is IUniswapV2ERC20 {
+interface INordekV2Pair is INordekV2ERC20 {
     function MINIMUM_LIQUIDITY() external pure returns (uint);
 
     function factory() external view returns (address);

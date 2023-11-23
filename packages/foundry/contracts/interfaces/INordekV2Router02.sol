@@ -1,8 +1,8 @@
 pragma solidity ^0.8.20;
 
-import "./IUniswapV2Router01.sol";
+import "./INordekV2Router01.sol";
 
-interface IUniswapV2Router02 is IUniswapV2Router01 {
+interface INordekV2Router02 is INordekV2Router01 {
     function removeLiquidityETHSupportingFeeOnTransferTokens(
         address token,
         uint liquidity,
