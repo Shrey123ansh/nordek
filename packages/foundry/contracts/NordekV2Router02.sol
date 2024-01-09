@@ -25,7 +25,7 @@ contract NordekV2Router02 is INordekV2Router02 {
     }
 
     receive() external payable {
-        assert(msg.sender == WNRK); // only accept ETH via fallback from the WNRK contract
+        assert(msg.sender == WNRK); // only accept NRK via fallback from the WNRK contract
     }
 
     // **** ADD LIQUIDITY ****
@@ -106,11 +106,11 @@ contract NordekV2Router02 is INordekV2Router02 {
         liquidity = INordekV2Pair(pair).mint(to);
     }
 
-    function addLiquidityETH(
+    function addLiquidityNRK(
         address token,
         uint amountTokenDesired,
         uint amountTokenMin,
-        uint amountETHMin,
+        uint amountNRKMin,
         address to,
         uint deadline
     )
@@ -119,24 +119,24 @@ contract NordekV2Router02 is INordekV2Router02 {
         virtual
         override
         ensure(deadline)
-        returns (uint amountToken, uint amountETH, uint liquidity)
+        returns (uint amountToken, uint amountNRK, uint liquidity)
     {
-        (amountToken, amountETH) = _addLiquidity(
+        (amountToken, amountNRK) = _addLiquidity(
             token,
             WNRK,
             amountTokenDesired,
             msg.value,
             amountTokenMin,
-            amountETHMin
+            amountNRKMin
         );
         address pair = NordekV2Library.pairFor(factory, token, WNRK);
         TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
-        IWNRK(WNRK).deposit{value: amountETH}();
-        assert(IWNRK(WNRK).transfer(pair, amountETH));
+        IWNRK(WNRK).deposit{value: amountNRK}();
+        assert(IWNRK(WNRK).transfer(pair, amountNRK));
         liquidity = INordekV2Pair(pair).mint(to);
-        // refund dust eth, if any
-        if (msg.value > amountETH)
-            TransferHelper.safeTransferETH(msg.sender, msg.value - amountETH);
+        // refund dust NRK, if any
+        if (msg.value > amountNRK)
+            TransferHelper.safeTransferNRK(msg.sender, msg.value - amountNRK);
     }
 
     // **** REMOVE LIQUIDITY ****
@@ -166,11 +166,11 @@ contract NordekV2Router02 is INordekV2Router02 {
         require(amountB >= amountBMin, "NordekV2Router: INSUFFICIENT_B_AMOUNT");
     }
 
-    function removeLiquidityETH(
+    function removeLiquidityNRK(
         address token,
         uint liquidity,
         uint amountTokenMin,
-        uint amountETHMin,
+        uint amountNRKMin,
         address to,
         uint deadline
     )
@@ -178,20 +178,20 @@ contract NordekV2Router02 is INordekV2Router02 {
         virtual
         override
         ensure(deadline)
-        returns (uint amountToken, uint amountETH)
+        returns (uint amountToken, uint amountNRK)
     {
-        (amountToken, amountETH) = removeLiquidity(
+        (amountToken, amountNRK) = removeLiquidity(
             token,
             WNRK,
             liquidity,
             amountTokenMin,
-            amountETHMin,
+            amountNRKMin,
             address(this),
             deadline
         );
         TransferHelper.safeTransfer(token, to, amountToken);
-        IWNRK(WNRK).withdraw(amountETH);
-        TransferHelper.safeTransferETH(to, amountETH);
+        IWNRK(WNRK).withdraw(amountNRK);
+        TransferHelper.safeTransferNRK(to, amountNRK);
     }
 
     function removeLiquidityWithPermit(
@@ -229,18 +229,18 @@ contract NordekV2Router02 is INordekV2Router02 {
         );
     }
 
-    function removeLiquidityETHWithPermit(
+    function removeLiquidityNRKWithPermit(
         address token,
         uint liquidity,
         uint amountTokenMin,
-        uint amountETHMin,
+        uint amountNRKMin,
         address to,
         uint deadline,
         bool approveMax,
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external virtual override returns (uint amountToken, uint amountETH) {
+    ) external virtual override returns (uint amountToken, uint amountNRK) {
         address pair = NordekV2Library.pairFor(factory, token, WNRK);
         uint value = approveMax ? type(uint256).max : liquidity;
         INordekV2Pair(pair).permit(
@@ -252,31 +252,31 @@ contract NordekV2Router02 is INordekV2Router02 {
             r,
             s
         );
-        (amountToken, amountETH) = removeLiquidityETH(
+        (amountToken, amountNRK) = removeLiquidityNRK(
             token,
             liquidity,
             amountTokenMin,
-            amountETHMin,
+            amountNRKMin,
             to,
             deadline
         );
     }
 
     // **** REMOVE LIQUIDITY (supporting fee-on-transfer tokens) ****
-    function removeLiquidityETHSupportingFeeOnTransferTokens(
+    function removeLiquidityNRKSupportingFeeOnTransferTokens(
         address token,
         uint liquidity,
         uint amountTokenMin,
-        uint amountETHMin,
+        uint amountNRKMin,
         address to,
         uint deadline
-    ) public virtual override ensure(deadline) returns (uint amountETH) {
-        (, amountETH) = removeLiquidity(
+    ) public virtual override ensure(deadline) returns (uint amountNRK) {
+        (, amountNRK) = removeLiquidity(
             token,
             WNRK,
             liquidity,
             amountTokenMin,
-            amountETHMin,
+            amountNRKMin,
             address(this),
             deadline
         );
@@ -285,22 +285,22 @@ contract NordekV2Router02 is INordekV2Router02 {
             to,
             IERC20(token).balanceOf(address(this))
         );
-        IWNRK(WNRK).withdraw(amountETH);
-        TransferHelper.safeTransferETH(to, amountETH);
+        IWNRK(WNRK).withdraw(amountNRK);
+        TransferHelper.safeTransferNRK(to, amountNRK);
     }
 
-    function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
+    function removeLiquidityNRKWithPermitSupportingFeeOnTransferTokens(
         address token,
         uint liquidity,
         uint amountTokenMin,
-        uint amountETHMin,
+        uint amountNRKMin,
         address to,
         uint deadline,
         bool approveMax,
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external virtual override returns (uint amountETH) {
+    ) external virtual override returns (uint amountNRK) {
         address pair = NordekV2Library.pairFor(factory, token, WNRK);
         uint value = approveMax ? type(uint256).max : liquidity;
         INordekV2Pair(pair).permit(
@@ -312,11 +312,11 @@ contract NordekV2Router02 is INordekV2Router02 {
             r,
             s
         );
-        amountETH = removeLiquidityETHSupportingFeeOnTransferTokens(
+        amountNRK = removeLiquidityNRKSupportingFeeOnTransferTokens(
             token,
             liquidity,
             amountTokenMin,
-            amountETHMin,
+            amountNRKMin,
             to,
             deadline
         );
@@ -402,7 +402,7 @@ contract NordekV2Router02 is INordekV2Router02 {
         _swap(amounts, path, to);
     }
 
-    function swapExactETHForTokens(
+    function swapExactNRKForTokens(
         uint amountOutMin,
         address[] calldata path,
         address to,
@@ -431,7 +431,7 @@ contract NordekV2Router02 is INordekV2Router02 {
         _swap(amounts, path, to);
     }
 
-    function swapTokensForExactETH(
+    function swapTokensForExactNRK(
         uint amountOut,
         uint amountInMax,
         address[] calldata path,
@@ -458,10 +458,10 @@ contract NordekV2Router02 is INordekV2Router02 {
         );
         _swap(amounts, path, address(this));
         IWNRK(WNRK).withdraw(amounts[amounts.length - 1]);
-        TransferHelper.safeTransferETH(to, amounts[amounts.length - 1]);
+        TransferHelper.safeTransferNRK(to, amounts[amounts.length - 1]);
     }
 
-    function swapExactTokensForETH(
+    function swapExactTokensForNRK(
         uint amountIn,
         uint amountOutMin,
         address[] calldata path,
@@ -488,10 +488,10 @@ contract NordekV2Router02 is INordekV2Router02 {
         );
         _swap(amounts, path, address(this));
         IWNRK(WNRK).withdraw(amounts[amounts.length - 1]);
-        TransferHelper.safeTransferETH(to, amounts[amounts.length - 1]);
+        TransferHelper.safeTransferNRK(to, amounts[amounts.length - 1]);
     }
 
-    function swapETHForExactTokens(
+    function swapNRKForExactTokens(
         uint amountOut,
         address[] calldata path,
         address to,
@@ -518,9 +518,9 @@ contract NordekV2Router02 is INordekV2Router02 {
             )
         );
         _swap(amounts, path, to);
-        // refund dust eth, if any
+        // refund dust NRK, if any
         if (msg.value > amounts[0])
-            TransferHelper.safeTransferETH(msg.sender, msg.value - amounts[0]);
+            TransferHelper.safeTransferNRK(msg.sender, msg.value - amounts[0]);
     }
 
     // **** SWAP (supporting fee-on-transfer tokens) ****
@@ -584,7 +584,7 @@ contract NordekV2Router02 is INordekV2Router02 {
         );
     }
 
-    function swapExactETHForTokensSupportingFeeOnTransferTokens(
+    function swapExactNRKForTokensSupportingFeeOnTransferTokens(
         uint amountOutMin,
         address[] calldata path,
         address to,
@@ -608,7 +608,7 @@ contract NordekV2Router02 is INordekV2Router02 {
         );
     }
 
-    function swapExactTokensForETHSupportingFeeOnTransferTokens(
+    function swapExactTokensForNRKSupportingFeeOnTransferTokens(
         uint amountIn,
         uint amountOutMin,
         address[] calldata path,
@@ -629,7 +629,7 @@ contract NordekV2Router02 is INordekV2Router02 {
             "NordekV2Router: INSUFFICIENT_OUTPUT_AMOUNT"
         );
         IWNRK(WNRK).withdraw(amountOut);
-        TransferHelper.safeTransferETH(to, amountOut);
+        TransferHelper.safeTransferNRK(to, amountOut);
     }
 
     // **** LIBRARY FUNCTIONS ****

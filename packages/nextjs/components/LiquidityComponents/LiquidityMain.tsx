@@ -181,8 +181,6 @@ export default function LiquidityMain() {
     const nrkAddress: string = localTokens.NRK.address
     if (token0Amount === 0 || token1Amount === 0) return
     if (token0.address === nrkAddress || token1.address === nrkAddress) {
-      // one of the token is native NRK token 
-      // addLiquidityETH
       if (token0.address === nrkAddress) {
         try {
           await writeContract({
