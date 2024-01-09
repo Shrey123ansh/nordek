@@ -4,13 +4,10 @@ import "./interfaces/INordekV2Factory.sol";
 import "./libraries/TransferHelper.sol";
 import "./interfaces/INordekV2Router02.sol";
 import "./libraries/NordekV2Library.sol";
-import "./libraries/SafeMath.sol";
 import "./interfaces/IERC20.sol";
 import "./interfaces/IWNRK.sol";
 
 contract NordekV2Router02 is INordekV2Router02 {
-    using SafeMath for uint;
-
     address public immutable factory;
     address public immutable WNRK;
 
