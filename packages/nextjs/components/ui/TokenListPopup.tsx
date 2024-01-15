@@ -28,26 +28,27 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
   const [heading, setHeading] = useState(heading1);
   const [searchValue, setSearchValue] = useState("");
   const [loadingToken, setLoadingToken] = useState(false);
+  const [logo, setLogo] = useState("https://picsum.photos/200")
 
   const [newToken, setNewToken] = useState({ name: "", symbol: "", address: "", status: "" });
 
   const [fotter, setFooter] = useState("Edit My Token List >");
 
+  const fetchTokens = async () => {
+    try {
+      const response = await axios.get("/api/swapSupportedTokenList");
+
+      setTokens(response.data.swapSupportedTokenList);
+    } catch (error) {
+
+    }
+  };
   useEffect(() => {
-    const fetchTokens = async () => {
-      try {
-        const response = await axios.get("/api/swapSupportedTokenList");
-
-        setTokens(response.data.swapSupportedTokenList);
-      } catch (error) {
-
-      }
-    };
-
     fetchTokens();
   }, []);
 
   const onCloseOverride = () => {
+
     onClose();
     setHeading(heading1);
     setNewToken({ name: "", symbol: "", address: "", status: "" });
@@ -66,27 +67,43 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
   const onAddressInput = async (address: string) => {
     if (address === "") return;
+    try {
 
-    setLoadingToken(true);
-    const name = await readContract({
-      address: address,
-      abi: deployedContractData.abi,
-      functionName: "name",
-      account: account,
-    });
-    const symbol = await readContract({
-      address: address,
-      abi: deployedContractData.abi,
-      functionName: "symbol",
-      account: account,
-    });
-    setNewToken({ name: name, symbol: symbol, address: address, status: "not added" });
-    setLoadingToken(false);
+      setLoadingToken(true);
+      // getting logo 
+      const logo = await axios.get(`https://nordekscan.com/api/v2/tokens/${address}`)
+      console.log(logo)
+      try {
+        await axios.get(logo.data.icon_url)
+        setLogo(logo.data.icon_url)
+      } catch (c) {
+        console.log("error")
+      }
+      const name = await readContract({
+        address: address,
+        abi: deployedContractData.abi,
+        functionName: "name",
+        account: account,
+      });
+      const symbol = await readContract({
+        address: address,
+        abi: deployedContractData.abi,
+        functionName: "symbol",
+        account: account,
+      });
+      setNewToken({ name: name, symbol: symbol, address: address, status: "not added" });
+      setLoadingToken(false);
+    } catch (e) {
+      console.log(e)
+    }
   };
 
   const addNewTokenToList = async () => {
+
+
+
     const token = {
-      logo: "https://picsum.photos/200",
+      logo: logo,
       name: newToken.name,
       symbol: newToken.symbol,
       address: newToken.address,
@@ -115,6 +132,8 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
     }
 
     console.log("Saved to DB");
+    fetchTokens()
+
   };
 
   const removeToken = async () => {
@@ -147,7 +166,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
               <img src={token.logo} className="w-6 h-6 rounded-full" alt={token.symbol} />
               <span className="text-base text-primary-content ">{token.symbol}</span>
             </div>
-            <span className="ml-20">{0}</span>
+            {/* <span className="ml-20">{0}</span> */}
           </div>
         ))}
       </div>
@@ -158,7 +177,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center z-50 ">
-      <div className="fixed inset-0 bg-gray-800 opacity-50 "
+      <div className="fixed inset-0 bg-gray-800   opacity-50 "
         onClick={onCloseOverride}></div>
       <div className="relative z-10  rounded-lg shadow-lg p-6 max-h-[500px] w-[350px] lg:w-[450px] bg-gradient-to-r bg-base-300">
         <div className="flex  flex-col ">
@@ -166,7 +185,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
           <div className="flex flex-row justify-between  items-center  ">
             <div className="text-lg text-center font-bold text-primary-content">{heading}</div>
             <button
-              className="absolute top-0 right-0 m-2 p-2 text-gray-400  hover:text-primary-content"
+              className="absolute top-0 right-0 m-2 p-2 text-gray-400   hover:text-primary-content"
               onClick={onCloseOverride}
             >
               <svg
@@ -181,21 +200,25 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
             </button>
           </div>
 
-          <label className="bg-white rounded-md my-2 flex justify-between items-center p-2">
+          <div className=" flex flex-row bg-white text-black px-4 py-2  rounded-md items-center my-2  ">
 
             <input
-              className="bg-transparent rounded-md  outline-none placeholer:text-secondary  placeholder:text-base w-full"
+              className="bg-transparent outline-none placeholer:text-secondary  placeholder:text-base w-full"
               placeholder="Search By Name or Address"
               type="text"
               onChange={event => {
                 setSearchValue(event.target.value);
-                onAddressInput(event.target.value);
+                if (heading === heading2)
+                  onAddressInput(event.target.value);
               }}
-            ></input>
+            >
+            </input>
+
+
             <span>
               <BsSearch className="text-lg text-gray" />
             </span>
-          </label>
+          </div>
 
           {heading === heading2 && (
             <>
@@ -203,7 +226,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
               {newToken.name !== "" && newToken.symbol !== "" && (
                 <div className="flex items-center justify-between p-4 bg-base-300 hover:bg-base-100 text-white cursor-pointer">
                   <div className="flex items-center space-x-4 mr-20">
-                    <img src={tokens[0].logo} className="w-6 h-6 rounded-full" alt={newToken.symbol} />
+                    <img src={logo} className="w-6 h-6 rounded-full" alt={newToken.symbol} />
                     <span className="">{newToken.symbol}</span>
                   </div>
                   {newToken.status === "not added" && (

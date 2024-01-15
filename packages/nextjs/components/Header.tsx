@@ -22,9 +22,8 @@ const NavLink = ({
     <Link
       href={href}
       passHref
-      className={`${
-        isActive ? "bg-accent shadow-md text-white font-bold" : ""
-      } hover:bg-accent hover:font-bold hover:shadow-md hover:text-white focus:bg-accent py-1.5 px-6 lg:text-sm lg:font-normal text-2xl font-bold space-x-2 rounded-none m-0 h-full text-center  flex items-center justify-center`}
+      className={`${isActive ? "bg-accent shadow-md text-white font-bold" : ""
+        } hover:bg-accent hover:font-bold hover:shadow-md hover:text-white focus:bg-accent py-1.5 px-6 lg:text-sm lg:font-normal text-2xl font-bold space-x-2 rounded-none m-0 h-full text-center  flex items-center justify-center`}
       onClick={toggleDrawer}
     >
       {children}
@@ -59,9 +58,9 @@ export const Header = ({ isDarkTheme }) => {
       <NavLink href="/liquidity" toggleDrawer={toggleDrawer}>
         Liquidity
       </NavLink>
-      <NavLink href="/stake" toggleDrawer={toggleDrawer}>
+      {/* <NavLink href="/stake" toggleDrawer={toggleDrawer}>
         Stake
-      </NavLink>
+      </NavLink> */}
     </>
   );
 

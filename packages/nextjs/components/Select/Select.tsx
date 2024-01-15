@@ -11,21 +11,25 @@ export const Select: React.FC<SelectProps> = ({ setToken, token }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handlePopup = () => {
-    setIsPopupOpen(!isPopupOpen);
+    setIsPopupOpen(true);
   };
 
 
 
   return (
+    <>
 
-    <button className=" flex flex-row items-center font-semibold lg:text-base text-sm rounded-full bg-white  text-gray-800 px-4 pr-6 py-1  " onClick={handlePopup}>
 
-      <img src={token.logo} className="lg:w-6 lg:h-6 w-4 h-4 rounded-full mr-1 " />
-      <div>
-        {token.symbol}
-      </div>
-      <TokenListPopup isOpen={isPopupOpen} onClose={handlePopup} setToken={setToken}></TokenListPopup>
-    </button>
+      <button className=" flex flex-row items-center font-semibold lg:text-base text-sm rounded-full bg-white  text-gray-800 px-4 pr-6 py-1  " onClick={handlePopup}>
+
+        <img src={token.logo} className="lg:w-6 lg:h-6 w-4 h-4 rounded-full mr-1 " />
+        <div>
+          {token.symbol}
+        </div>
+      </button>
+      <TokenListPopup isOpen={isPopupOpen} onClose={() => { setIsPopupOpen(false) }} setToken={setToken}></TokenListPopup>
+
+    </>
   );
 };
 

@@ -76,9 +76,7 @@ contract NordekV2ERC20 is INordekV2ERC20 {
         uint value
     ) external returns (bool) {
         if (allowance[from][msg.sender] != type(uint).max) {
-            allowance[from][msg.sender] = allowance[from][msg.sender].sub(
-                value
-            );
+            allowance[from][msg.sender] = allowance[from][msg.sender] - value;
         }
         _transfer(from, to, value);
         return true;

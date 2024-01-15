@@ -12,17 +12,17 @@ interface INordekV2Router01 {
         uint deadline
     ) external returns (uint amountA, uint amountB, uint liquidity);
 
-    function addLiquidityETH(
+    function addLiquidityNRK(
         address token,
         uint amountTokenDesired,
         uint amountTokenMin,
-        uint amountETHMin,
+        uint amountNRKMin,
         address to,
         uint deadline
     )
         external
         payable
-        returns (uint amountToken, uint amountETH, uint liquidity);
+        returns (uint amountToken, uint amountNRK, uint liquidity);
 
     function removeLiquidity(
         address tokenA,
@@ -34,14 +34,14 @@ interface INordekV2Router01 {
         uint deadline
     ) external returns (uint amountA, uint amountB);
 
-    function removeLiquidityETH(
+    function removeLiquidityNRK(
         address token,
         uint liquidity,
         uint amountTokenMin,
-        uint amountETHMin,
+        uint amountNRKMin,
         address to,
         uint deadline
-    ) external returns (uint amountToken, uint amountETH);
+    ) external returns (uint amountToken, uint amountNRK);
 
     function removeLiquidityWithPermit(
         address tokenA,
@@ -57,18 +57,18 @@ interface INordekV2Router01 {
         bytes32 s
     ) external returns (uint amountA, uint amountB);
 
-    function removeLiquidityETHWithPermit(
+    function removeLiquidityNRKWithPermit(
         address token,
         uint liquidity,
         uint amountTokenMin,
-        uint amountETHMin,
+        uint amountNRKMin,
         address to,
         uint deadline,
         bool approveMax,
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external returns (uint amountToken, uint amountETH);
+    ) external returns (uint amountToken, uint amountNRK);
 
     function swapExactTokensForTokens(
         uint amountIn,
@@ -86,14 +86,14 @@ interface INordekV2Router01 {
         uint deadline
     ) external returns (uint[] memory amounts);
 
-    function swapExactETHForTokens(
+    function swapExactNRKForTokens(
         uint amountOutMin,
         address[] calldata path,
         address to,
         uint deadline
     ) external payable returns (uint[] memory amounts);
 
-    function swapTokensForExactETH(
+    function swapTokensForExactNRK(
         uint amountOut,
         uint amountInMax,
         address[] calldata path,
@@ -101,7 +101,7 @@ interface INordekV2Router01 {
         uint deadline
     ) external returns (uint[] memory amounts);
 
-    function swapExactTokensForETH(
+    function swapExactTokensForNRK(
         uint amountIn,
         uint amountOutMin,
         address[] calldata path,
@@ -109,7 +109,7 @@ interface INordekV2Router01 {
         uint deadline
     ) external returns (uint[] memory amounts);
 
-    function swapETHForExactTokens(
+    function swapNRKForExactTokens(
         uint amountOut,
         address[] calldata path,
         address to,
