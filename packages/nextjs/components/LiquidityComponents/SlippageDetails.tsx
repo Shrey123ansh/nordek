@@ -46,7 +46,7 @@ const SlippageDetails = ({ token1, token2, reserve1 = 0, reserve2 = 0, share = 0
             {token1PerToken2}
           </div>
           <div className=" mt-2 text-sm " >
-            {`${token1.symbol} per ${token2.symbol}`}
+            {`${token2.symbol} per ${token1.symbol}`}
           </div>
         </div>
 
@@ -57,7 +57,7 @@ const SlippageDetails = ({ token1, token2, reserve1 = 0, reserve2 = 0, share = 0
             {token2PerToken1}
           </div>
           <div className=" mt-2 text-sm " >
-            {`${token2.symbol} per ${token1.symbol}`}
+            {`${token1.symbol} per ${token2.symbol}`}
           </div>
         </div>
 
