@@ -19,7 +19,7 @@ import axios from "axios";
 import TokenListPopup from "../ui/TokenListPopup";
 import { Select } from "../Select/Select";
 import { MdArrowDropDown } from "react-icons/md";
-import { fetchBalance } from '@wagmi/core'
+import { fetchBalance, waitForTransaction } from '@wagmi/core'
 
 
 export default function LiquidityMain() {
@@ -32,7 +32,7 @@ export default function LiquidityMain() {
   const [pairContract, setPairContract] = useState("0x0000000000000000000000000000000000000000")
   const [reserveA, setReserve1] = useState(0)
   const [reserveB, setReserve2] = useState(0)
-  const { data: routerContract } = useDeployedContractInfo("UniswapV2Router02");
+  const { data: routerContract } = useDeployedContractInfo("NordekV2Router02");
   const [slippage, setSlippage] = useState(0.5)
   const [update, setUpdate] = useState(0)
   const token0Min = Number(token0Amount) - ((Number(token0Amount) * slippage) / 100)
@@ -41,7 +41,7 @@ export default function LiquidityMain() {
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
   const [share, setShare] = useState(0)
   const [tokenAFromContract, setTokenAFromContract] = useState(address0)
-  const [lpTokens, setLPTokens] = useState("-")
+  const [lpTokens, setLPTokens] = useState(0)
   const [pairTotalSupply, setPairTotalSupply] = useState(0)
   const [kLast, setKLast] = useState(0)
   const token0AmountNumber: number = Number(token0Amount)
@@ -50,7 +50,7 @@ export default function LiquidityMain() {
   const [balance1, setBalance1] = useState(0)
 
   const { data: pc, isFetched } = useScaffoldContractRead({
-    contractName: "UniswapV2Factory",
+    contractName: "NordekV2Factory",
     functionName: "getPair",
     args: [token0.address, token1.address],
     account: account,
@@ -70,8 +70,8 @@ export default function LiquidityMain() {
 
 
   const { writeAsync: addLiquidityETHToken0 } = useScaffoldContractWrite({
-    contractName: "UniswapV2Router02",
-    functionName: "addLiquidityETH",
+    contractName: "NordekV2Router02",
+    functionName: "addLiquidityNRK",
     args: [
       token1.address,
       parseEther(`${token1Amount}`),
@@ -98,8 +98,8 @@ export default function LiquidityMain() {
     },
   });
   const { writeAsync: addLiquidityETHToken1 } = useScaffoldContractWrite({
-    contractName: "UniswapV2Router02",
-    functionName: "addLiquidityETH",
+    contractName: "NordekV2Router02",
+    functionName: "addLiquidityNRK",
     args: [
       token0.address,
       parseEther(`${token0Amount}`),
@@ -121,7 +121,7 @@ export default function LiquidityMain() {
     }
   });
   const { writeAsync: addLiquidity, isLoading, isMining } = useScaffoldContractWrite({
-    contractName: "UniswapV2Router02",
+    contractName: "NordekV2Router02",
     functionName: "addLiquidity",
     args: [
       token0.address,
@@ -178,28 +178,42 @@ export default function LiquidityMain() {
 
 
   const handleAddLiquidity = async () => {
+    console.log("add liuidity")
     const nrkAddress: string = localTokens.NRK.address
     if (token0Amount === 0 || token1Amount === 0) return
+    console.log("non zero")
     if (token0.address === nrkAddress || token1.address === nrkAddress) {
+      console.log("nordek address")
       if (token0.address === nrkAddress) {
+        console.log("token 1 nordek")
         try {
-          await writeContract({
+          const { hash: approveHash } = await writeContract({
             address: token1.address,
             abi: erc20ABI.abi,
             functionName: 'approve',
             args: [routerContract.address, parseEther(`${token1Amount}`)],
           })
 
-          await addLiquidityETHToken0()
+          await waitForTransaction({
+            hash: approveHash
+          })
 
-        } catch (error) { }
+          console.log("approve")
+          await addLiquidityETHToken0()
+          console.log("add liquidity")
+
+        } catch (error) { console.log(error) }
       } else if (token1.address === nrkAddress) {
+        console.log("token 2 nordek")
         try {
-          await writeContract({
+          const { hash: approveHash } = await writeContract({
             address: token0.address,
             abi: erc20ABI.abi,
             functionName: 'approve',
             args: [routerContract.address, parseEther(`${token0Amount}`)],
+          })
+          await waitForTransaction({
+            hash: approveHash
           })
           await addLiquidityETHToken1()
         } catch (error) { }
@@ -210,20 +224,26 @@ export default function LiquidityMain() {
     else {
       // addLiquidity 
       try {
-        await writeContract({
+        const { hash: approveHash } = await writeContract({
           address: token0.address,
           abi: erc20ABI.abi,
           functionName: 'approve',
           args: [routerContract.address, parseEther(`${token0Amount}`)],
         })
+        await waitForTransaction({
+          hash: approveHash
+        })
       } catch (error) { }
       try {
 
-        await writeContract({
+        const { hash: approveHash } = await writeContract({
           address: token1.address,
           abi: erc20ABI.abi,
           functionName: 'approve',
           args: [routerContract.address, parseEther(`${token1Amount}`)],
+        })
+        await waitForTransaction({
+          hash: approveHash
         })
       } catch (error) { }
       await addLiquidity()
@@ -233,7 +253,7 @@ export default function LiquidityMain() {
 
 
 
-  const { data: factoryContract } = useDeployedContractInfo("UniswapV2Factory")
+  const { data: factoryContract } = useDeployedContractInfo("NordekV2Factory")
 
   const setTokenA = (token: tokenType) => {
     if (token.address !== token1.address) {
@@ -435,7 +455,7 @@ export default function LiquidityMain() {
 
       liquidity = value1 > value2 ? value2 : value1
 
-      setLPTokens(String(liquidity.toFixed(3)))
+      setLPTokens(Number(liquidity.toFixed(3)))
     }
 
   }, [token0Amount, token1Amount])
@@ -457,7 +477,7 @@ export default function LiquidityMain() {
     } else {
       setToken0Amount(value)
     }
-    setLPTokens("-")
+    setLPTokens(0)
   }
   const setTokenAmount1Override = (value: Number) => {
     if (Number(value) > balance1) return
@@ -476,7 +496,7 @@ export default function LiquidityMain() {
     else {
       setToken1Amount(value)
     }
-    setLPTokens("-")
+    setLPTokens(0)
   }
 
   return (

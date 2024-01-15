@@ -22,6 +22,7 @@ export default function LiquidityPositions() {
       try {
         const response = await axios.get(apiUrl);
         const liquidity: Liquidity[] = response.data.userLiquidityValues
+        console.log(liquidity)
         setUserLiquidity(liquidity)
       } catch (error) {
         console.log(error);

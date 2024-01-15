@@ -14,7 +14,7 @@ import uniswapv2paircontractABI from "../../../foundry/out/UniswapV2Pair.sol/Uni
 import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { nordek } from "~~/utils/NordekChain";
 import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
-import { fetchBalance } from '@wagmi/core'
+import { fetchBalance, waitForTransaction } from '@wagmi/core'
 
 
 
@@ -43,10 +43,10 @@ export default function SwapMain() {
   const currentDate = new Date();
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
 
-  const { data: routerContract } = useDeployedContractInfo("UniswapV2Router02");
+  const { data: routerContract } = useDeployedContractInfo("NordekV2Router02");
 
   const { data: pc, isFetched, isFetching } = useScaffoldContractRead({
-    contractName: "UniswapV2Factory",
+    contractName: "NordekV2Factory",
     functionName: "getPair",
     args: [token0.address, token1.address],
     account: account,
@@ -205,7 +205,7 @@ export default function SwapMain() {
   // };
 
   // const { data: pc, isFetched } = useScaffoldContractRead({
-  //   contractName: "UniswapV2Factory",
+  //   contractName: "NordekV2Factory",
   //   functionName: "getPair",
   //   args: [token0.address, token1.address],
   //   account: account,
@@ -230,8 +230,8 @@ export default function SwapMain() {
 
 
   const { writeAsync: swapNRKToToken } = useScaffoldContractWrite({
-    contractName: "UniswapV2Router02",
-    functionName: "swapExactETHForTokensSupportingFeeOnTransferTokens",
+    contractName: "NordekV2Router02",
+    functionName: "swapExactNRKForTokensSupportingFeeOnTransferTokens",
     args: [
       parseEther(`${token1Min}`),
       [token0.address, token1.address],
@@ -251,8 +251,8 @@ export default function SwapMain() {
   });
 
   const { writeAsync: swapTokenForNRK } = useScaffoldContractWrite({
-    contractName: "UniswapV2Router02",
-    functionName: "swapExactTokensForETHSupportingFeeOnTransferTokens",
+    contractName: "NordekV2Router02",
+    functionName: "swapExactTokensForNRKSupportingFeeOnTransferTokens",
     args: [
       parseEther(`${token0Amount}`),
       parseEther(`${token1Min}`),
@@ -269,7 +269,7 @@ export default function SwapMain() {
     },
   });
   const { writeAsync: swapTokenForToken } = useScaffoldContractWrite({
-    contractName: "UniswapV2Router02",
+    contractName: "NordekV2Router02",
     functionName: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
     args: [
       parseEther(`${token0Amount}`),
@@ -329,11 +329,14 @@ export default function SwapMain() {
       console.log("token 0 address " + token0.address)
 
       try {
-        await writeContract({
+        const { hash: approveHash } = await writeContract({
           address: token0.address,
           abi: erc20ABI.abi,
           functionName: 'approve',
           args: [routerContract.address, parseEther(`${token0Amount}`)],
+        })
+        await waitForTransaction({
+          hash: approveHash
         })
         if (token1.address === nrkAddress) {
           console.log(" swaping token for nrk ")

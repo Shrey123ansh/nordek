@@ -10,7 +10,7 @@ import { useScaffoldContractWrite, useDeployedContractInfo } from "~~/hooks/scaf
 import { parseEther } from "viem";
 import { useAccount } from "wagmi";
 import axios from "axios";
-import { writeContract } from '@wagmi/core'
+import { writeContract, waitForTransaction } from '@wagmi/core'
 import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
 import { RiArrowDropDownLine, RiArrowDropUpLine } from "react-icons/ri";
 
@@ -22,7 +22,7 @@ import { FaArrowDownLong } from "react-icons/fa6";
 
 const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity: Liquidity, updateOnRemove: (value: bool) => void, onRemove: bool }) => {
 
-  const { data: routerContract } = useDeployedContractInfo("UniswapV2Router02");
+  const { data: routerContract } = useDeployedContractInfo("NordekV2Router02");
   const nrkAddress: string = localTokens.NRK.address
   const sliderRef = useRef(null);
 
@@ -48,8 +48,8 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
 
   const { writeAsync: removeLiqudityETH } = useScaffoldContractWrite({
-    contractName: "UniswapV2Router02",
-    functionName: "removeLiquidityETHSupportingFeeOnTransferTokens",
+    contractName: "NordekV2Router02",
+    functionName: "removeLiquidityNRKSupportingFeeOnTransferTokens",
     args: [
       liqudity.token0.address === nrkAddress ? liqudity.token1.address : nrkAddress,
       parseEther(`${(Number(value) * percentage) / 100}`),
@@ -74,7 +74,7 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
     }
   });
   const { writeAsync: removeLiquidity } = useScaffoldContractWrite({
-    contractName: "UniswapV2Router02",
+    contractName: "NordekV2Router02",
     functionName: "removeLiquidity",
     args: [
       liqudity.token0.address,
@@ -147,14 +147,18 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
   const handleWithdraw = async () => {
 
     try {
+      console.log(value)
       if (percentage === 0) return
       var _value = (Number(value) * percentage) / 100
       console.log("pair contract  value  " + liqudity.pairContract)
-      await writeContract({
+      const { hash: approveHash } = await writeContract({
         address: liqudity.pairContract,
         abi: pairABI.abi,
         functionName: 'approve',
         args: [routerContract.address, parseEther(`${_value}`)]
+      })
+      await waitForTransaction({
+        hash: approveHash
       })
       console.log("token 1 withdraw amount " + token0WithdrawMin)
       console.log("token 2 withdraw amount " + token1WithdrawMin)
