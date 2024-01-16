@@ -119,9 +119,11 @@ export const Header = ({ isDarkTheme }) => {
                 <XMarkIcon className="w-8 h-8 text-secondary-content" />
               </button>
             </div>
-            <div className="flex flex-col justify-between h-full space-y-8 p-y-12">
-              {navLinks}
-              <div className="flex mx-auto">
+            <div className="flex flex-col h-full items-center justify-between   ">
+              <div className="flex flex-col w-full" >
+                {navLinks}
+              </div>
+              <div className="flex mx-auto mb-12 ">
                 <RainbowKitCustomConnectButton />
               </div>
             </div>

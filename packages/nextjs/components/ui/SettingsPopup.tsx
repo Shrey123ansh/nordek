@@ -33,12 +33,11 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="fixed inset-0 bg-gray-800 opacity-50  " onClick={onClose}></div>
-      <div className="relative z-10 bg-setting-gradient p-4 rounded shadow-lg ">
+    <div className="fixed    inset-0 flex items-center justify-center z-50">
+      <div className="fixed  w-full inset-0 bg-gray-800 opacity-50    " onClick={onClose}></div>
+      <div className="relative z-10 bg-setting-gradient p-4 rounded shadow-lg m-4 lg:w-fit  w-full ">
         <div className="flex justify-center items-center text-center">
           <div className="text-xl text-center font-bold text- ">Settings</div>
-
           <button className="absolute top-0 right-0 m-2 p-2 text-white-600 hover:text-gray-400" onClick={onClose}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -80,7 +79,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
             <input
               type="number"
               placeholder="0"
-              className="px-2 py-2 bg-transparent rounded-lg text-right appearance-none"
+              className="px-2 py-2 bg-transparent rounded-lg text-right appearance-none outline-none "
               value={selectedSlippage}
               onChange={e => handleSlippageClick(Number(e.target.value))}
             />
