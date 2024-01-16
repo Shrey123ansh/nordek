@@ -36,7 +36,6 @@ export default function LiquidityMain() {
   const [slippage, setSlippage] = useState(0.5)
   const [update, setUpdate] = useState(0)
   const token0Min = Number(token0Amount) - ((Number(token0Amount) * slippage) / 100)
-
   const token1Min = Number(token1Amount) - ((Number(token1Amount) * slippage) / 100)
   const currentDate = new Date();
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
@@ -563,6 +562,7 @@ const TokenAmountEntry = ({ setTokenAmount, tokenAmount, token, balance }: { bal
             if (value < 0) {
               return
             }
+
             setTokenAmount(value);
           }}
         />

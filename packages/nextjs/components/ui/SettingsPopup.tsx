@@ -88,7 +88,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
         </div>
         <hr className="my-4 border-t border-primary" />
 
-        <div className="mt-4 mb-4">
+        {/* <div className="mt-4 mb-4">
           <h1 className="mb-4 font-medium ">Approved Amounts</h1>
           <div className="mt-4">
             <label className="inline-flex items-center">
@@ -118,7 +118,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
               <span className="ml-2  text-sm">Infinite for approval that dont cost gas</span>
             </label>
           </div>
-        </div>
+        </div> */}
 
       </div>
     </div>

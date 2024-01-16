@@ -3,6 +3,7 @@ import SwapHeader from "./swapComponents/SwapHeader";
 import SwapMain from "./swapComponents/SwapMain";
 import { ToggleSwitchProps } from "./swapComponents/ToggleSwitchProps";
 
+
 export const Swap2: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpertToggle }) => {
   // Define states for decimal numbers
 
@@ -23,10 +24,7 @@ export const Swap2: React.FC<ToggleSwitchProps> = ({ expertToggle, setExpertTogg
             <ExpertToggle expertToggle={expertToggle} setExpertToggle={setExpertToggle}></ExpertToggle>
           </div>
         )} */}
-        <div  >
-          <div className=" font-bold text-2xl     " >Swap</div>
-          <div className="  font-normal lg:text-sm  text-[10px]  " >Trade tokens in an instant</div>
-        </div>
+
         <SwapMain></SwapMain>
         <br />
       </div>

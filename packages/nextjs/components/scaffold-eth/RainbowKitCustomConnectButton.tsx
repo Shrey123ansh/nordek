@@ -102,7 +102,7 @@ export const RainbowKitCustomConnectButton = () => {
                     type="button"
                     className="space-x-4"
                   >
-                    {/* <span>{account.displayBalance}</span> */}
+                    <span>{account.displayBalance}</span>
                     {chain.hasIcon && (
                       <div
                         style={{

@@ -3619,6 +3619,7 @@ __metadata:
     react-icons: ^4.11.0
     react-range-slider-input: ^3.0.7
     react-resizable: ^3.0.5
+    react-toastify: ^10.0.2
     react-ts-tradingview-widgets: ^1.1.0
     swr: ^2.2.2
     tailwind-merge: ^1.14.0
@@ -6287,6 +6288,13 @@ __metadata:
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
+  languageName: node
+  linkType: hard
+
+"clsx@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "clsx@npm:2.1.0"
+  checksum: 43fefc29b6b49c9476fbce4f8b1cc75c27b67747738e598e6651dd40d63692135dc60b18fa1c5b78a2a9ba8ae6fd2055a068924b94e20b42039bd53b78b98e1d
   languageName: node
   linkType: hard
 
@@ -11751,6 +11759,18 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 7ee8ef3aab74c7ae1d70ff34a27643d11ba1a8d62d072c767827d9ff9a520905223e567002e0bf6c772929d8ea1c781a3ba0cc4a563e92b1e3dc2eaa817ecbe8
+  languageName: node
+  linkType: hard
+
+"react-toastify@npm:^10.0.2":
+  version: 10.0.2
+  resolution: "react-toastify@npm:10.0.2"
+  dependencies:
+    clsx: ^2.1.0
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 9d69f12bfa3da377e7f72b05071cd558ca5929a5e61d74c1672494b1c9cb1b8549d93b47093c49927ff861eae81336d15417762bba43881472b8adfb72cb70c9
   languageName: node
   linkType: hard
 

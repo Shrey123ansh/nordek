@@ -46,11 +46,11 @@ const Swap: NextPage<any> = props => {
       <div
         className={
           expertToggle
-            ? `flex items-center flex-col flex-grow pt-10 mt-4`
+            ? `flex items-center flex-col flex-grow pt-10 mt-4 `
             : `flex items-center flex-col justify-center  mx-auto mt-4`
         }
       >
-        <div className="px-0 flex w-full h-full justify-between">
+        <div className="px-0 flex w-full h-full justify-between ">
           {expertToggle ? (
             <>
               <div className="flex justify-between p-0 w-[100%]">

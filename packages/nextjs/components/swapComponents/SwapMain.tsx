@@ -16,14 +16,18 @@ import { nordek } from "~~/utils/NordekChain";
 import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
 import { fetchBalance, waitForTransaction } from '@wagmi/core'
 import { TbArrowsUpDown } from "react-icons/tb";
+import { IoIosSettings } from "react-icons/io";
 
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { notification } from "~~/utils/scaffold-eth";
 
 export default function SwapMain() {
   const address0 = "0x0000000000000000000000000000000000000000"
   const [share, setShare] = useState(0)
-  const [token0Amount, setToken0Amount] = useState<number>(0.0);
-  const [token1Amount, setToken1Amount] = useState<number>(0.0);
+  const [token0Amount, setToken0Amount] = useState<number>(0);
+  const [token1Amount, setToken1Amount] = useState<number>(0);
   // Define states for tokens
   const [tokenAFromContract, setTokenAFromContract] = useState(address0)
 
@@ -40,6 +44,12 @@ export default function SwapMain() {
   const { address: account, isConnected } = useAccount();
   const [balance0, setBalance0] = useState(0)
   const [balance1, setBalance1] = useState(0)
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const handlePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
 
   const currentDate = new Date();
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
@@ -296,11 +306,17 @@ export default function SwapMain() {
   const handleSwap = async () => {
     if (token1Amount <= 0 || token0Amount <= 0) {
       console.log("can't be lt 0");
+      notification.error("Amount Can't Be 0", {
+        duration: 1000
+      })
       return;
     }
 
     if (!account) {
       console.log("notConnected");
+      notification.info("Please Connect Your Wallet", {
+        duration: 1000
+      })
       return;
     }
 
@@ -334,18 +350,23 @@ export default function SwapMain() {
       console.log("token 0 address " + token0.address)
 
       try {
+
+        let approveId = notification.loading("Waiting for User to Approve Tx")
         const { hash: approveHash } = await writeContract({
           address: token0.address,
           abi: erc20ABI.abi,
           functionName: 'approve',
           args: [routerContract.address, parseEther(`${token0Amount}`)],
         })
+        notification.remove(approveId)
+        let completionID = notification.loading("Waiting for Tx Completion")
+        // notification.info("Waiting For Tx Completion")
         await waitForTransaction({
           hash: approveHash
         })
+        notification.remove(completionID)
         if (token1.address === nrkAddress) {
           console.log(" swaping token for nrk ")
-
           await swapTokenForNRK()
         }
         else
@@ -355,6 +376,7 @@ export default function SwapMain() {
     }
 
     await getData()
+    await getBalance()
     console.log("Swapped");
   };
 
@@ -363,6 +385,7 @@ export default function SwapMain() {
 
 
   const setTokenAmount0Override = (value) => {
+    if (value > balance0) return
     if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
       setToken0Amount(value)
 
@@ -377,7 +400,7 @@ export default function SwapMain() {
     }
   }
   const setTokenAmount1Override = (value) => {
-
+    if (value > balance1) return
     const numerator = reserveA * value * 1000
     const denominator = (reserveB - value) * 997
 
@@ -403,36 +426,62 @@ export default function SwapMain() {
   }
 
   return (
-    <div className="flex flex-col">
-      {reserveA === 0 && reserveB === 0 && <div className=" text-center font-bold " >NO PAIR EXISTS</div>}
-      <SelectToken
-        token={token0}
-        setToken={setTokenA}
-        tokenAmount={token0Amount}
-        setTokenAmount={setTokenAmount0Override}
-        title="From"
-        balance={balance0}
-      ></SelectToken>
-      <button className="w-full h-6 flex flex-row items-center justify-center     rounded-full " onClick={() => { setToken0(token1); setToken1(token0); setReserve1(reserveB); setReserve2(reserveA) }}   >
-        <TbArrowsUpDown />
-      </button>
-      <SelectToken
-        token={token1}
-        setToken={setTokenB}
-        tokenAmount={token1Amount}
-        setTokenAmount={setTokenAmount1Override}
-        title="To"
-        balance={balance1}
-      ></SelectToken>
-      <SwapFooter handleSwap={handleSwap}
-        pairContract={pairContract}
-        token1={token0}
-        token2={token1}
-        reserve1={reserveA}
-        reserve2={reserveB}
-        slippage={slippage}
-        setSLippage={setSlippage}
-        minimumPrice={Number(token1Amount) - ((Number(token1Amount) * slippage) / 100)}></SwapFooter>
-    </div >
+    <>
+
+      <div className="flex flex-col">
+        <div className="flex flex-row items-center justify-between" >
+          <div>
+            <div className=" font-bold text-2xl     " >Swap</div>
+            <div className="  font-normal lg:text-sm  text-[10px]  " >Trade tokens in an instant</div>
+          </div>
+          <button onClick={handlePopup}>
+            <IoIosSettings size={20} />
+          </button>
+        </div>
+        {reserveA === 0 && reserveB === 0 && <div className=" text-center font-bold " >NO PAIR EXISTS</div>}
+        <SelectToken
+          token={token0}
+          setToken={setTokenA}
+          tokenAmount={token0Amount}
+          setTokenAmount={setTokenAmount0Override}
+          title="From"
+          balance={balance0}
+        ></SelectToken>
+        <button className="w-full h-6 flex flex-row items-center justify-center     rounded-full " onClick={() => { setToken0(token1); setToken1(token0); setReserve1(reserveB); setReserve2(reserveA) }}   >
+          <TbArrowsUpDown />
+        </button>
+        <SelectToken
+          token={token1}
+          setToken={setTokenB}
+          tokenAmount={token1Amount}
+          setTokenAmount={setTokenAmount1Override}
+          title="To"
+          balance={balance1}
+        ></SelectToken>
+        <SwapFooter handleSwap={handleSwap}
+          pairContract={pairContract}
+          token1={token0}
+          token2={token1}
+          reserve1={reserveA}
+          reserve2={reserveB}
+          slippage={slippage}
+          setSLippage={setSlippage}
+          handlePopup={handlePopup}
+          isPopupOpen={isPopupOpen}
+          minimumPrice={Number(token1Amount) - ((Number(token1Amount) * slippage) / 100)}></SwapFooter>
+
+      </div >
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark" />
+    </>
   );
 }

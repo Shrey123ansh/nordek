@@ -67,18 +67,18 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
   const onAddressInput = async (address: string) => {
     if (address === "") return;
-    try {
 
-      setLoadingToken(true);
-      // getting logo 
+    setLoadingToken(true);
+    // getting logo 
+    try {
       const logo = await axios.get(`https://nordekscan.com/api/v2/tokens/${address}`)
       console.log(logo)
-      try {
-        await axios.get(logo.data.icon_url)
-        setLogo(logo.data.icon_url)
-      } catch (c) {
-        console.log("error")
-      }
+      await axios.get(logo.data.icon_url)
+      setLogo(logo.data.icon_url)
+    } catch (c) {
+      console.log("error")
+    }
+    try {
       const name = await readContract({
         address: address,
         abi: deployedContractData.abi,
@@ -94,6 +94,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
       setNewToken({ name: name, symbol: symbol, address: address, status: "not added" });
       setLoadingToken(false);
     } catch (e) {
+      setLoadingToken(false);
       console.log(e)
     }
   };
@@ -133,6 +134,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
     console.log("Saved to DB");
     fetchTokens()
+    setSearchValue("")
 
   };
 
@@ -206,6 +208,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
               className="bg-transparent outline-none placeholer:text-secondary  placeholder:text-base w-full"
               placeholder="Search By Name or Address"
               type="text"
+              value={searchValue}
               onChange={event => {
                 setSearchValue(event.target.value);
                 if (heading === heading2)
@@ -222,7 +225,11 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
           {heading === heading2 && (
             <>
-              {loadingToken && <div className="text-white font-bold mt-4">Loading...</div>}
+              {loadingToken &&
+                <div className="w-full flex flex-row items-center justify-center " >
+                  <div className="loader "></div>
+                </div>
+              }
               {newToken.name !== "" && newToken.symbol !== "" && (
                 <div className="flex items-center justify-between p-4 bg-base-300 hover:bg-base-100 text-white cursor-pointer">
                   <div className="flex items-center space-x-4 mr-20">
