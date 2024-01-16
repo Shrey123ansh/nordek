@@ -23,7 +23,7 @@ import { fetchBalance, waitForTransaction } from '@wagmi/core'
 import { notification } from "~~/utils/scaffold-eth";
 
 
-export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => {} }) {
+export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => void }) {
   const address0 = "0x0000000000000000000000000000000000000000"
   const [token0Amount, setToken0Amount] = useState<Number>(0);
   const [token1Amount, setToken1Amount] = useState<Number>(0);

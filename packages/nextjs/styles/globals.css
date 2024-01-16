@@ -15,10 +15,12 @@
 :root,
 [data-theme] {
   background: hsl(var(--b2));
+
 }
 
 body {
   min-height: 100vh;
+
 }
 
 h1,

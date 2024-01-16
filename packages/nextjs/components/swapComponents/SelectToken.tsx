@@ -14,7 +14,7 @@ const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount, title, bala
   return (
 
 
-    <div className=" shadow-md  rounded-lg  bg-swap-gradient px-4 py-2 mb-4 mt-4 " >
+    <div className=" shadow-md  rounded-lg  bg-swap-gradient  px-4 py-2 mb-4 mt-4 " >
       <div className="mb-4 font-semibold " >{title}</div>
       <div className=" flex flex-row items-center   justify-between  " >
         <Select setToken={setToken} token={token}></Select>

@@ -66,6 +66,7 @@ module.exports = {
 
           ".bg-body-gradient": {
             backgroundImage: "var(--custom-body-gradient)", // Use the CSS variable
+
           },
 
           ".important-text": {

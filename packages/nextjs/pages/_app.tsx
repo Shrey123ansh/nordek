@@ -50,7 +50,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
         <div
           className={`flex flex-col min-h-screen ${isDarkTheme
             ? "bg-gradient-to-r from-[#1B0A30] to-[#000000]"
-            : "bg-gradient-to-r from-[#FFFFFF] to-[#FFFFFF]"
+            : " bg-[#E2D4FF] "
             }`}
         >
           <Header isDarkTheme={isDarkTheme} />
