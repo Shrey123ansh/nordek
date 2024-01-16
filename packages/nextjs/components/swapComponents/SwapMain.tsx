@@ -19,8 +19,6 @@ import { TbArrowsUpDown } from "react-icons/tb";
 import { IoIosSettings } from "react-icons/io";
 
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { notification } from "~~/utils/scaffold-eth";
 
 export default function SwapMain() {
@@ -471,17 +469,7 @@ export default function SwapMain() {
           minimumPrice={Number(token1Amount) - ((Number(token1Amount) * slippage) / 100)}></SwapFooter>
 
       </div >
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark" />
+
     </>
   );
 }

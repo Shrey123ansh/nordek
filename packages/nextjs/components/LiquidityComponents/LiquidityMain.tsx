@@ -20,9 +20,10 @@ import TokenListPopup from "../ui/TokenListPopup";
 import { Select } from "../Select/Select";
 import { MdArrowDropDown } from "react-icons/md";
 import { fetchBalance, waitForTransaction } from '@wagmi/core'
+import { notification } from "~~/utils/scaffold-eth";
 
 
-export default function LiquidityMain() {
+export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => {} }) {
   const address0 = "0x0000000000000000000000000000000000000000"
   const [token0Amount, setToken0Amount] = useState<Number>(0);
   const [token1Amount, setToken1Amount] = useState<Number>(0);
@@ -86,6 +87,7 @@ export default function LiquidityMain() {
     },
     onSuccess: async () => {
       await addToDataBase()
+
       setToken0Amount(0)
       setToken1Amount(0)
       setUpdate(update + 1)
@@ -114,6 +116,7 @@ export default function LiquidityMain() {
     },
     onSuccess: async () => {
       await addToDataBase()
+
       setToken0Amount(0)
       setToken1Amount(0)
       setUpdate(update + 1)
@@ -139,6 +142,7 @@ export default function LiquidityMain() {
     },
     onSuccess: async () => {
       await addToDataBase()
+
       setToken0Amount(0)
       setToken1Amount(0)
       setUpdate(update + 1)
@@ -169,33 +173,56 @@ export default function LiquidityMain() {
 
       console.log(response);
       console.log("added to database ");
+      handleUpdate()
     } catch (error) {
       console.log(error);
     }
   }
 
-
+  let approvalId = null
+  const approvalNotification = () => {
+    approvalId = notification.loading("Waiting for user approval")
+  }
+  const removeApprovalNotification = () => {
+    notification.remove(approvalId)
+  }
+  let txCompId = null
+  const txCompletionWaitNotification = () => {
+    txCompId = notification.loading("Waiting for Tx to complete")
+  }
+  const removeTxCompNotification = () => {
+    notification.remove(txCompId)
+  }
 
   const handleAddLiquidity = async () => {
     console.log("add liuidity")
     const nrkAddress: string = localTokens.NRK.address
-    if (token0Amount === 0 || token1Amount === 0) return
+    if (token0Amount === 0 || token1Amount === 0) {
+      notification.error("Amount Cannot be 0", {
+        duration: 1000
+      })
+      return
+    }
     console.log("non zero")
     if (token0.address === nrkAddress || token1.address === nrkAddress) {
       console.log("nordek address")
       if (token0.address === nrkAddress) {
         console.log("token 1 nordek")
         try {
+          approvalNotification()
           const { hash: approveHash } = await writeContract({
             address: token1.address,
             abi: erc20ABI.abi,
             functionName: 'approve',
             args: [routerContract.address, parseEther(`${token1Amount}`)],
           })
+          removeApprovalNotification()
 
+          txCompletionWaitNotification()
           await waitForTransaction({
             hash: approveHash
           })
+          removeTxCompNotification()
 
           console.log("approve")
           await addLiquidityETHToken0()
@@ -205,15 +232,20 @@ export default function LiquidityMain() {
       } else if (token1.address === nrkAddress) {
         console.log("token 2 nordek")
         try {
+          approvalNotification()
           const { hash: approveHash } = await writeContract({
             address: token0.address,
             abi: erc20ABI.abi,
             functionName: 'approve',
             args: [routerContract.address, parseEther(`${token0Amount}`)],
           })
+          removeApprovalNotification()
+          txCompletionWaitNotification()
           await waitForTransaction({
             hash: approveHash
           })
+          removeTxCompNotification()
+
           await addLiquidityETHToken1()
         } catch (error) { }
       }
@@ -223,27 +255,34 @@ export default function LiquidityMain() {
     else {
       // addLiquidity 
       try {
+        approvalNotification()
         const { hash: approveHash } = await writeContract({
           address: token0.address,
           abi: erc20ABI.abi,
           functionName: 'approve',
           args: [routerContract.address, parseEther(`${token0Amount}`)],
         })
+        removeApprovalNotification()
+        txCompletionWaitNotification()
         await waitForTransaction({
           hash: approveHash
         })
+        removeTxCompNotification()
       } catch (error) { }
       try {
-
+        approvalNotification()
         const { hash: approveHash } = await writeContract({
           address: token1.address,
           abi: erc20ABI.abi,
           functionName: 'approve',
           args: [routerContract.address, parseEther(`${token1Amount}`)],
         })
+        removeApprovalNotification()
+        txCompletionWaitNotification()
         await waitForTransaction({
           hash: approveHash
         })
+        removeTxCompNotification()
       } catch (error) { }
       await addLiquidity()
     }

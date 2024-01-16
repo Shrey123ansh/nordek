@@ -8,7 +8,7 @@ import { Liquidity } from "~~/pages/api/liquidity";
 
 
 
-export default function LiquidityPositions() {
+export default function LiquidityPositions({ updatePosition }: { updatePosition: Number }) {
   const address0 = "0x0000000000000000000000000000000000000000"
   const { address: account, isConnected, isConnecting } = useAccount()
   const [userLiquidity, setUserLiquidity] = useState<Liquidity[]>([])
@@ -29,7 +29,7 @@ export default function LiquidityPositions() {
       }
     }
     getUserLiquidity()
-  }, [isConnected, onRemove])
+  }, [isConnected, onRemove, updatePosition])
 
 
   return (
