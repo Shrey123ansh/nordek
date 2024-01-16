@@ -1,3 +1,4 @@
+import { useDarkMode } from "usehooks-ts";
 import { Select } from "../Select/Select";
 import { tokenType } from "~~/data/data";
 
@@ -11,10 +12,16 @@ type SwapFooterProps = {
 };
 
 const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount, title, balance }: SwapFooterProps) => {
+
+  const { isDarkMode } = useDarkMode()
+
   return (
 
 
-    <div className=" shadow-md  rounded-lg  bg-swap-gradient  px-4 py-2 mb-4 mt-4 " >
+    <div className={
+      isDarkMode ? " shadow-md  rounded-lg  bg-swap-gradient   px-4 py-2 mb-4 mt-4 " :
+        " shadow-md  rounded-lg  bg-swap-gradient  border-2 border-[#E2D4FF]  px-4 py-2 mb-4 mt-4 "
+    } >
       <div className="mb-4 font-semibold " >{title}</div>
       <div className=" flex flex-row items-center   justify-between  " >
         <Select setToken={setToken} token={token}></Select>

@@ -21,9 +21,11 @@ import { Select } from "../Select/Select";
 import { MdArrowDropDown } from "react-icons/md";
 import { fetchBalance, waitForTransaction } from '@wagmi/core'
 import { notification } from "~~/utils/scaffold-eth";
+import { useDarkMode } from "usehooks-ts";
 
 
 export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => void }) {
+  const { isDarkMode } = useDarkMode()
   const address0 = "0x0000000000000000000000000000000000000000"
   const [token0Amount, setToken0Amount] = useState<Number>(0);
   const [token1Amount, setToken1Amount] = useState<Number>(0);
@@ -578,8 +580,9 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
 
 const TokenAmountEntry = ({ setTokenAmount, tokenAmount, token, balance }: { balance: Number, setTokenAmount: (value: Number) => void, tokenAmount: Number, token: tokenType }) => {
+  const { isDarkMode } = useDarkMode()
   return (
-    <div className="mt-4   " >
+    <div className="mt-4 " >
       <div className="flex flex-row items-center  justify-between" >
         <div className="flex flex-row items-center" >
           <img src={token.logo} className="w-6 h-6 rounded-full mr-2" />
@@ -590,7 +593,9 @@ const TokenAmountEntry = ({ setTokenAmount, tokenAmount, token, balance }: { bal
         <div className="font-semibold text-sm"  >{`Balance : ${balance === 0 ? 0 : balance.toFixed(4)}`}</div>
       </div>
 
-      <div className=" flex flex-col  shadow-md  bg-swap-gradient rounded-lg px-4 py-4 mb-4 mt-4  " >
+      <div className={
+        ` flex flex-col  shadow-md  bg-swap-gradient rounded-lg px-4 py-4 mb-4 mt-4 ${!isDarkMode && "border-2 border-[#E2D4FF]"
+        } `} >
         <input
           type="number"
           placeholder="0.0"
@@ -631,9 +636,11 @@ const LiquidityTokenSelectButton = ({ setToken, token }: {
     setIsPopupOpen(!isPopupOpen);
   };
 
+  const { isDarkMode } = useDarkMode()
   return (
     <>
-      <button className="rounded-full flex flex-row bg-white  items-center   text-gray-800 text-xs py-1 px-4 w-full " onClick={handlePopup} >
+      <button className={`rounded-full flex flex-row bg-white  items-center   text-gray-800 text-xs py-1 px-4 w-full ${!isDarkMode && "border - 2 border-[#E2D4FF]"
+        } `} onClick={handlePopup} >
         <div className="flex flex-row flex-1 " >
           <div className="flex items-center font-semibold text-base  justify-between   ">
             {" "}
@@ -642,7 +649,7 @@ const LiquidityTokenSelectButton = ({ setToken, token }: {
           </div>
         </div>
         <MdArrowDropDown className="text-gray-800  invisible lg:visible   " size={15} />
-      </button>
+      </button >
       <TokenListPopup isOpen={isPopupOpen} onClose={handlePopup} setToken={setToken}></TokenListPopup>
     </>
   );

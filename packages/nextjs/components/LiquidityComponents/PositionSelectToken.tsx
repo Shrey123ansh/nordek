@@ -18,11 +18,13 @@ import { RiArrowDropDownLine, RiArrowDropUpLine } from "react-icons/ri";
 import { RangeSlider } from 'toolcool-range-slider';
 import { FaArrowDownLong } from "react-icons/fa6";
 import { notification } from "~~/utils/scaffold-eth";
+import { useDarkMode } from "usehooks-ts";
+
 
 
 
 const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity: Liquidity, updateOnRemove: (value: bool) => void, onRemove: bool }) => {
-
+  const { isDarkMode } = useDarkMode()
   const { data: routerContract } = useDeployedContractInfo("NordekV2Router02");
   const nrkAddress: string = localTokens.NRK.address
   const sliderRef = useRef(null);
@@ -204,7 +206,7 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
   return (
     <>
 
-      <div className="bg-swap-gradient rounded-lg px-4 py-4 mb-4" >
+      <div className="bg-swap-gradient rounded-lg px-4 py-4 mb-4  " >
 
         <div className="flex flex-row w-full  items-center justify-between  " >
           <div className="flex flex-row items-center font-medium ml-2  text-sm lg:text-base " >
@@ -213,7 +215,7 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
             <img src={liqudity.token1.logo} className="w-4 h-4 lg:w-6 lg:h-6 rounded-full  mr-2   " />
             {`${liqudity.token0.symbol}/${liqudity.token1.symbol}`}
           </div>
-          <button className="flex flex-row items-center  bg-secondary rounded-full px-2 lg:px-4 lg:py-1  text-xs  lg:text-sm font-medium " onClick={() => { setOpen(!open); setRemove(false) }} >
+          <button className="flex flex-row items-center  bg-primary text-white rounded-full px-2 lg:px-4 lg:py-1  text-xs  lg:text-sm font-medium " onClick={() => { setOpen(!open); setRemove(false) }} >
             Manage
             {open ? <RiArrowDropUpLine className="ml-2 " />
               : <RiArrowDropDownLine className="ml-2" />}
@@ -251,7 +253,7 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
                 </div>
               </div>
 
-              {!remove && <button className=" text-center  w-full mt-4 font-medium bg-secondary rounded-lg py-2  " onClick={() => { setRemove(true) }} >
+              {!remove && <button className=" text-center  w-full mt-4 font-medium bg-primary text-white rounded-lg py-2  " onClick={() => { setRemove(true) }} >
                 Remove
               </button>}
 

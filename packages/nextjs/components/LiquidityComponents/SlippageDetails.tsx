@@ -5,6 +5,7 @@ import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json"
 import { nordek } from "~~/utils/NordekChain";
 import { tokenType } from "~~/data/data";
 import { formatEther } from "viem";
+import { useDarkMode } from "usehooks-ts";
 
 type DetailsType = {
   pairContract: string,
@@ -28,12 +29,12 @@ const SlippageDetails = ({ token1, token2, reserve1 = 0, reserve2 = 0, share = 0
     setToken2PerToken1(Number(value2.toFixed(4).replace(/[.,]00$/, "")))
   }, [reserve1, reserve2, token1, token2])
 
-
+  const { isDarkMode } = useDarkMode()
 
   return (
 
 
-    <div className="shadow-md bg-swap-gradient rounded-lg mt-4   font-medium    " >
+    <div className={`shadow-md bg-swap-gradient rounded-lg mt-4   font-medium ${!isDarkMode && "border-2 border-[#E2D4FF]"}   `} >
 
       <div className="px-4 pt-4  text-[10px]" >
         PRICES AND POOL SHARE

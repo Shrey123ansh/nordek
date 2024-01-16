@@ -48,7 +48,7 @@ module.exports = {
 
           "--swap-gradient": "linear-gradient(to right, #E2D4FF, #FFFFFF)",
           ".bg-swap-gradient": {
-            // background: "var(--swap-gradient)",
+            background: "var(--swap-gradient)",
           },
 
           "--setting-gradient": "linear-gradient(to right, #E2D4FF,#FFFFFF)",
@@ -89,6 +89,11 @@ module.exports = {
 
           },
 
+          ".lightBorders": {
+            stroke: "#E2D4FF",
+            strokeWidth: "2px"
+
+          }
 
         },
       },

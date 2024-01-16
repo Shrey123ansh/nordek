@@ -360,15 +360,18 @@ const Stake: NextPage = () => {
   // });
 
   return (
-    <>
-      <div className="w-[80%] flex items-center flex-col flex-grow pt-10 justify-center m-auto font-inter">
-        {/* <StakeInfoBox></StakeInfoBox> */}
-        <StakeHeader />
-        <StakeInfo></StakeInfo>
-        <StakeBox></StakeBox>
-        <StakesTable></StakesTable>
-      </div>
-    </>
+
+    // <div className="w-[80%] flex items-center flex-col flex-grow pt-10 justify-center m-auto font-inter">
+    //   {/* <StakeInfoBox></StakeInfoBox> */}
+    //   <StakeHeader />
+    //   <StakeInfo></StakeInfo>
+    //   <StakeBox></StakeBox>
+    //   <StakesTable></StakesTable>
+    // </div>
+    <div className="flex flex-row items-center justify-center mt-12  font-bold  text-4xl  " >
+      Comming Soon
+    </div>
+
   );
 };
 

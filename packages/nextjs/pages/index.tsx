@@ -21,8 +21,9 @@ const Home: NextPage = () => {
   return (
     <>
       <div className="flex flex-col w-full">
-        <Hero />
-        <Features />
+        {/* <Hero />
+        <Features /> */}
+        Home
       </div>
     </>
   );
