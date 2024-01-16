@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import RPCComponent from "../SettingsComponents/RPCComponent";
 import SwapModes from "../SettingsComponents/SwapModes";
-import SwapSettings from "../SettingsComponents/SwapSettings";
-import TransactionSpeed from "../SettingsComponents/TransactionSpeed";
+import { notification } from "~~/utils/scaffold-eth";
 
 interface SettingsPopupProps {
   isOpen: boolean;
@@ -20,7 +19,10 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
   const slippageValues = [0.1, 0.5, 1];
 
   const handleSlippageClick = (value: number) => {
-    if (value > 5) return
+    if (value > 5) {
+      notification.info("Slippage Can't be more than 5%", { duration: 1000 })
+      return
+    }
     const decimalCount = (value.toString().split('.')[1] || '').length;
     if (decimalCount > 4) return
     setSelectedSlippage(value);
@@ -78,9 +80,9 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
             </div>
             <input
               type="number"
-              placeholder="0"
+              placeholder="0.0"
               className="px-2 py-2 bg-transparent rounded-lg text-right appearance-none outline-none "
-              value={selectedSlippage}
+              value={selectedSlippage === 0 ? "" : Number(selectedSlippage)}
               onChange={e => handleSlippageClick(Number(e.target.value))}
             />
           </div>
