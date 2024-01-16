@@ -36,6 +36,7 @@ export default function LiquidityMain() {
   const [slippage, setSlippage] = useState(0.5)
   const [update, setUpdate] = useState(0)
   const token0Min = Number(token0Amount) - ((Number(token0Amount) * slippage) / 100)
+
   const token1Min = Number(token1Amount) - ((Number(token1Amount) * slippage) / 100)
   const currentDate = new Date();
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
@@ -66,7 +67,6 @@ export default function LiquidityMain() {
       setShare(0)
     }
   }, [isFetched])
-
 
 
   const { writeAsync: addLiquidityETHToken0 } = useScaffoldContractWrite({
@@ -555,8 +555,8 @@ const TokenAmountEntry = ({ setTokenAmount, tokenAmount, token, balance }: { bal
       <div className=" flex flex-col  shadow-md  bg-swap-gradient rounded-lg px-4 py-4 mb-4 mt-4  " >
         <input
           type="number"
-          placeholder="0"
-          value={tokenAmount.toFixed(4).replace(/[.,]0000$/, "")?.toString()}
+          placeholder="0.0"
+          value={tokenAmount !== 0 ? tokenAmount.toFixed(4).replace(/[.,]0000$/, "")?.toString() : ""}
           className="input input-sm pr-0 bg-transparent w-full text-lg  font-semibold  input-ghost max-w-md text-right rounded-none focus:outline-none leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           onChange={e => {
             const value = Number(e.target.value)

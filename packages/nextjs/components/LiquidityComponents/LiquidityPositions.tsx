@@ -45,16 +45,13 @@ export default function LiquidityPositions() {
         <div>
           {
             userLiquidity.map((value, key) => {
+              console.log("fetched")
               return <div key={key}>
                 <PositionSelectToken liqudity={value} updateOnRemove={setOnRemove} onRemove={onRemove} />
               </div>
             })
           }
         </div>
-
-
-
-
 
       </>}
     </div>

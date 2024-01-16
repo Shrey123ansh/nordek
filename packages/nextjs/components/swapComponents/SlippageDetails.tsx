@@ -35,9 +35,8 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
 
       <div className="flex justify-between">
         <span> Price </span>
+
         <div className="flex items-center gap-1">
-
-
           {
             toggleBtn ? (
               <div className="">
@@ -56,6 +55,7 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
             <AiOutlineSwap className="text-lg " />
           </button>
         </div>
+
       </div>
 
 

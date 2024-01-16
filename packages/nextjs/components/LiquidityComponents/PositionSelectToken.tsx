@@ -172,9 +172,9 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
 
 
 
-  const setSliderValue = (value: Number) => {
-    sliderRef.current.setAttribute("value", `${value}`)
-  }
+
+  console.log(liqudity.token0)
+  console.log(liqudity.token)
 
 
   return (
@@ -185,8 +185,8 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
         <div className="flex flex-row w-full  items-center justify-between  " >
           <div className="flex flex-row items-center font-medium ml-2  text-sm lg:text-base " >
 
-            <img src={liqudity.token0.logo} className=" w-4 h-4 lg:w-6 lg:h-6 rounded-full    mr-2   " />
-            <img src={liqudity.token1.logo} className="w-4 h-4 lg:w-6 lg:h-6 rounded-full   absolute -ml-3 " />
+            <img src={liqudity.token0.logo} className=" w-4 h-4 lg:w-6 lg:h-6 rounded-full  absolute -ml-3   " />
+            <img src={liqudity.token1.logo} className="w-4 h-4 lg:w-6 lg:h-6 rounded-full  mr-2   " />
             {`${liqudity.token0.symbol}/${liqudity.token1.symbol}`}
           </div>
           <button className="flex flex-row items-center  bg-secondary rounded-full px-2 lg:px-4 lg:py-1  text-xs  lg:text-sm font-medium " onClick={() => { setOpen(!open); setRemove(false) }} >
@@ -207,7 +207,7 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
 
 
               <div className="flex flex-row items-center justify-between  font-normal text-sm  " >
-                <div>Your total pool tokens:</div>
+                <div>Your Lp Tokens:</div>
                 <div>{liqudity.lpTokens.toFixed(2).replace(/[.,]00$/, "")}</div>
               </div>
 
@@ -223,7 +223,7 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
                 <div>{`Pooled ${liqudity.token1.symbol}`}</div>
                 <div className="flex flex-row items-center" >
                   {liqudity.token1Amount.toFixed(2).replace(/[.,]00$/, "")}
-                  <img src={liqudity.token0.logo} className="w-4 h-4 rounded-full ml-2 " />
+                  <img src={liqudity.token1.logo} className="w-4 h-4 rounded-full ml-2 " />
                 </div>
               </div>
 

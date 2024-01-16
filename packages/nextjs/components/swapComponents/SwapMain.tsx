@@ -171,6 +171,11 @@ export default function SwapMain() {
       // console.log(kLastValue)
       setKLast(Number(kLastValue))
     }
+    else if (pairContract === "0x0000000000000000000000000000000000000000") {
+      console.log("pair is zero getdata")
+      setReserve1(0)
+      setReserve2(0)
+    }
   }
 
   // const saveStakeToDb = async (newTrade: {
@@ -225,9 +230,8 @@ export default function SwapMain() {
   // }, [isFetched])
 
   useEffect(() => {
-
     getData()
-  }, [pairContract])
+  }, [pairContract, token1, token0])
 
 
   const { writeAsync: swapNRKToToken } = useScaffoldContractWrite({
@@ -400,6 +404,7 @@ export default function SwapMain() {
 
   return (
     <div className="flex flex-col">
+      {reserveA === 0 && reserveB === 0 && <div className=" text-center font-bold " >NO PAIR EXISTS</div>}
       <SelectToken
         token={token0}
         setToken={setTokenA}
