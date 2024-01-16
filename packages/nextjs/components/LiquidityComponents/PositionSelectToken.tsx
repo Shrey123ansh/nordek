@@ -17,6 +17,7 @@ import { RiArrowDropDownLine, RiArrowDropUpLine } from "react-icons/ri";
 // import 'toolcool-range-slider';
 import { RangeSlider } from 'toolcool-range-slider';
 import { FaArrowDownLong } from "react-icons/fa6";
+import { notification } from "~~/utils/scaffold-eth";
 
 
 
@@ -37,6 +38,22 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
       setPercentage(value)
       setValue((Number(liqudity.lpTokens) * value) / 100)
     }
+  }
+
+
+  let approvalId = null
+  const approvalNotification = () => {
+    approvalId = notification.loading("Waiting for user approval")
+  }
+  const removeApprovalNotification = () => {
+    notification.remove(approvalId)
+  }
+  let txCompId = null
+  const txCompletionWaitNotification = () => {
+    txCompId = notification.loading("Waiting for Tx to complete")
+  }
+  const removeTxCompNotification = () => {
+    notification.remove(txCompId)
   }
 
   const token0Withdraw = (Number(liqudity.token0Amount) * percentage) / 100
@@ -148,18 +165,25 @@ const PositionSelectToken = ({ liqudity, updateOnRemove, onRemove }: { liqudity:
 
     try {
       console.log(value)
-      if (percentage === 0) return
+      if (percentage === 0) {
+        notification.error("Percentage cannot be 0", { duration: 1000 })
+        return
+      }
       var _value = (Number(value) * percentage) / 100
       console.log("pair contract  value  " + liqudity.pairContract)
+      approvalNotification()
       const { hash: approveHash } = await writeContract({
         address: liqudity.pairContract,
         abi: pairABI.abi,
         functionName: 'approve',
         args: [routerContract.address, parseEther(`${_value}`)]
       })
+      removeApprovalNotification()
+      txCompletionWaitNotification()
       await waitForTransaction({
         hash: approveHash
       })
+      removeTxCompNotification()
       console.log("token 1 withdraw amount " + token0WithdrawMin)
       console.log("token 2 withdraw amount " + token1WithdrawMin)
       if (liqudity.token0.address === nrkAddress || liqudity.token1.address === nrkAddress) {
