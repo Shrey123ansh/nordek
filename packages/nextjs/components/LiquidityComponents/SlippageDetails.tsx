@@ -68,7 +68,7 @@ const SlippageDetails = ({ token1, token2, reserve1 = 0, reserve2 = 0, share = 0
             {share}
           </div>
           <div className=" mt-2 text-sm " >
-            Share of pool
+            No. of LP tokens
           </div>
         </div>
       </div>

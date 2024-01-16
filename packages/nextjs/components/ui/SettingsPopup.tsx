@@ -64,7 +64,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
           <h1 className="mb-4 font-medium ">TRADING</h1>
           <div className="flex justify-between">
             <div className="flex flex-col">
-              <h1 className="mb-4 text-gray-400 font-medium "> Slippage Tollerance</h1>
+              <h1 className="mb-4 text-gray-400 font-medium "> Slippage Tolerance</h1>
               <ul className="flex list-none space-x-4">
                 {slippageValues.map(value => (
                   <li

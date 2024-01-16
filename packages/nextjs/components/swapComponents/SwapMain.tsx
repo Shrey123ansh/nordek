@@ -15,6 +15,7 @@ import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldContractWr
 import { nordek } from "~~/utils/NordekChain";
 import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
 import { fetchBalance, waitForTransaction } from '@wagmi/core'
+import { TbArrowsUpDown } from "react-icons/tb";
 
 
 
@@ -407,8 +408,8 @@ export default function SwapMain() {
         title="From"
         balance={balance0}
       ></SelectToken>
-      <button className="w-full h-6 flex flex-row items-center justify-center text-white rounded-full " onClick={() => { setToken0(token1); setToken1(token0); setReserve1(reserveB); setReserve2(reserveA) }}   >
-        <ArrowDownIcon className="font-bold w-6 h-6 " />
+      <button className="w-full h-6 flex flex-row items-center justify-center     rounded-full " onClick={() => { setToken0(token1); setToken1(token0); setReserve1(reserveB); setReserve2(reserveA) }}   >
+        <TbArrowsUpDown />
       </button>
       <SelectToken
         token={token1}

@@ -102,7 +102,7 @@ export const RainbowKitCustomConnectButton = () => {
                     type="button"
                     className="space-x-4"
                   >
-                    <span>{account.displayBalance}</span>
+                    {/* <span>{account.displayBalance}</span> */}
                     {chain.hasIcon && (
                       <div
                         style={{
@@ -119,7 +119,7 @@ export const RainbowKitCustomConnectButton = () => {
                         )}
                       </div>
                     )}
-                    {chain.name}
+                    {/* {chain.name} */}
                   </button>
 
                   <WalletButton buttonText={account.displayName} onClickFunc={openAccountModal}></WalletButton>

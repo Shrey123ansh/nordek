@@ -88,6 +88,7 @@ module.exports = {
 
           },
 
+
         },
       },
       {
@@ -95,7 +96,6 @@ module.exports = {
           primary: "#642EFF",
           "primary-content": "#FFFFFF",
           secondary: "#A259FF",
-
 
 
           "secondary-content": "#A259FF",
