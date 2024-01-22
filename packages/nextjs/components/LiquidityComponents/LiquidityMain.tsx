@@ -1,103 +1,100 @@
 //import PriceComponent from "./PriceBox";
 import { useEffect, useState } from "react";
+import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
+import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
+import { Select } from "../Select/Select";
+import { updateUserData } from "../StakingComponents/APICallFunctions";
 import SelectToken from "../swapComponents/SelectToken";
+import TokenListPopup from "../ui/TokenListPopup";
 import LiquidityFooter from "./LiquidityFooter";
 import SlippageDetails from "./SlippageDetails";
+import { readContract } from "@wagmi/core";
+import { writeContract } from "@wagmi/core";
+import { fetchBalance, waitForTransaction } from "@wagmi/core";
+import axios from "axios";
+import { MdArrowDropDown } from "react-icons/md";
+import { useDarkMode } from "usehooks-ts";
 import { formatEther, parseEther } from "viem";
-import { Liquidity } from "~~/pages/api/liquidity";
 import { useAccount } from "wagmi";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import { localTokens, tokenType } from "~~/data/data";
 import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
-import { readContract } from '@wagmi/core'
-import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
+import { Liquidity } from "~~/pages/api/liquidity";
 import { nordek } from "~~/utils/NordekChain";
-import { writeContract } from '@wagmi/core'
-import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
-import { updateUserData } from "../StakingComponents/APICallFunctions";
-import axios from "axios";
-import TokenListPopup from "../ui/TokenListPopup";
-import { Select } from "../Select/Select";
-import { MdArrowDropDown } from "react-icons/md";
-import { fetchBalance, waitForTransaction } from '@wagmi/core'
 import { notification } from "~~/utils/scaffold-eth";
-import { useDarkMode } from "usehooks-ts";
-
 
 export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => void }) {
-  const { isDarkMode } = useDarkMode()
-  const address0 = "0x0000000000000000000000000000000000000000"
+  const { isDarkMode } = useDarkMode();
+  const address0 = "0x0000000000000000000000000000000000000000";
   const [token0Amount, setToken0Amount] = useState<Number>(0);
   const [token1Amount, setToken1Amount] = useState<Number>(0);
   const { address: account } = useAccount();
   const [token0, setToken0] = useState<tokenType>(localTokens.NRK);
   const [token1, setToken1] = useState<tokenType>(localTokens.PERC);
-  const [pairContract, setPairContract] = useState("0x0000000000000000000000000000000000000000")
-  const [reserveA, setReserve1] = useState(0)
-  const [reserveB, setReserve2] = useState(0)
+  const [pairContract, setPairContract] = useState("0x0000000000000000000000000000000000000000");
+  const [reserveA, setReserve1] = useState(0);
+  const [reserveB, setReserve2] = useState(0);
   const { data: routerContract } = useDeployedContractInfo("NordekV2Router02");
-  const [slippage, setSlippage] = useState(0.5)
-  const [update, setUpdate] = useState(0)
-  const token0Min = Number(token0Amount) - ((Number(token0Amount) * slippage) / 100)
-  const token1Min = Number(token1Amount) - ((Number(token1Amount) * slippage) / 100)
+  const [slippage, setSlippage] = useState(0.5);
+  const [update, setUpdate] = useState(0);
+  const token0Min = Number(token0Amount) - (Number(token0Amount) * slippage) / 100;
+  const token1Min = Number(token1Amount) - (Number(token1Amount) * slippage) / 100;
   const currentDate = new Date();
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
-  const [share, setShare] = useState(0)
-  const [tokenAFromContract, setTokenAFromContract] = useState(address0)
-  const [lpTokens, setLPTokens] = useState(0)
-  const [pairTotalSupply, setPairTotalSupply] = useState(0)
-  const [kLast, setKLast] = useState(0)
-  const token0AmountNumber: number = Number(token0Amount)
-  const token1AmountNumber: number = Number(token1Amount)
-  const [balance0, setBalance0] = useState(0)
-  const [balance1, setBalance1] = useState(0)
+  const [share, setShare] = useState(0);
+  const [tokenAFromContract, setTokenAFromContract] = useState(address0);
+  const [lpTokens, setLPTokens] = useState(0);
+  const [pairTotalSupply, setPairTotalSupply] = useState(0);
+  const [kLast, setKLast] = useState(0);
+  const token0AmountNumber: number = Number(token0Amount);
+  const token1AmountNumber: number = Number(token1Amount);
+  const [balance0, setBalance0] = useState(0);
+  const [balance1, setBalance1] = useState(0);
 
   const { data: pc, isFetched } = useScaffoldContractRead({
     contractName: "NordekV2Factory",
     functionName: "getPair",
     args: [token0.address, token1.address],
     account: account,
-
   });
 
   useEffect(() => {
-    setPairContract(pc)
+    setPairContract(pc);
     if (pc === address0) {
-      setShare(100)
+      setShare(100);
     }
     if (pc !== address0) {
-      setShare(0)
+      setShare(0);
     }
-  }, [isFetched])
-
+  }, [isFetched]);
 
   const { writeAsync: addLiquidityETHToken0 } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
     functionName: "addLiquidityNRK",
     args: [
       token1.address,
-      parseEther(`${token1Amount}`),
-      parseEther(`${token1Min}`),
-      parseEther(`${token0Min}`),
+      parseEther(`${token1Amount.toFixed(6)}`),
+      parseEther(`${token1Min.toFixed(6)}`),
+      parseEther(`${token0Min.toFixed(6)}`),
       account,
-      BigInt(unixTimestampInSeconds + 300)
+      BigInt(unixTimestampInSeconds + 300),
     ],
     value: `${token0AmountNumber}`,
-    onBlockConfirmation: async (txnReceipt) => {
+    onBlockConfirmation: async txnReceipt => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
-      await getBalance()
+      await getBalance();
     },
     onSuccess: async () => {
-      await addToDataBase()
+      await addToDataBase();
 
-      setToken0Amount(0)
-      setToken1Amount(0)
-      setUpdate(update + 1)
+      setToken0Amount(0);
+      setToken1Amount(0);
+      setUpdate(update + 1);
     },
     onError(error, variables, context) {
-      console.log("error " + error)
-      console.log("variables " + variables)
-      console.log("context " + context)
+      console.log("error " + error);
+      console.log("variables " + variables);
+      console.log("context " + context);
     },
   });
   const { writeAsync: addLiquidityETHToken1 } = useScaffoldContractWrite({
@@ -105,53 +102,55 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     functionName: "addLiquidityNRK",
     args: [
       token0.address,
-      parseEther(`${token0Amount}`),
-      parseEther(`${token0Min}`),
-      parseEther(`${token1Min}`),
+      parseEther(`${token0Amount.toFixed(6)}`),
+      parseEther(`${token0Min.toFixed(6)}`),
+      parseEther(`${token1Min.toFixed(6)}`),
       account,
-      BigInt(unixTimestampInSeconds + 300)
+      BigInt(unixTimestampInSeconds + 300),
     ],
     value: `${token1AmountNumber}`,
-    onBlockConfirmation: async (txnReceipt) => {
+    onBlockConfirmation: async txnReceipt => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
-      await getBalance()
+      await getBalance();
     },
     onSuccess: async () => {
-      await addToDataBase()
+      await addToDataBase();
 
-      setToken0Amount(0)
-      setToken1Amount(0)
-      setUpdate(update + 1)
-    }
+      setToken0Amount(0);
+      setToken1Amount(0);
+      setUpdate(update + 1);
+    },
   });
-  const { writeAsync: addLiquidity, isLoading, isMining } = useScaffoldContractWrite({
+  const {
+    writeAsync: addLiquidity,
+    isLoading,
+    isMining,
+  } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
     functionName: "addLiquidity",
     args: [
       token0.address,
       token1.address,
-      parseEther(`${token0Amount}`),
-      parseEther(`${token1Amount}`),
-      parseEther(`${token0Min}`),
-      parseEther(`${token1Min}`),
+      parseEther(`${token0Amount.toFixed(6)}`),
+      parseEther(`${token1Amount.toFixed(6)}`),
+      parseEther(`${token0Min.toFixed(6)}`),
+      parseEther(`${token1Min.toFixed(6)}`),
       account,
-      BigInt(unixTimestampInSeconds + 300)
+      BigInt(unixTimestampInSeconds + 300),
     ],
 
-    onBlockConfirmation: async (txnReceipt) => {
+    onBlockConfirmation: async txnReceipt => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
-      await getBalance()
+      await getBalance();
     },
     onSuccess: async () => {
-      await addToDataBase()
+      await addToDataBase();
 
-      setToken0Amount(0)
-      setToken1Amount(0)
-      setUpdate(update + 1)
-    }
+      setToken0Amount(0);
+      setToken1Amount(0);
+      setUpdate(update + 1);
+    },
   });
-
-
 
   const addToDataBase = async () => {
     const liquidity: Liquidity = {
@@ -161,8 +160,8 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       token1Amount: token1Amount,
       pairContract: pairContract,
       user: account,
-      lpTokens: Number(lpTokens)
-    }
+      lpTokens: Number(lpTokens),
+    };
 
     const headers = {
       "Content-Type": "application/json",
@@ -175,482 +174,480 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
       console.log(response);
       console.log("added to database ");
-      handleUpdate()
+      handleUpdate();
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  let approvalId = null
+  let approvalId = null;
   const approvalNotification = () => {
-    approvalId = notification.loading("Waiting for user approval")
-  }
+    approvalId = notification.loading("Waiting for user approval");
+  };
   const removeApprovalNotification = () => {
-    notification.remove(approvalId)
-  }
-  let txCompId = null
+    notification.remove(approvalId);
+  };
+  let txCompId = null;
   const txCompletionWaitNotification = () => {
-    txCompId = notification.loading("Waiting for Tx to complete")
-  }
+    txCompId = notification.loading("Waiting for Tx to complete");
+  };
   const removeTxCompNotification = () => {
-    notification.remove(txCompId)
-  }
+    notification.remove(txCompId);
+  };
 
   const handleAddLiquidity = async () => {
-    console.log("add liuidity")
-    const nrkAddress: string = localTokens.NRK.address
+    console.log("add liuidity");
+    const nrkAddress: string = localTokens.NRK.address;
     if (token0Amount === 0 || token1Amount === 0) {
       notification.error("Amount Cannot be 0", {
-        duration: 1000
-      })
-      return
+        duration: 1000,
+      });
+      return;
     }
-    console.log("non zero")
+    console.log("non zero");
     if (token0.address === nrkAddress || token1.address === nrkAddress) {
-      console.log("nordek address")
+      console.log("nordek address");
       if (token0.address === nrkAddress) {
-        console.log("token 1 nordek")
+        console.log("token 1 nordek");
         try {
-          approvalNotification()
+          approvalNotification();
           const { hash: approveHash } = await writeContract({
             address: token1.address,
             abi: erc20ABI.abi,
-            functionName: 'approve',
+            functionName: "approve",
             args: [routerContract.address, parseEther(`${token1Amount}`)],
-          })
-          removeApprovalNotification()
+          });
+          removeApprovalNotification();
 
-          txCompletionWaitNotification()
+          txCompletionWaitNotification();
           await waitForTransaction({
-            hash: approveHash
-          })
-          removeTxCompNotification()
+            hash: approveHash,
+          });
+          removeTxCompNotification();
 
-          console.log("approve")
-          await addLiquidityETHToken0()
-          console.log("add liquidity")
-
-        } catch (error) { console.log(error) }
+          console.log("approve");
+          await addLiquidityETHToken0();
+          console.log("add liquidity");
+        } catch (error) {
+          console.log(error);
+        }
       } else if (token1.address === nrkAddress) {
-        console.log("token 2 nordek")
+        console.log("token 2 nordek");
         try {
-          approvalNotification()
+          approvalNotification();
           const { hash: approveHash } = await writeContract({
             address: token0.address,
             abi: erc20ABI.abi,
-            functionName: 'approve',
+            functionName: "approve",
             args: [routerContract.address, parseEther(`${token0Amount}`)],
-          })
-          removeApprovalNotification()
-          txCompletionWaitNotification()
+          });
+          removeApprovalNotification();
+          txCompletionWaitNotification();
           await waitForTransaction({
-            hash: approveHash
-          })
-          removeTxCompNotification()
+            hash: approveHash,
+          });
+          removeTxCompNotification();
 
-          await addLiquidityETHToken1()
-        } catch (error) { }
+          await addLiquidityETHToken1();
+        } catch (error) {}
       }
-
-
-    }
-    else {
-      // addLiquidity 
+    } else {
+      // addLiquidity
       try {
-        approvalNotification()
+        approvalNotification();
         const { hash: approveHash } = await writeContract({
           address: token0.address,
           abi: erc20ABI.abi,
-          functionName: 'approve',
+          functionName: "approve",
           args: [routerContract.address, parseEther(`${token0Amount}`)],
-        })
-        removeApprovalNotification()
-        txCompletionWaitNotification()
+        });
+        removeApprovalNotification();
+        txCompletionWaitNotification();
         await waitForTransaction({
-          hash: approveHash
-        })
-        removeTxCompNotification()
-      } catch (error) { }
+          hash: approveHash,
+        });
+        removeTxCompNotification();
+      } catch (error) {}
       try {
-        approvalNotification()
+        approvalNotification();
         const { hash: approveHash } = await writeContract({
           address: token1.address,
           abi: erc20ABI.abi,
-          functionName: 'approve',
+          functionName: "approve",
           args: [routerContract.address, parseEther(`${token1Amount}`)],
-        })
-        removeApprovalNotification()
-        txCompletionWaitNotification()
+        });
+        removeApprovalNotification();
+        txCompletionWaitNotification();
         await waitForTransaction({
-          hash: approveHash
-        })
-        removeTxCompNotification()
-      } catch (error) { }
-      await addLiquidity()
+          hash: approveHash,
+        });
+        removeTxCompNotification();
+      } catch (error) {}
+      await addLiquidity();
     }
-
   };
 
-
-
-  const { data: factoryContract } = useDeployedContractInfo("NordekV2Factory")
+  const { data: factoryContract } = useDeployedContractInfo("NordekV2Factory");
 
   const setTokenA = (token: tokenType) => {
     if (token.address !== token1.address) {
-      setToken0(token)
+      setToken0(token);
     }
-  }
+  };
   const setTokenB = (token: tokenType) => {
     if (token.address !== token0.address) {
-      setToken1(token)
+      setToken1(token);
     }
-  }
+  };
   const getPairAddress = async () => {
-    setToken0Amount(0)
-    setToken1Amount(0)
-    console.log("pair contract function")
+    setToken0Amount(0);
+    setToken1Amount(0);
+    console.log("pair contract function");
     try {
       const pairAddress = await readContract({
         address: factoryContract?.address,
         abi: factoryContract?.abi,
-        functionName: 'getPair',
+        functionName: "getPair",
         args: [token0.address, token1.address],
-        account: account
-      })
-      console.log("pair contrat from toggle" + pairAddress)
+        account: account,
+      });
+      console.log("pair contrat from toggle" + pairAddress);
 
-      setPairContract(pairAddress)
+      setPairContract(pairAddress);
       if (pairAddress === address0) {
-        setShare(100)
-        setReserve1(0)
-        setReserve2(0)
+        setShare(100);
+        setReserve1(0);
+        setReserve2(0);
       }
       if (pairAddress !== address0) {
-        setShare(0)
+        setShare(0);
       }
-
-    } catch (error) {
-
-    }
-  }
-
-
+    } catch (error) {}
+  };
 
   useEffect(() => {
-    console.log("pair contract getting ")
-    getPairAddress()
-  }, [token0, token1, update])
-
-
+    console.log("pair contract getting ");
+    getPairAddress();
+  }, [token0, token1, update]);
 
   useEffect(() => {
     const getData = async () => {
       if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
-        console.log(pairContract)
+        console.log(pairContract);
         const reserves = await readContract({
           address: pairContract,
           abi: pairABI.abi,
           functionName: "getReserves",
           account: account,
-          chainId: nordek.id
-        })
+          chainId: nordek.id,
+        });
         const tokenA = await readContract({
           address: pairContract,
           abi: pairABI.abi,
           functionName: "token0",
           account: account,
-          chainId: nordek.id
-        })
-        setTokenAFromContract(String(tokenA))
-        const reserve1 = Number(formatEther(reserves[0]))
-        const reserve2 = Number(formatEther(reserves[1]))
+          chainId: nordek.id,
+        });
+        setTokenAFromContract(String(tokenA));
+        const reserve1 = Number(formatEther(reserves[0]));
+        const reserve2 = Number(formatEther(reserves[1]));
 
         if (tokenA === token0.address) {
-          setReserve1(reserve1)
-          setReserve2(reserve2)
+          setReserve1(reserve1);
+          setReserve2(reserve2);
         } else if (tokenA === token1.address) {
-          setReserve2(reserve1)
-          setReserve1(reserve2)
+          setReserve2(reserve1);
+          setReserve1(reserve2);
         }
         const totalSupply = await readContract({
           address: pairContract,
           abi: pairABI.abi,
           functionName: "totalSupply",
           account: account,
-          chainId: nordek.id
-        })
-        const supply = Number(formatEther(BigInt(Number(totalSupply))))
-        setPairTotalSupply(supply)
+          chainId: nordek.id,
+        });
+        const supply = Number(formatEther(BigInt(Number(totalSupply))));
+        setPairTotalSupply(supply);
         // setPairTotalSupply(Number(formatEther(BigInt(totalSupply))))
         var kLastValue = await readContract({
           address: pairContract,
           abi: pairABI.abi,
           functionName: "kLast",
           account: account,
-          chainId: nordek.id
-        })
+          chainId: nordek.id,
+        });
         // setKLast(Number(formatEther(BigInt(Number(kLastValue)))))
-        kLastValue = BigInt(Number(kLastValue)) / BigInt(10 ** 36)
+        kLastValue = BigInt(Number(kLastValue)) / BigInt(10 ** 36);
         // console.log(kLastValue)
-        setKLast(Number(kLastValue))
+        setKLast(Number(kLastValue));
       }
-    }
-    getData()
-  }, [pairContract, update])
-
+    };
+    getData();
+  }, [pairContract, update]);
 
   const getBalance = async () => {
-    console.log("fetching....")
+    console.log("fetching....");
     try {
-      const nrkAddress = localTokens.NRK.address
+      const nrkAddress = localTokens.NRK.address;
       if (token0.address === nrkAddress || token1.address === nrkAddress) {
-
         const balanceNRK = await fetchBalance({
           address: account,
-        })
+        });
         if (token0.address === nrkAddress) {
           const balanceB = await readContract({
             address: token1.address,
             abi: erc20ABI.abi,
-            functionName: 'balanceOf',
+            functionName: "balanceOf",
             args: [account],
-            account: account
-          })
-          setBalance0(Number(balanceNRK.formatted))
-          setBalance1(Number(formatEther(balanceB)))
-
+            account: account,
+          });
+          setBalance0(Number(balanceNRK.formatted));
+          setBalance1(Number(formatEther(balanceB)));
         } else {
           const balanceA = await readContract({
             address: token0.address,
             abi: erc20ABI.abi,
-            functionName: 'balanceOf',
+            functionName: "balanceOf",
             args: [account],
-            account: account
-          })
-          setBalance0(Number(formatEther(balanceA)))
-          setBalance1(Number(balanceNRK.formatted))
+            account: account,
+          });
+          setBalance0(Number(formatEther(balanceA)));
+          setBalance1(Number(balanceNRK.formatted));
         }
       } else {
         const balanceA = await readContract({
           address: token0.address,
           abi: erc20ABI.abi,
-          functionName: 'balanceOf',
+          functionName: "balanceOf",
           args: [account],
-          account: account
-        })
+          account: account,
+        });
         const balanceB = await readContract({
           address: token1.address,
           abi: erc20ABI.abi,
-          functionName: 'balanceOf',
+          functionName: "balanceOf",
           args: [account],
-          account: account
-        })
-        setBalance0(Number(formatEther(balanceA)))
-        setBalance1(Number(formatEther(balanceB)))
+          account: account,
+        });
+        setBalance0(Number(formatEther(balanceA)));
+        setBalance1(Number(formatEther(balanceB)));
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-
-  }
+  };
   useEffect(() => {
-    getBalance()
-  }, [token0, token1, account])
-
-
+    getBalance();
+  }, [token0, token1, account]);
 
   useEffect(() => {
     if (pairContract !== address0) {
-      setShare(Number(((Number(token0Amount) * 100) / reserveA).toFixed(2).replace(/[.,]00$/, "")))
+      setShare(Number(((Number(token0Amount) * 100) / reserveA).toFixed(2).replace(/[.,]00$/, "")));
 
-      // calculating lp tokens user will get 
+      // calculating lp tokens user will get
 
       var reserve0 = 0;
       var reserve1 = 0;
       var amount0: Number = 0;
       var amount1: Number = 0;
       if (tokenAFromContract === token0.address) {
-        reserve0 = reserveA
-        reserve1 = reserveB
-        amount0 = token0Amount
-        amount1 = token1Amount
+        reserve0 = reserveA;
+        reserve1 = reserveB;
+        amount0 = token0Amount;
+        amount1 = token1Amount;
+      } else {
+        reserve0 = reserveB;
+        reserve1 = reserveA;
+        amount0 = token1Amount;
+        amount1 = token0Amount;
       }
-      else {
-        reserve0 = reserveB
-        reserve1 = reserveA
-        amount0 = token1Amount
-        amount1 = token0Amount
-      }
-      const rootK = Math.sqrt((reserve0 + amount0) * (reserve1 + amount1))
-      const rootKLast = Math.sqrt(kLast)
+      const rootK = Math.sqrt((reserve0 + amount0) * (reserve1 + amount1));
+      const rootKLast = Math.sqrt(kLast);
 
-      const numerator = pairTotalSupply * (rootK - rootKLast)
-      const denominator = rootK * 5 + rootKLast
-      const feeMinted = numerator / denominator
-      console.log(feeMinted)
-      const updatedSupply = pairTotalSupply + feeMinted
-      var liquidity = 0
-      const value1 = ((Number(amount0) * updatedSupply) / reserve0)
-      const value2 = ((Number(amount1) * updatedSupply) / reserve1)
+      const numerator = pairTotalSupply * (rootK - rootKLast);
+      const denominator = rootK * 5 + rootKLast;
+      const feeMinted = numerator / denominator;
+      console.log(feeMinted);
+      const updatedSupply = pairTotalSupply + feeMinted;
+      var liquidity = 0;
+      const value1 = (Number(amount0) * updatedSupply) / reserve0;
+      const value2 = (Number(amount1) * updatedSupply) / reserve1;
 
-      liquidity = value1 > value2 ? value2 : value1
+      liquidity = value1 > value2 ? value2 : value1;
 
-      setLPTokens(Number(liquidity.toFixed(3)))
+      setLPTokens(Number(liquidity.toFixed(3)));
     }
-
-  }, [token0Amount, token1Amount])
-
-
+  }, [token0Amount, token1Amount]);
 
   const setTokenAmount0Override = (value: Number) => {
-    if (Number(value) > balance0) return
+    // if (Number(value) > balance0) return
     if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
-      var _amount1 = (Number(value) * reserveB) / reserveA
-      if (_amount1 > balance1) {
-        var _amount0 = (Number(balance1) * reserveA) / reserveB
-        setToken0Amount(_amount0)
-        setToken1Amount(balance1)
-        return
-      }
-      setToken0Amount(value)
-      setToken1Amount(_amount1)
+      var _amount1 = (Number(value) * reserveB) / reserveA;
+      // if (_amount1 > balance1) {
+      //   var _amount0 = (Number(balance1) * reserveA) / reserveB;
+      //   setToken0Amount(_amount0);
+      //   setToken1Amount(balance1);
+      //   return;
+      // }
+      setToken0Amount(value);
+      setToken1Amount(_amount1);
     } else {
-      setToken0Amount(value)
+      setToken0Amount(value);
     }
-    setLPTokens(0)
-  }
+    setLPTokens(0);
+  };
   const setTokenAmount1Override = (value: Number) => {
-    if (Number(value) > balance1) return
+    // if (Number(value) > balance1) return
     if (pairContract !== "0x0000000000000000000000000000000000000000" && pairContract !== undefined) {
-      var _amount0 = (Number(value) * reserveA) / reserveB
-      if (_amount0 > balance0) {
-        var _amount1 = (Number(balance0) * reserveB) / reserveA
+      var _amount0 = (Number(value) * reserveA) / reserveB;
+      // if (_amount0 > balance0) {
+      //   var _amount1 = (Number(balance0) * reserveB) / reserveA;
 
-        setToken0Amount(balance0)
-        setToken1Amount(_amount1)
-        return
-      }
-      setToken0Amount(_amount0)
-      setToken1Amount(value)
+      //   setToken0Amount(balance0);
+      //   setToken1Amount(_amount1);
+      //   return;
+      // }
+      setToken0Amount(_amount0);
+      setToken1Amount(value);
+    } else {
+      setToken1Amount(value);
     }
-    else {
-      setToken1Amount(value)
-    }
-    setLPTokens(0)
-  }
+    setLPTokens(0);
+  };
 
   return (
     <div className="flex flex-col w-full  ">
-      {
-        pairContract === "0x0000000000000000000000000000000000000000" &&
-        <div className=" text-sm  text-center  font-bold mb-4 " >
-          ! NO PAIR EXISTS FOR THESE TWO TOKENS !
-        </div>
-      }
+      {pairContract === "0x0000000000000000000000000000000000000000" && (
+        <div className=" text-sm  text-center  font-bold mb-4 ">! NO PAIR EXISTS FOR THESE TWO TOKENS !</div>
+      )}
 
-
-
-      <div className=" text-[10px] font-semibold  " >CHOOSE TOKEN PAIR</div>
-      <div className="flex flex-row items-center w-full  justify-between mt-4  " >
-        <div className="w-full mr-4 " >
+      <div className=" text-[10px] font-semibold  ">CHOOSE TOKEN PAIR</div>
+      <div className="flex flex-row items-center w-full  justify-between mt-4  ">
+        <div className="w-full mr-4 ">
           {/* <Select setToken={setTokenA} token={token0} /> */}
           <LiquidityTokenSelectButton setToken={setTokenA} token={token0} />
         </div>
-        <div className=" font-bold text-lg " >+</div>
-        <div className="w-full ml-4 " >
+        <div className=" font-bold text-lg ">+</div>
+        <div className="w-full ml-4 ">
           {/* <Select setToken={setTokenB} token={token1} /> */}
           <LiquidityTokenSelectButton setToken={setTokenB} token={token1} />
         </div>
       </div>
 
+      <div className=" text-[10px] font-semibold mt-8 ">DEPOSIT AMOUNT</div>
+      <TokenAmountEntry
+        tokenAmount={token0Amount}
+        setTokenAmount={setTokenAmount0Override}
+        token={token0}
+        balance={balance0}
+      />
 
+      <TokenAmountEntry
+        tokenAmount={token1Amount}
+        setTokenAmount={setTokenAmount1Override}
+        token={token1}
+        balance={balance1}
+      />
 
-      <div className=" text-[10px] font-semibold mt-8 " >DEPOSIT AMOUNT</div>
-      <TokenAmountEntry tokenAmount={token0Amount} setTokenAmount={setTokenAmount0Override} token={token0} balance={balance0} />
-
-      <TokenAmountEntry tokenAmount={token1Amount} setTokenAmount={setTokenAmount1Override} token={token1} balance={balance1} />
-
-
-      <LiquidityFooter handleAddLiquidity={handleAddLiquidity} pairContract={pairContract} token1={token0} token2={token1} reserve1={reserveA} reserve2={reserveB} slippage={slippage} setSlippageValue={setSlippage} share={share} lpTokens={lpTokens}></LiquidityFooter>
+      <LiquidityFooter
+        handleAddLiquidity={handleAddLiquidity}
+        pairContract={pairContract}
+        token1={token0}
+        token2={token1}
+        reserve1={reserveA}
+        reserve2={reserveB}
+        slippage={slippage}
+        setSlippageValue={setSlippage}
+        share={share}
+        lpTokens={lpTokens}
+      ></LiquidityFooter>
     </div>
   );
 }
 
-
-
-
-const TokenAmountEntry = ({ setTokenAmount, tokenAmount, token, balance }: { balance: Number, setTokenAmount: (value: Number) => void, tokenAmount: Number, token: tokenType }) => {
-  const { isDarkMode } = useDarkMode()
+const TokenAmountEntry = ({
+  setTokenAmount,
+  tokenAmount,
+  token,
+  balance,
+}: {
+  balance: Number;
+  setTokenAmount: (value: Number) => void;
+  tokenAmount: Number;
+  token: tokenType;
+}) => {
+  const { isDarkMode } = useDarkMode();
   return (
-    <div className="mt-4 " >
-      <div className="flex flex-row items-center  justify-between" >
-        <div className="flex flex-row items-center" >
-          <img src={token.logo} className="w-6 h-6 rounded-full mr-2" />
-          <div className=" font-semibold   " >
-            {token.symbol}
-          </div>
+    <div className="mt-4 ">
+      <div className="flex flex-row items-center  justify-between">
+        <div className="flex flex-row items-center">
+          <img alt="logo" src={token.logo} className="w-6 h-6 rounded-full mr-2" />
+          <div className=" font-semibold   ">{token.symbol}</div>
         </div>
-        <div className="font-semibold text-sm"  >{`Balance : ${balance === 0 ? 0 : balance.toFixed(4)}`}</div>
+        <div className="font-semibold text-sm">{`Balance : ${balance === 0 ? 0 : balance.toFixed(4)}`}</div>
       </div>
 
-      <div className={
-        ` flex flex-col  shadow-md  bg-swap-gradient rounded-lg px-4 py-4 mb-4 mt-4 ${!isDarkMode && "border-2 border-[#E2D4FF]"
-        } `} >
+      <div
+        className={` flex flex-col  shadow-md  bg-swap-gradient rounded-lg px-4 py-4 mb-4 mt-4 ${
+          !isDarkMode && "border-2 border-[#E2D4FF]"
+        } `}
+      >
         <input
           type="number"
           placeholder="0.0"
-          value={tokenAmount !== 0 ? tokenAmount.toFixed(4).replace(/[.,]0000$/, "")?.toString() : ""}
+          value={Number(tokenAmount)}
           className="input input-sm pr-0 bg-transparent w-full text-lg  font-semibold  input-ghost max-w-md text-right rounded-none focus:outline-none leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           onChange={e => {
-            const value = Number(e.target.value)
+            e.preventDefault();
+            const value = Number(e.target.value);
             if (value < 0) {
-              return
+              return;
             }
 
             setTokenAmount(value);
           }}
         />
-        <button className=" self-end font-semibold   bg-secondary rounded-full px-2 mt-2   " onClick={() => {
-          // 0.01% buffer for gas fee 
-          var _balance = Number(balance) - (Number(balance) / 10000)
-          setTokenAmount(_balance)
-        }}  >Max</button>
+        <button
+          className=" self-end font-semibold   bg-secondary rounded-full px-2 mt-2   "
+          onClick={() => {
+            // 0.01% buffer for gas fee
+
+            var _balance = Number(balance) - Number(balance) / 10000;
+            setTokenAmount(_balance);
+          }}
+        >
+          Max
+        </button>
       </div>
-
-
     </div>
   );
-}
+};
 
-
-
-
-
-const LiquidityTokenSelectButton = ({ setToken, token }: {
-  setToken: () => void,
-  token: tokenType
-}) => {
+const LiquidityTokenSelectButton = ({ setToken, token }: { setToken: () => void; token: tokenType }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handlePopup = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
-  const { isDarkMode } = useDarkMode()
+  const { isDarkMode } = useDarkMode();
   return (
     <>
-      <button className={`rounded-full flex flex-row bg-white  items-center   text-gray-800 text-xs py-1 px-4 w-full ${!isDarkMode && "border - 2 border-[#E2D4FF]"
-        } `} onClick={handlePopup} >
-        <div className="flex flex-row flex-1 " >
+      <button
+        className={`rounded-full flex flex-row bg-white  items-center   text-gray-800 text-xs py-1 px-4 w-full ${
+          !isDarkMode && "border - 2 border-[#E2D4FF]"
+        } `}
+        onClick={handlePopup}
+      >
+        <div className="flex flex-row flex-1 ">
           <div className="flex items-center font-semibold text-base  justify-between   ">
             {" "}
-            <img src={token.logo} className="w-6 h-6 rounded-full mr-2" /> {token.symbol}
-
+            <img src={token.logo} alt="logo" className="w-6 h-6 rounded-full mr-2" /> {token.symbol}
           </div>
         </div>
         <MdArrowDropDown className="text-gray-800  invisible lg:visible   " size={15} />
-      </button >
+      </button>
       <TokenListPopup isOpen={isPopupOpen} onClose={handlePopup} setToken={setToken}></TokenListPopup>
     </>
   );
-}
+};

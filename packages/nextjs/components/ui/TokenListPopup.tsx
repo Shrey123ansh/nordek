@@ -4,18 +4,16 @@ import React, { useEffect, useState } from "react";
 import erc20Abi from "../../../foundry/out/ERC20.sol/ERC20.json";
 import { readContract } from "@wagmi/core";
 import axios from "axios";
+import { BsSearch } from "react-icons/bs";
 import { useAccount, useBalance } from "wagmi";
 import { tokenType } from "~~/data/data";
 import { useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
-import { BsSearch } from 'react-icons/bs';
 
 interface TokenListPopupProps {
   isOpen: boolean;
   onClose: () => void;
   setToken: (value: tokenType) => void;
 }
-
-
 
 const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setToken }) => {
   const [tokens, setTokens] = useState<tokenType[] | undefined>(undefined); // Initialize tokens as undefined
@@ -28,7 +26,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
   const [heading, setHeading] = useState(heading1);
   const [searchValue, setSearchValue] = useState("");
   const [loadingToken, setLoadingToken] = useState(false);
-  const [logo, setLogo] = useState("https://picsum.photos/200")
+  const [logo, setLogo] = useState("https://picsum.photos/200");
 
   const [newToken, setNewToken] = useState({ name: "", symbol: "", address: "", status: "" });
 
@@ -39,16 +37,14 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
       const response = await axios.get("/api/swapSupportedTokenList");
 
       setTokens(response.data.swapSupportedTokenList);
-    } catch (error) {
-
-    }
+    } catch (error) {}
   };
+
   useEffect(() => {
     fetchTokens();
-  }, []);
+  }, [newToken]);
 
   const onCloseOverride = () => {
-
     onClose();
     setHeading(heading1);
     setNewToken({ name: "", symbol: "", address: "", status: "" });
@@ -69,14 +65,14 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
     if (address === "") return;
 
     setLoadingToken(true);
-    // getting logo 
+    // getting logo
     try {
-      const logo = await axios.get(`https://nordekscan.com/api/v2/tokens/${address}`)
-      console.log(logo)
-      await axios.get(logo.data.icon_url)
-      setLogo(logo.data.icon_url)
+      const logo = await axios.get(`https://nordekscan.com/api/v2/tokens/${address}`);
+      // console.log(logo);
+      await axios.get(logo.data.icon_url);
+      setLogo(logo.data.icon_url);
     } catch (c) {
-      console.log("error")
+      // console.log("error");
     }
     try {
       const name = await readContract({
@@ -95,14 +91,11 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
       setLoadingToken(false);
     } catch (e) {
       setLoadingToken(false);
-      console.log(e)
+      // console.log(e);
     }
   };
 
   const addNewTokenToList = async () => {
-
-
-
     const token = {
       logo: logo,
       name: newToken.name,
@@ -119,29 +112,27 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
         headers: headers,
       });
 
-      console.log(response);
-      console.log("new token added");
+      setSearchValue("");
       setNewToken({
         name: newToken.name,
         symbol: newToken.symbol,
         address: newToken.address,
         status: "added",
       });
-
     } catch (error) {
       console.log(error);
     }
 
     console.log("Saved to DB");
-    fetchTokens()
-    setSearchValue("")
-
+    fetchTokens();
+    setSearchValue("");
   };
 
   const removeToken = async () => {
     try {
       const response = await axios.delete(`/api/swapSupportedTokenList?address=${newToken.address}`);
       console.log(response);
+      setSearchValue("");
       setNewToken({ name: "", symbol: "", address: "", status: "" });
     } catch (e) {
       console.log("Couldn't send update/del request", e);
@@ -179,14 +170,14 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center z-50 ">
-      <div className="fixed inset-0 bg-gray-800   opacity-50 "
-        onClick={onCloseOverride}></div>
+      <div className="fixed inset-0 bg-gray-800   opacity-50 " onClick={onCloseOverride}></div>
       <div className="relative z-10  rounded-lg shadow-lg p-6 max-h-[500px] w-[350px] lg:w-[450px] bg-gradient-to-r bg-base-300">
         <div className="flex  flex-col ">
           {/* header part  */}
           <div className="flex flex-row justify-between  items-center  ">
             <div className="text-lg text-center font-bold text-primary-content">{heading}</div>
             <button
+              title="onCloseOverride"
               className="absolute top-0 right-0 m-2 p-2 text-gray-400   hover:text-primary-content"
               onClick={onCloseOverride}
             >
@@ -203,7 +194,6 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
           </div>
 
           <div className=" flex flex-row bg-white text-black px-4 py-2  rounded-md items-center my-2  ">
-
             <input
               className="bg-transparent outline-none placeholer:text-secondary  placeholder:text-base w-full"
               placeholder="Search By Name or Address"
@@ -211,12 +201,9 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
               value={searchValue}
               onChange={event => {
                 setSearchValue(event.target.value);
-                if (heading === heading2)
-                  onAddressInput(event.target.value);
+                if (heading === heading2) onAddressInput(event.target.value);
               }}
-            >
-            </input>
-
+            ></input>
 
             <span>
               <BsSearch className="text-lg text-gray" />
@@ -225,25 +212,24 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
 
           {heading === heading2 && (
             <>
-              {loadingToken &&
-                <div className="w-full flex flex-row items-center justify-center " >
+              {loadingToken && (
+                <div className="w-full flex flex-row items-center justify-center ">
                   <div className="loader "></div>
                 </div>
-              }
+              )}
               {newToken.name !== "" && newToken.symbol !== "" && (
                 <div className="flex items-center justify-between p-4 bg-base-300 hover:bg-base-100 text-white cursor-pointer">
                   <div className="flex items-center space-x-4 mr-20">
                     <img src={logo} className="w-6 h-6 rounded-full" alt={newToken.symbol} />
                     <span className="">{newToken.symbol}</span>
                   </div>
-                  {newToken.status === "not added" && (
-                    <button className="ml-20" onClick={addNewTokenToList}>
-                      + Add
-                    </button>
-                  )}
-                  {newToken.status === "added" && (
+                  {Object.values(tokens).find(token => token.address === newToken.address) ? (
                     <button className="ml-20" onClick={removeToken}>
                       - Remove
+                    </button>
+                  ) : (
+                    <button className="ml-20" onClick={addNewTokenToList}>
+                      + Add
                     </button>
                   )}
                 </div>

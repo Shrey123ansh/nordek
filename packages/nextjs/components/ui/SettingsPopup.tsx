@@ -7,7 +7,7 @@ interface SettingsPopupProps {
   isOpen: boolean;
   onClose: () => void;
   setSlippageValue: (value: number) => void;
-  slippage: Number
+  slippage: Number;
 }
 
 const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlippageValue, slippage }) => {
@@ -20,11 +20,11 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
 
   const handleSlippageClick = (value: number) => {
     if (value > 5) {
-      notification.info("Slippage Can't be more than 5%", { duration: 1000 })
-      return
+      notification.info("Slippage Can't be more than 5%", { duration: 1000 });
+      return;
     }
-    const decimalCount = (value.toString().split('.')[1] || '').length;
-    if (decimalCount > 4) return
+    const decimalCount = (value.toString().split(".")[1] || "").length;
+    if (decimalCount > 4) return;
     setSelectedSlippage(value);
     handleSlippage(value);
   };
@@ -40,7 +40,11 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
       <div className="relative z-10 bg-setting-gradient p-4 rounded shadow-lg m-4 lg:w-fit  w-full ">
         <div className="flex justify-center items-center text-center">
           <div className="text-xl text-center font-bold text- ">Settings</div>
-          <button className="absolute top-0 right-0 m-2 p-2 text-white-600 hover:text-gray-400" onClick={onClose}>
+          <button
+            className="absolute top-0 right-0 m-2 p-2 text-white-600 hover:text-gray-400"
+            onClick={onClose}
+            title="Popup"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -120,7 +124,6 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
             </label>
           </div>
         </div> */}
-
       </div>
     </div>
   );

@@ -51,7 +51,7 @@ const SlippageDetails = ({ pairContract, token1, token2, reserve1 = 0, reserve2 
                 </div>
               </div>
             )}
-          <button onClick={toggleBtnFunction}>
+          <button title="toggleBtnFunction" onClick={toggleBtnFunction}>
             <AiOutlineSwap className="text-lg " />
           </button>
         </div>

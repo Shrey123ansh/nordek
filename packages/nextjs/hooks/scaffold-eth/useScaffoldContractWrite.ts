@@ -42,7 +42,7 @@ export const useScaffoldContractWrite = <
     abi: deployedContractData?.abi as Abi,
     functionName: functionName as any,
     args: args as unknown[],
-    value: value ? parseEther(value) : undefined,
+    value: undefined ? parseEther(value) : undefined,
     ...writeConfig,
   });
 
