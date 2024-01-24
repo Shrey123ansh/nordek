@@ -7,7 +7,7 @@ interface SettingsPopupProps {
   isOpen: boolean;
   onClose: () => void;
   setSlippageValue: (value: number) => void;
-  slippage: Number
+  slippage: Number;
 }
 
 const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlippageValue, slippage }) => {
@@ -20,11 +20,11 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
 
   const handleSlippageClick = (value: number) => {
     if (value > 5) {
-      notification.info("Slippage Can't be more than 5%", { duration: 1000 })
-      return
+      notification.info("Slippage Can't be more than 5%", { duration: 1000 });
+      return;
     }
-    const decimalCount = (value.toString().split('.')[1] || '').length;
-    if (decimalCount > 4) return
+    const decimalCount = (value.toString().split(".")[1] || "").length;
+    if (decimalCount > 4) return;
     setSelectedSlippage(value);
     handleSlippage(value);
   };
@@ -120,7 +120,6 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, setSlipp
             </label>
           </div>
         </div> */}
-
       </div>
     </div>
   );
