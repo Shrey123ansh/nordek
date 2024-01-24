@@ -1,0 +1,378 @@
+//@ts-nocheck
+import { useState } from "react";
+import type { NextPage } from "next";
+import useSWR from "swr";
+import { formatEther, parseEther } from "viem";
+import { useAccount } from "wagmi";
+import { getPlatformDetails } from "~~/components/StakingComponents/APICallFunctions";
+import GradientComponent from "~~/components/StakingComponents/GradientContainer";
+import StakeHeader from "~~/components/StakingComponents/StakeHeader";
+import { StakeInfo } from "~~/components/StakingComponents/StakeInfo";
+import { StakesTable } from "~~/components/StakingComponents/StakesTable";
+import { useAccountBalance, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+
+//import { connectToDatabase } from "~~/lib/mongoDb";
+
+const StakeBox = () => {
+  const [stakeAmount, setStakeAmount] = useState(0);
+  const { address } = useAccount();
+  const [isStaking, setIsStaking] = useState(true);
+  const { balance } = useAccountBalance(address);
+
+  const { data: userTotalStakes, isLoading: isUserTotalStakes } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getUserTotalStakes",
+    account: address,
+  });
+
+  function setStakeAmountMax() {
+    if (isStaking) {
+      var _balance = balance
+      // 0.01% buffer 
+      _balance = _balance - (_balance / 10000)
+      setStakeAmount(Number(_balance));
+    } else {
+      setStakeAmount(Number(formatEther(userTotalStakes)).toFixed(8));
+    }
+  }
+
+  const { writeAsync: stake, isStakeLoading } = useScaffoldContractWrite({
+    contractName: "StakingContract",
+    functionName: "stake",
+    account: address,
+    value: `${stakeAmount}`,
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
+
+  const { writeAsync: unstake, isUnstakeLoading } = useScaffoldContractWrite({
+    contractName: "StakingContract",
+    functionName: "unstake",
+    account: address,
+    args: [parseEther(stakeAmount?.toString())],
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
+
+  const { writeAsync: unstakeAll, isUnstakeAllLoading } = useScaffoldContractWrite({
+    contractName: "StakingContract",
+    functionName: "unstakeAll",
+    account: address,
+    onBlockConfirmation: txnReceipt => {
+      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
+
+  function handleUnstaking() {
+    if (parseEther(stakeAmount.toString()) === userTotalStakes) {
+      unstakeAll();
+    } else {
+      unstake();
+    }
+  }
+
+  const { data: apy, isLoading: isApyLoading } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getCurrentApy",
+    account: address,
+  });
+
+  const handleStaking = async () => {
+    if (stakeAmount <= 0) {
+      console.log("can't be lt 0");
+      return;
+    }
+
+    if (!address) {
+      console.log("notConnected");
+      return;
+    }
+
+    if (isStaking) {
+      await stake();
+    } else {
+      await handleUnstaking();
+    }
+  };
+
+  const { data: minStake, isLoading: isMinStake } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "minimumStake",
+    account: address,
+  });
+
+  const { data: frequency, isLoading: isFrequency } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "frequency",
+    account: address,
+  });
+
+  const { data: userRewards, isLoading: isUserTotalRewards } = useScaffoldContractRead({
+    contractName: "StakingContract",
+    functionName: "getTotalRewards",
+    account: address,
+  });
+
+  const statsH1Class = "flex w-full justify-between space-x-12";
+
+  const textColor = "text-secondary-content text-xs md:text-base lg:text-base";
+  return (
+    <section className="flex flex-col lg:flex-row  justify-between w-full mt-8">
+      <div className="w-full lg:w-[40%] lg:mr-8 mb-4 lg:mb-0">
+        <GradientComponent>
+          <div className="relative flex flex-col w-full space-y-8 px-2 bg-custom-gradient rounded-xl py-8 px-8">
+            <h1 className="text-2xl font-semibold"> Stake </h1>
+
+            {/* <div>Min Stake: {minStake ? formatEther(minStake) : ""}</div>
+            <div>Frequency: {frequency ? Number(frequency) / 86400 : ""} Days</div>
+            <div>Your total staked Amount: {userTotalStake ? formatEther(userTotalStake) : ""}</div>
+            <div>Total User Rewards: {userRewards ? formatEther(userRewards) : ""} NRK</div> */}
+
+            <h1 className="text-xl font-semibold">Standard</h1>
+            <h1 className={statsH1Class}>
+              {" "}
+              <span className={textColor}>Min Stake</span>{" "}
+              <span className={`${textColor} important-text text-right`}>{minStake ? formatEther(minStake) : ""}</span>
+            </h1>
+            <h1 className={statsH1Class}>
+              {" "}
+              <span className={textColor}>Frequency</span>{" "}
+              <span className={`${textColor} important-text text-right`}>
+                {frequency ? Number(frequency) / 86400 : ""} Days
+              </span>
+            </h1>
+            <h1 className={statsH1Class}>
+              <span className={textColor}>Current APY</span>
+              <span className={`${textColor} important-text text-right`}>{apy ? apy.toString() : ""}%</span>
+            </h1>
+
+            <h1 className="text-xl font-semibold">Your Position</h1>
+
+            <h1 className={statsH1Class}>
+              <span className={textColor}>Your Staked Amount</span>
+              <span className={`${textColor} important-text text-right`}>
+                {" "}
+                {userTotalStakes ? formatEther(userTotalStakes) : ""} NRK
+              </span>
+            </h1>
+
+            <h1 className={statsH1Class}>
+              <span className={textColor}>Your Rewards</span>
+              <span className={`${textColor} important-text text-right`}>
+                {" "}
+                {userRewards ? formatEther(userRewards) : ""} NRK{" "}
+              </span>
+            </h1>
+            <h1 className={statsH1Class}>
+              <span className={textColor}>NRK in Wallet</span>
+              <span className={`${textColor} important-text text-right`}>{balance?.toFixed(4)} NRK</span>
+            </h1>
+          </div>
+        </GradientComponent>
+      </div>
+      <div className="w-full lg:w-[60%] lg:ml-8 h-full mt-4 lg:mt-0">
+        <GradientComponent>
+          <div className="relative p-8 flex flex-col items-center space-y-8 rounded-lg bg-custom-gradient w-full h-full">
+            <h1 className="text-2xl font-semibold w-full text-left"> Order Summary </h1>
+            <div className="flex justify-between w-full mb-8 font-semibold">
+              <button
+                className={
+                  isStaking
+                    ? "w-full bg-transparent border-b-2 border-purple-500"
+                    : "w-full bg-transparent border-b-2 border-base-300 hover:border-purple-500"
+                }
+                onClick={() => {
+                  setIsStaking(!isStaking);
+                  setStakeAmount(0);
+                }}
+              >
+                Stake
+              </button>
+              <button
+                className={
+                  !isStaking
+                    ? "w-full bg-transparent border-b-2 border-purple-500"
+                    : "w-full bg-transparent border-b-2 border-base-300 hover:border-purple-500"
+                }
+                onClick={() => {
+                  setIsStaking(!isStaking);
+                  setStakeAmount(0);
+                }}
+              >
+                Unstake
+              </button>
+            </div>
+            <div className="flex flex-col w-full text-left justify-center">
+              <label htmlFor="" className="mb-4">
+                {" "}
+                Enter Amount
+              </label>
+              <div className="relative flex w-full rounded-lg border border-snow-300 text-center">
+                <input
+                  type="number"
+                  placeholder="0"
+                  className="px-2 py-2 mr-4 w-full text-left appearance-none bg-base-200 bg-transparent w-[90%] focus:border-transparent focus:ring-0 text-base-content"
+                  value={stakeAmount}
+                  onChange={e => setStakeAmount(Number(e.target.value))}
+                />
+                <div className="relative top-1 h-8 mr-2 rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] p-0.5 text-sm text-white">
+                  <button
+                    type="button"
+                    className="border-1 rounded-full font-bold bg-base-100 px-4 h-7 text-base-content"
+                    onClick={setStakeAmountMax}
+                  >
+                    Max
+                  </button>
+                </div>
+              </div>
+            </div>
+            <br />
+            <br />
+            <br />
+            <button
+              className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] font-bold text-white py-2 w-full rounded-lg"
+              onClick={() => {
+                handleStaking();
+              }}
+            >
+              {isStaking ? "Stake" : "Unstake"}
+            </button>
+          </div>
+        </GradientComponent>
+      </div>
+    </section>
+  );
+};
+
+// const UnStake = ({ unstakeAmount, slotId }: { unstakeAmount: number; slotId: number }) => {
+//   const { writeAsync, isLoading } = useScaffoldContractWrite({
+//     contractName: "StakingContract",
+//     functionName: "unstake",
+//     args: [BigInt(unstakeAmount), BigInt(slotId)],
+//     onBlockConfirmation: txnReceipt => {
+//       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+//     },
+//   });
+
+//   return (
+//     <div className="p-0.5 text-sm rounded-full bg-gradient-to-r from-[#4F56FF] to-[#9D09E3]">
+//       <button
+//         type="button"
+//         className="px-4 py-2 border-1 rounded-full bg-gray-800"
+//         onClick={() => {
+//           writeAsync();
+//         }}
+//       >
+//         Unstake
+//       </button>
+//     </div>
+//   );
+// };
+
+// const Claim = ({ ClaimAmount, slotId }: { ClaimAmount: number; slotId: number }) => {
+//   const { address } = useAccount();
+//   const { writeAsync, isLoading } = useScaffoldContractWrite({
+//     contractName: "StakingContract",
+//     functionName: "claimRewards",
+//     account: address,
+//     args: [BigInt(ClaimAmount), BigInt(slotId)],
+//     onBlockConfirmation: txnReceipt => {
+//       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+//     },
+//   });
+
+//   return (
+//     <button
+//       className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-2 px-8 rounded-full w-full"
+//       onClick={() => {
+//         writeAsync;
+//       }}
+//     >
+//       Claim
+//     </button>
+//   );
+// };
+
+// const Restake = ({ RestakeAmount, slotId }: { RestakeAmount: number; slotId: number }) => {
+//   const { address } = useAccount();
+//   const { writeAsync, isLoading } = useScaffoldContractWrite({
+//     contractName: "StakingContract",
+//     functionName: "restake",
+//     account: address,
+//     args: [BigInt(RestakeAmount), BigInt(slotId)],
+//     onBlockConfirmation: txnReceipt => {
+//       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+//     },
+//   });
+
+//   return (
+//     <button
+//       className="bg-gradient-to-r from-[#4F56FF] to-[#9D09E3] text-sm text-white py-2 px-8 rounded-full w-full"
+//       onClick={() => {
+//         writeAsync;
+//       }}
+//     >
+//       Restake
+//     </button>
+//   );
+// };
+
+// const Claim = ({ claimAmount, slotId }: { unstakeAmount: number; slotId: number }) => {
+//   const { writeAsync, isLoading } = useScaffoldContractWrite({
+//     contractName: "StakingContract",
+//     functionName: "unstake",
+//     args: [BigInt(unstakeAmount), BigInt(slotId)],
+//     onBlockConfirmation: txnReceipt => {
+//       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+//     },
+//   });
+
+//   return (
+//     <button
+//       className="btn btn-sm btn-outline btn-accent"
+//       onClick={() => {
+//         writeAsync();
+//       }}
+//     >
+//       Unstake
+//     </button>
+//   );
+// };
+
+const Stake: NextPage = () => {
+  //const [stakeAmount, setStakeAmount] = useState(0);
+
+  // const platformApyFetcher = async () => {
+  //   const data = await getPlatformDetails();
+  //   console.log("LOADED PLATFORM DATA", data);
+  //   return data;
+  // };
+
+  // const {
+  //   data: platformDetails,
+  //   isLoading: isPlatformDetailsLoading,
+  //   error: isPlatformDetailsError,
+  //   mutate: mutatePlatformDetails,
+  // } = useSWR(`/api/platformDetails`, platformApyFetcher, {
+  //   refreshInterval: 0,
+  // });
+
+  return (
+
+    // <div className="w-[80%] flex items-center flex-col flex-grow pt-10 justify-center m-auto font-inter">
+    //   {/* <StakeInfoBox></StakeInfoBox> */}
+    //   <StakeHeader />
+    //   <StakeInfo></StakeInfo>
+    //   <StakeBox></StakeBox>
+    //   <StakesTable></StakesTable>
+    // </div>
+    <div className="flex flex-row items-center justify-center mt-12  font-bold  text-4xl  " >
+      Comming Soon
+    </div>
+
+  );
+};
+
+export default Stake;
