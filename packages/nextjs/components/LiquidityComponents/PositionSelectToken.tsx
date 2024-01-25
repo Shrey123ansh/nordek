@@ -91,7 +91,7 @@ const PositionSelectToken = ({
         await updateLiquidity();
       }
 
-      updateOnRemove(!onRemove);
+      updateOnRemove?.(!onRemove);
     },
   });
   const { writeAsync: removeLiquidity } = useScaffoldContractWrite({
@@ -187,7 +187,9 @@ const PositionSelectToken = ({
       } else {
         await removeLiquidity();
       }
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   console.log(liqudity.token0);

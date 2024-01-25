@@ -437,7 +437,9 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     }
   };
   useEffect(() => {
-    getBalance();
+    if (account) {
+      getBalance();
+    }
   }, [token0, token1, account]);
 
   useEffect(() => {
