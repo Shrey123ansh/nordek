@@ -3778,6 +3778,7 @@ __metadata:
     ioredis: ^5.3.2
     mongodb: ^6.1.0
     mongoose: ^7.5.0
+    net: ^1.0.2
     next: ^13.5.6
     nextjs-progressbar: ~0.0.16
     postcss: ~8.4.16
@@ -3800,6 +3801,7 @@ __metadata:
     tailwind-merge: ^1.14.0
     tailwindcss: ~3.3.3
     tailwindcss-animate: ^1.0.6
+    tls: ^0.0.1
     toolcool-range-slider: ^4.0.28
     typescript: ~4.9.5
     unstated-next: ^1.1.0
@@ -10394,6 +10396,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"net@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "net@npm:1.0.2"
+  checksum: d97e215d922e87e9aa86e87daae73ce7f4e291f2d71365a115f2f51831b1add86e73584e944285daafcad4058c09bb85e33250da84834a26a83020740d45b4a1
+  languageName: node
+  linkType: hard
+
 "next@npm:^13.5.6":
   version: 13.5.6
   resolution: "next@npm:13.5.6"
@@ -12911,6 +12920,13 @@ __metadata:
   version: 1.0.3
   resolution: "tiny-warning@npm:1.0.3"
   checksum: da62c4acac565902f0624b123eed6dd3509bc9a8d30c06e017104bedcf5d35810da8ff72864400ad19c5c7806fc0a8323c68baf3e326af7cb7d969f846100d71
+  languageName: node
+  linkType: hard
+
+"tls@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "tls@npm:0.0.1"
+  checksum: b0205b0efb5f4537d3031cc3797f93c52fb568f41878795cd5361f604b49bc26ad830c1de340fc71f070967d55f73a6fac8527506fc519efe9c5eadcd510a1f8
   languageName: node
   linkType: hard
 
