@@ -35,7 +35,7 @@ const PositionSelectToken = ({
   const sliderRef = useRef(null);
 
   const [percentage, setPercentage] = useState(0);
-  const [value, setValue] = useState<Number>(liqudity.lpTokens);
+  const [value, setValue] = useState<number>(liqudity.lpTokens);
   const [open, setOpen] = useState(false);
   const [slippage, setSlippage] = useState(0.8);
   const { address: account } = useAccount();
@@ -64,8 +64,8 @@ const PositionSelectToken = ({
 
   const token0Withdraw = (Number(liqudity.token0Amount) * percentage) / 100;
   const token1Withdraw = (Number(liqudity.token1Amount) * percentage) / 100;
-  const token0WithdrawMin = token0Withdraw - (token0Withdraw * slippage) / 100;
-  const token1WithdrawMin = token1Withdraw - (token1Withdraw * slippage) / 100;
+  const token0WithdrawMin: number = token0Withdraw - (token0Withdraw * slippage) / 100;
+  const token1WithdrawMin: number = token1Withdraw - (token1Withdraw * slippage) / 100;
 
   const currentDate = new Date();
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
@@ -91,7 +91,7 @@ const PositionSelectToken = ({
         await updateLiquidity();
       }
 
-      updateOnRemove?.(!onRemove);
+      updateOnRemove(!onRemove);
     },
   });
   const { writeAsync: removeLiquidity } = useScaffoldContractWrite({
@@ -100,7 +100,7 @@ const PositionSelectToken = ({
     args: [
       liqudity.token0.address,
       liqudity.token1.address,
-      parseEther(`${value}`),
+      parseEther(`${(Number(value) * percentage) / 100}`),
       parseEther(`${token0WithdrawMin}`),
       parseEther(`${token1WithdrawMin}`),
       account,
@@ -159,13 +159,27 @@ const PositionSelectToken = ({
   };
 
   const handleWithdraw = async () => {
+    console.log("withdraw liuidity");
+
+    console.log("Approval num", Number(value));
+    console.log("Approval parse", parseEther(`${value}`));
+    console.log("Nrk token", liqudity.token0Amount);
+    console.log("token2", liqudity.token1Amount);
+    console.log("Approval", Number(liqudity.lpTokens));
+    console.log("hello2");
+    console.log("should Nrk token", parseEther(`${liqudity.token0Amount}`));
+    console.log("should Approval", parseEther(`${liqudity.token1Amount}`));
+    console.log("should Approval", parseEther(`${token0WithdrawMin}`));
+    console.log("should Approval", parseEther(`${token1WithdrawMin}`));
+
     try {
-      console.log(value);
+      console.log(typeof value);
       if (percentage === 0) {
         notification.error("Percentage cannot be 0", { duration: 1000 });
         return;
       }
       var _value = (Number(value) * percentage) / 100;
+      console.log(parseEther(`${_value}`));
       console.log("pair contract  value  " + liqudity.pairContract);
       approvalNotification();
       const { hash: approveHash } = await writeContract({
@@ -183,17 +197,15 @@ const PositionSelectToken = ({
       console.log("token 1 withdraw amount " + token0WithdrawMin);
       console.log("token 2 withdraw amount " + token1WithdrawMin);
       if (liqudity.token0.address === nrkAddress || liqudity.token1.address === nrkAddress) {
-        await removeLiqudityETH();
+        await removeLiquidity();
       } else {
         await removeLiquidity();
       }
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
 
-  console.log(liqudity.token0);
-  console.log(liqudity.token);
+  // console.log(liqudity.token0);
+  // console.log(liqudity.token);
 
   return (
     <>
@@ -210,6 +222,7 @@ const PositionSelectToken = ({
               setOpen(!open);
               setRemove(false);
             }}
+            x
           >
             Manage
             {open ? <RiArrowDropUpLine className="ml-2 " /> : <RiArrowDropDownLine className="ml-2" />}

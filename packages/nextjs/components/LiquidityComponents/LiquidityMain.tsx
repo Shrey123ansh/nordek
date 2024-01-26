@@ -197,6 +197,16 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
   const handleAddLiquidity = async () => {
     console.log("add liuidity");
+
+    console.log("Nrk token", token0Amount);
+    console.log("Approval", token1Amount);
+    console.log("lp tokens", Number(lpTokens));
+    console.log("hello");
+    console.log("Nrk token", parseEther(`${token0Amount}`));
+    console.log("Approval", parseEther(`${token1Amount}`));
+    console.log("mintoken0", parseEther(`${token0Min}`));
+    console.log("mintoken1", parseEther(`${token1Min}`));
+
     const nrkAddress: string = localTokens.NRK.address;
     if (token0Amount === 0 || token1Amount === 0) {
       notification.error("Amount Cannot be 0", {
@@ -444,7 +454,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
   useEffect(() => {
     if (pairContract !== address0) {
-      setShare(Number(((Number(token0Amount) * 100) / reserveA).toFixed(2).replace(/[.,]00$/, "")));
+      setShare(Number((Number(token0Amount) * 100) / reserveA));
 
       // calculating lp tokens user will get
 
@@ -477,7 +487,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
       liquidity = value1 > value2 ? value2 : value1;
 
-      setLPTokens(Number(liquidity.toFixed(3)));
+      setLPTokens(Number(liquidity));
     }
   }, [token0Amount, token1Amount]);
 

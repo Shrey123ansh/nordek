@@ -17,7 +17,7 @@ export default function LiquidityPositions({ updatePosition }: { updatePosition:
     const apiUrl = `api/liquidity?address=${account}`;
     try {
       const response = await axios.get(apiUrl);
-      const liquidity: Liquidity[] = response.data.userLiquidityValues;
+      const liquidity: Liquidity[] = response.data.userLiquidityaValues;
       console.log(liquidity);
       setUserLiquidity(liquidity);
     } catch (error) {
