@@ -84,12 +84,11 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       console.log("Transaction blockHash", txnReceipt.blockHash);
       await getBalance();
     },
-    onSuccess: async () => {
-      await addToDataBase();
-
-      setToken0Amount(0);
-      setToken1Amount(0);
-      setUpdate(update + 1);
+    onSuccess: async data => {
+      if (data.hash) {
+        const lpTokens = await fetchLpTokenBalance();
+        await addToDataBase(lpTokens);
+      }
     },
     onError(error, variables, context) {
       console.log("error " + error);
@@ -113,12 +112,11 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       console.log("Transaction blockHash", txnReceipt.blockHash);
       await getBalance();
     },
-    onSuccess: async () => {
-      await addToDataBase();
-
-      setToken0Amount(0);
-      setToken1Amount(0);
-      setUpdate(update + 1);
+    onSuccess: async data => {
+      if (data.hash) {
+        const lpTokens = await fetchLpTokenBalance();
+        await addToDataBase(lpTokens);
+      }
     },
   });
   const {
@@ -143,16 +141,15 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       console.log("Transaction blockHash", txnReceipt.blockHash);
       await getBalance();
     },
-    onSuccess: async () => {
-      await addToDataBase();
-
-      setToken0Amount(0);
-      setToken1Amount(0);
-      setUpdate(update + 1);
+    onSuccess: async data => {
+      if (data.hash) {
+        const lpTokens = await fetchLpTokenBalance();
+        await addToDataBase(lpTokens);
+      }
     },
   });
 
-  const addToDataBase = async () => {
+  const addToDataBase = async (lpTokens: Number) => {
     const liquidity: Liquidity = {
       token0: token0,
       token1: token1,
@@ -160,7 +157,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       token1Amount: token1Amount,
       pairContract: pairContract,
       user: account,
-      lpTokens: Number(lpTokens),
+      lpTokens: lpTokens,
     };
 
     const headers = {
@@ -177,6 +174,10 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       handleUpdate();
     } catch (error) {
       console.log(error);
+    } finally {
+      setToken0Amount(0);
+      setToken1Amount(0);
+      setUpdate(update + 1);
     }
   };
 
@@ -193,6 +194,26 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
   };
   const removeTxCompNotification = () => {
     notification.remove(txCompId);
+  };
+
+  const fetchLpTokenBalance = async () => {
+    await new Promise(r => setTimeout(r, 5000));
+    const pairAddress = await readContract({
+      address: factoryContract.address,
+      abi: factoryContract.abi,
+      functionName: "getPair",
+      args: [token0.address, token1.address],
+      account: account,
+    });
+    const lptokensBalance = await readContract({
+      address: pairAddress,
+      abi: erc20ABI.abi,
+      functionName: "balanceOf",
+      args: [account],
+      account: account,
+    });
+    console.log("check: ", Number(formatEther(lptokensBalance as bigint)));
+    return Number(formatEther(lptokensBalance as bigint));
   };
 
   const handleAddLiquidity = async () => {

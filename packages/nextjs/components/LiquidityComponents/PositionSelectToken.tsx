@@ -91,7 +91,7 @@ const PositionSelectToken = ({
         await updateLiquidity();
       }
 
-      updateOnRemove(!onRemove);
+      updateOnRemove?.(!onRemove);
     },
   });
   const { writeAsync: removeLiquidity } = useScaffoldContractWrite({
@@ -113,6 +113,8 @@ const PositionSelectToken = ({
       } else {
         await updateLiquidity();
       }
+
+      updateOnRemove?.(!onRemove);
     },
   });
 
@@ -197,7 +199,7 @@ const PositionSelectToken = ({
       console.log("token 1 withdraw amount " + token0WithdrawMin);
       console.log("token 2 withdraw amount " + token1WithdrawMin);
       if (liqudity.token0.address === nrkAddress || liqudity.token1.address === nrkAddress) {
-        await removeLiquidity();
+        await removeLiqudityETH();
       } else {
         await removeLiquidity();
       }
