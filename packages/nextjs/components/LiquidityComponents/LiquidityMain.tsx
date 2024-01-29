@@ -35,6 +35,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
   const [reserveA, setReserve1] = useState(0);
   const [reserveB, setReserve2] = useState(0);
   const { data: routerContract } = useDeployedContractInfo("NordekV2Router02");
+  const { data: factoryContractData } = useDeployedContractInfo("NordekV2Factory");
   const [slippage, setSlippage] = useState(0.5);
   const [update, setUpdate] = useState(0);
   const token0Min = Number(token0Amount) - (Number(token0Amount) * slippage) / 100;
@@ -60,7 +61,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
   useEffect(() => {
     setPairContract(pc);
-    if (pc === address0) {
+    if (pc === address0) {    
       setShare(100);
     }
     if (pc !== address0) {
@@ -68,7 +69,8 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     }
   }, [isFetched]);
 
-  const { writeAsync: addLiquidityETHToken0 } = useScaffoldContractWrite({
+   
+ const { writeAsync: addLiquidityETHToken0 } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
     functionName: "addLiquidityNRK",
     args: [
@@ -87,6 +89,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     onSuccess: async data => {
       if (data.hash) {
         const lpTokens = await fetchLpTokenBalance();
+        
         await addToDataBase(lpTokens);
       }
     },
@@ -115,15 +118,12 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     onSuccess: async data => {
       if (data.hash) {
         const lpTokens = await fetchLpTokenBalance();
+        
         await addToDataBase(lpTokens);
       }
     },
   });
-  const {
-    writeAsync: addLiquidity,
-    isLoading,
-    isMining,
-  } = useScaffoldContractWrite({
+  const { writeAsync: addLiquidity } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
     functionName: "addLiquidity",
     args: [
@@ -144,18 +144,33 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     onSuccess: async data => {
       if (data.hash) {
         const lpTokens = await fetchLpTokenBalance();
+        
         await addToDataBase(lpTokens);
       }
     },
   });
 
   const addToDataBase = async (lpTokens: Number) => {
+    let result = ""
+    try{
+        result = await readContract( {
+        abi :factoryContractData.abi,
+        address: factoryContractData.address,
+        functionName: 'getPair',
+        args: [token0.address, token1.address],
+       account: account,
+      })
+      console.log("pair contract address from wagmi "+result)
+      setPairContract(result)
+    }catch(e){
+      console.log(e)
+    }
     const liquidity: Liquidity = {
       token0: token0,
       token1: token1,
       token0Amount: token0Amount,
       token1Amount: token1Amount,
-      pairContract: pairContract,
+      pairContract: result,
       user: account,
       lpTokens: lpTokens,
     };
