@@ -61,12 +61,6 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
   useEffect(() => {
     setPairContract(pc);
-    if (pc === address0) {    
-      setShare(100);
-    }
-    if (pc !== address0) {
-      setShare(0);
-    }
   }, [isFetched]);
 
    
@@ -361,7 +355,6 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
       setPairContract(pairAddress);
       if (pairAddress === address0) {
-        setShare(100);
         setReserve1(0);
         setReserve2(0);
       }
@@ -525,6 +518,10 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
       setLPTokens(Number(liquidity));
     }
+    else{
+      if(token0Amount===0||token1Amount===0) return
+      setShare(Math.sqrt(Number(token0Amount)*Number(token1Amount)))
+    }
   }, [token0Amount, token1Amount]);
 
   const setTokenAmount0Override = (value: Number) => {
@@ -539,6 +536,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       setToken0Amount(value);
       setToken1Amount(_amount1);
     } else {
+      if(value===0) setShare(0)
       setToken0Amount(value);
     }
     setLPTokens(0);
@@ -556,6 +554,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       setToken0Amount(_amount0);
       setToken1Amount(value);
     } else {
+      if(value===0)setShare(0)
       setToken1Amount(value);
     }
     setLPTokens(0);
