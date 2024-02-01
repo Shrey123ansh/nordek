@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import PairAbi from "~~/utils/PairAbi.json"
 import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
 import { Select } from "../Select/Select";
 import LiquidityFooter from "./LiquidityPositionFooter";
-import { waitForTransaction, writeContract } from "@wagmi/core";
+import { waitForTransaction, writeContract, readContract } from "@wagmi/core";
 import axios from "axios";
 import { set } from "mongoose";
 import { FaArrowDownLong } from "react-icons/fa6";
@@ -13,10 +14,10 @@ import { RiArrowDropDownLine, RiArrowDropUpLine } from "react-icons/ri";
 // import 'toolcool-range-slider';
 import { RangeSlider } from "toolcool-range-slider";
 import { useDarkMode } from "usehooks-ts";
-import { parseEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { localTokens, tokenType } from "~~/data/data";
-import { useDeployedContractInfo, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useDeployedContractInfo, useScaffoldContractWrite, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { Liquidity } from "~~/pages/api/liquidity";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -40,12 +41,86 @@ const PositionSelectToken = ({
   const [slippage, setSlippage] = useState(0.8);
   const { address: account } = useAccount();
   const [remove, setRemove] = useState(false);
+
+  const [totalLp, setTotalLp] = useState(0)
+  const[reserve0, setReserve0] = useState(0)
+  const[reserve1, setReserve1] = useState(0)
+  const [token0Withdraw, setToken0Withdraw] = useState(0)
+  const [token1Withdraw, setToken1Withdraw] = useState(0)
+  const [token0WithdrawMin, setToken0WithdrawMin] = useState(0)
+  const [token1WithdrawMin, setToken1WithdrawMin] = useState(0)
+
+
   const setPercentageExtension = (value: number) => {
     if (value <= 100) {
       setPercentage(value);
       setValue((Number(liqudity.lpTokens) * value) / 100);
     }
   };
+
+  
+  useEffect(()=>{
+    // fetch the totaly lp token supply 
+const fetchData = async() =>{
+  console.log("fetching in liquidity positions")
+  console.log(liqudity.pairContract)
+if(liqudity.pairContract===undefined) return
+  try{
+    const totalLp = await readContract({
+     abi: PairAbi.abi,
+    address : liqudity.pairContract,
+    functionName:"totalSupply",
+    account:account
+    })
+    setTotalLp(Number(formatEther(totalLp as bigint)))
+    
+    }catch(e){
+      console.log(e)
+    }
+    
+    
+    try{
+      const data = await readContract({
+        abi: PairAbi.abi,
+        address : liqudity.pairContract,
+        functionName:"getReserves",
+        account:account
+       })
+      
+       const token0 = await readContract({
+        abi: PairAbi.abi,
+        address : liqudity.pairContract,
+        functionName:"token0",
+        account:account
+       })
+       const token1 = await readContract({
+        abi: PairAbi.abi,
+        address : liqudity.pairContract,
+        functionName:"token0",
+        account:account
+       })
+
+       if(token0===liqudity.token0.address){
+setReserve0(Number(formatEther(data[0] as bigint)))
+setReserve1(Number(formatEther(data[1] as bigint)))
+       }else{
+        setReserve0(Number(formatEther(data[1] as bigint)))
+        setReserve1(Number(formatEther(data[0] as bigint)))
+       }
+
+       
+
+    }catch(e){
+      console.log(e)
+    }
+    
+}
+
+fetchData()
+    // get reserves here 
+  },[liqudity.pairContract])
+
+
 
   let approvalId = null;
   const approvalNotification = () => {
@@ -62,15 +137,36 @@ const PositionSelectToken = ({
     notification.remove(txCompId);
   };
 
-  const token0Withdraw = (Number(liqudity.token0Amount) * percentage) / 100;
-  const token1Withdraw = (Number(liqudity.token1Amount) * percentage) / 100;
-  const token0WithdrawMin: number = token0Withdraw - (token0Withdraw * slippage) / 100;
-  const token1WithdrawMin: number = token1Withdraw - (token1Withdraw * slippage) / 100;
 
+  
   const currentDate = new Date();
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
 
-  const { writeAsync: removeLiqudityETH } = useScaffoldContractWrite({
+
+
+  useEffect(()=>{
+    if (reserve0 ===0||reserve1===0||totalLp===0)return
+    const userPercentage = (Number(liqudity.lpTokens)*100 / totalLp)
+   
+    const userToken0Amount = (reserve0 * userPercentage)/100
+    const userToken1Amount = (reserve1 * userPercentage)/100
+    const token0Withdraw = (Number(userToken0Amount) * percentage) / 100;
+    const token1Withdraw = (Number(userToken1Amount) * percentage) / 100;
+     
+    const token0WithdrawMin: number = token0Withdraw - (token0Withdraw * slippage) / 100;
+    const token1WithdrawMin: number = token1Withdraw - (token1Withdraw * slippage) / 100;
+ setToken0Withdraw(token0Withdraw)
+ setToken1Withdraw(token1Withdraw)
+setToken0WithdrawMin(token0WithdrawMin)  
+setToken1WithdrawMin(token1WithdrawMin)  
+
+},[
+    totalLp, reserve0, reserve1, percentage
+  ])
+
+  
+
+  const { writeAsync:removeLiqudityETH } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
     functionName: "removeLiquidityNRKSupportingFeeOnTransferTokens",
     args: [
@@ -80,19 +176,8 @@ const PositionSelectToken = ({
       liqudity.token0.address === nrkAddress ? parseEther(`${token0WithdrawMin}`) : parseEther(`${token1WithdrawMin}`),
       account,
       BigInt(unixTimestampInSeconds + 300),
-    ],
-    onSuccess: async () => {
-      // update database
-      if (percentage === 100) {
-        console.log("delete value from db");
-        await deleteLiquidity();
-      } else {
-        console.log("update value from db");
-        await updateLiquidity();
-      }
-
-      updateOnRemove?.(!onRemove);
-    },
+    ]
+     
   });
   const { writeAsync: removeLiquidity } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -105,27 +190,13 @@ const PositionSelectToken = ({
       parseEther(`${token1WithdrawMin}`),
       account,
       BigInt(unixTimestampInSeconds + 300),
-    ],
-    onSuccess: async () => {
-      // update database
-      if (percentage === 100) {
-        await deleteLiquidity();
-      } else {
-        await updateLiquidity();
-      }
-
-      updateOnRemove?.(!onRemove);
-    },
+    ]
   });
 
-  const resetValues = () => {
-    const lpTokenLeft = Number(liqudity.lpTokens) - Number(value);
-    setValue(lpTokenLeft);
-    liqudity.token0Amount = Number(liqudity.token0Amount) - token0Withdraw;
-    liqudity.token1Amount = Number(liqudity.token1Amount) - token1Withdraw;
-    liqudity.lpTokens = lpTokenLeft;
-  };
 
+  
+
+ 
   const deleteLiquidity = async () => {
     try {
       await axios.delete(`api/liquidity?pairContract=${liqudity.pairContract}&userAddress=${liqudity.user}`);
@@ -135,18 +206,36 @@ const PositionSelectToken = ({
     }
   };
 
+ 
+
   const updateLiquidity = async () => {
+    let newLp = 0 
+    try{
+const data = await readContract({
+address: liqudity.pairContract,
+abi: pairABI.abi,
+functionName:"balanceOf",
+args:[account],
+account:account
+})
+console.log(data)
+newLp = Number(formatEther(data as bigint))
+console.log("new lp of user")
+console.log(newLp)
+    }catch(e){
+      console.log(e)
+    }
+    
     const liquidity: Liquidity = {
       token0: liqudity.token0,
       token1: liqudity.token1,
-      token0Amount: Number(liqudity.token0Amount) - token0Withdraw,
-      token1Amount: Number(liqudity.token1Amount) - token1Withdraw,
       pairContract: liqudity.pairContract,
       user: account,
-      lpTokens: Number(liqudity.lpTokens) - Number((Number(value) * percentage) / 100),
+      lpTokens: newLp
     };
-
-    const headers = {
+console.log("sending liquidity...")
+console.log(liqudity)
+const headers = {
       "Content-Type": "application/json",
       Authorization: "JWT fefege...",
     };
@@ -163,16 +252,7 @@ const PositionSelectToken = ({
   const handleWithdraw = async () => {
     console.log("withdraw liuidity");
 
-    console.log("Approval num", Number(value));
-    console.log("Approval parse", parseEther(`${value}`));
-    console.log("Nrk token", liqudity.token0Amount);
-    console.log("token2", liqudity.token1Amount);
-    console.log("Approval", Number(liqudity.lpTokens));
-    console.log("hello2");
-    console.log("should Nrk token", parseEther(`${liqudity.token0Amount}`));
-    console.log("should Approval", parseEther(`${liqudity.token1Amount}`));
-    console.log("should Approval", parseEther(`${token0WithdrawMin}`));
-    console.log("should Approval", parseEther(`${token1WithdrawMin}`));
+     
 
     try {
       console.log(typeof value);
@@ -203,6 +283,15 @@ const PositionSelectToken = ({
       } else {
         await removeLiquidity();
       }
+      if (percentage === 100) {
+        console.log("delete value from db");
+        await deleteLiquidity();
+      } else {
+        console.log("update value from db");
+        await updateLiquidity();
+      }
+
+      updateOnRemove?.(!onRemove);
     } catch (e) {}
   };
 
@@ -224,7 +313,7 @@ const PositionSelectToken = ({
               setOpen(!open);
               setRemove(false);
             }}
-            x
+            
           >
             Manage
             {open ? <RiArrowDropUpLine className="ml-2 " /> : <RiArrowDropDownLine className="ml-2" />}
@@ -240,17 +329,17 @@ const PositionSelectToken = ({
               </div>
 
               <div className="flex flex-row items-center justify-between  font-normal text-sm mt-2 ">
-                <div>{`Pooled ${liqudity.token0.symbol}`}</div>
+                <div>{`Pool ${liqudity.token0.symbol}`}</div>
                 <div className="flex flex-row items-center">
-                  {liqudity.token0Amount.toFixed(2).replace(/[.,]00$/, "")}
+                  {reserve0.toFixed(2).replace(/[.,]00$/, "")}
                   <img src={liqudity.token0.logo} className="w-4 h-4 rounded-full ml-2 " />
                 </div>
               </div>
 
               <div className="flex flex-row items-center justify-between  font-normal text-sm mt-2  ">
-                <div>{`Pooled ${liqudity.token1.symbol}`}</div>
+                <div>{`Pool ${liqudity.token1.symbol}`}</div>
                 <div className="flex flex-row items-center">
-                  {liqudity.token1Amount.toFixed(2).replace(/[.,]00$/, "")}
+                  {reserve1.toFixed(2).replace(/[.,]00$/, "")}
                   <img src={liqudity.token1.logo} className="w-4 h-4 rounded-full ml-2 " />
                 </div>
               </div>
@@ -332,6 +421,10 @@ const PositionSelectToken = ({
           </div>
           <FaArrowDownLong className="w-full items-center my-4" />
           <div className="bg-swap-gradient rounded-lg p-4">
+          <div className="flex flex-row items-center justify-between mb-4 ">
+              <div>Your Pool Share</div>
+               <div>{`${((Number(liqudity.lpTokens)*100)/totalLp).toFixed(2)}%`}</div>
+            </div>
             <div className="flex flex-row items-center justify-between ">
               <div>{token0Withdraw === 0 ? 0 : token0Withdraw.toFixed(4)}</div>
               <div className="flex flex-row items-center  ">

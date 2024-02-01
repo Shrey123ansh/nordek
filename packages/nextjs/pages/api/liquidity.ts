@@ -5,8 +5,6 @@ import clientPromise from "~~/lib/mongoDb";
 export type Liquidity = {
   token0: tokenType;
   token1: tokenType;
-  token0Amount: Number;
-  token1Amount: Number;
   lpTokens: Number;
   pairContract: string;
   user: string;
@@ -38,9 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
           const updateLiquidity = {
             $set: {
-              lpTokens: liquidity.lpTokens + existingLiquidity.lpTokens,
-              token0Amount: liquidity.token0Amount + existingLiquidity.token0Amount,
-              token1Amount: liquidity.token1Amount + existingLiquidity.token1Amount,
+              lpTokens: liquidity.lpTokens 
             },
           };
 
@@ -79,8 +75,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const updateDoc = {
           $set: {
             lpTokens: liquidity.lpTokens,
-            token0Amount: liquidity.token0Amount,
-            token1Amount: liquidity.token1Amount,
           },
         };
 

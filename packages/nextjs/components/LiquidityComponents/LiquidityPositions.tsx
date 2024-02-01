@@ -14,7 +14,7 @@ export default function LiquidityPositions({ updatePosition }: { updatePosition:
 
   const getUserLiquidity = async () => {
     setIsLoading(true);
-    const apiUrl = `api/liquidity?address=${account}`;
+    const apiUrl = `/api/liquidity?address=${account}`;
     try {
       const response = await axios.get(apiUrl);
       const liquidity: Liquidity[] = await response.data.userLiquidityValues;
