@@ -124,14 +124,14 @@ fetchData()
 
   let approvalId = null;
   const approvalNotification = () => {
-    approvalId = notification.loading("Waiting for user approval");
+    approvalId = notification.loading("Awaiting user confirmation");
   };
   const removeApprovalNotification = () => {
     notification.remove(approvalId);
   };
   let txCompId = null;
   const txCompletionWaitNotification = () => {
-    txCompId = notification.loading("Waiting for Tx to complete");
+    txCompId = notification.loading("Waiting Tx completion");
   };
   const removeTxCompNotification = () => {
     notification.remove(txCompId);
@@ -176,8 +176,8 @@ setToken1WithdrawMin(token1WithdrawMin)
       liqudity.token0.address === nrkAddress ? parseEther(`${token0WithdrawMin}`) : parseEther(`${token1WithdrawMin}`),
       account,
       BigInt(unixTimestampInSeconds + 300),
-    ]
-     
+    ],
+    blockConfirmations:1
   });
   const { writeAsync: removeLiquidity } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -190,7 +190,8 @@ setToken1WithdrawMin(token1WithdrawMin)
       parseEther(`${token1WithdrawMin}`),
       account,
       BigInt(unixTimestampInSeconds + 300),
-    ]
+    ],
+    blockConfirmations:1
   });
 
 
@@ -269,11 +270,13 @@ const headers = {
         abi: pairABI.abi,
         functionName: "approve",
         args: [routerContract.address, parseEther(`${_value}`)],
+
       });
       removeApprovalNotification();
       txCompletionWaitNotification();
       await waitForTransaction({
         hash: approveHash,
+        confirmations:1
       });
       removeTxCompNotification();
       console.log("token 1 withdraw amount " + token0WithdrawMin);

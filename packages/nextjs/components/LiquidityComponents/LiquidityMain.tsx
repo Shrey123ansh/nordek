@@ -92,6 +92,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       console.log("variables " + variables);
       console.log("context " + context);
     },
+    blockConfirmations:1
   });
   const { writeAsync: addLiquidityETHToken1 } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -116,6 +117,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         await addToDataBase(lpTokens);
       }
     },
+    blockConfirmations:1
   });
   const { writeAsync: addLiquidity } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -142,6 +144,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         await addToDataBase(lpTokens);
       }
     },
+    blockConfirmations:1
   });
 
   const addToDataBase = async (lpTokens: Number) => {
@@ -190,14 +193,14 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
   let approvalId = null;
   const approvalNotification = () => {
-    approvalId = notification.loading("Waiting for user approval");
+    approvalId = notification.loading("Awaiting user confirmation");
   };
   const removeApprovalNotification = () => {
     notification.remove(approvalId);
   };
   let txCompId = null;
   const txCompletionWaitNotification = () => {
-    txCompId = notification.loading("Waiting for Tx to complete");
+    txCompId = notification.loading("Waiting Tx completion");
   };
   const removeTxCompNotification = () => {
     notification.remove(txCompId);
@@ -260,6 +263,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           txCompletionWaitNotification();
           await waitForTransaction({
             hash: approveHash,
+            confirmations:1
           });
           removeTxCompNotification();
 
@@ -283,6 +287,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           txCompletionWaitNotification();
           await waitForTransaction({
             hash: approveHash,
+            confirmations:1
           });
           removeTxCompNotification();
 
@@ -303,6 +308,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         txCompletionWaitNotification();
         await waitForTransaction({
           hash: approveHash,
+          confirmations:1
         });
         removeTxCompNotification();
       } catch (error) {}
@@ -318,6 +324,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         txCompletionWaitNotification();
         await waitForTransaction({
           hash: approveHash,
+          confirmations:1
         });
         removeTxCompNotification();
       } catch (error) {}

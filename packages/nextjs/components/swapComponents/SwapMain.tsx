@@ -1,19 +1,14 @@
-//import PriceComponent from "./PriceBox";
 import { useEffect, useState } from "react";
 import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
 import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
-//import { getTokenData } from "~~/utils/coingeckoPrices";
-import uniswapv2paircontractABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
 import SelectToken from "./SelectToken";
 import SwapFooter from "./SwapFooter";
 import { readContract, writeContract } from "@wagmi/core";
 import { fetchBalance, waitForTransaction } from "@wagmi/core";
 import { IoIosSettings } from "react-icons/io";
 import { TbArrowsUpDown } from "react-icons/tb";
-import { formatEther, numberToBytes, parseEther, parseUnits } from "viem";
-import { useAccount, useConnect } from "wagmi";
-import { useContractRead } from "wagmi";
-import { ArrowDownIcon } from "@heroicons/react/24/outline";
+import { formatEther, parseEther } from "viem";
+import { useAccount } from "wagmi";
 import { localTokens, tokenType } from "~~/data/data";
 import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { nordek } from "~~/utils/NordekChain";
@@ -252,6 +247,7 @@ export default function SwapMain() {
       setToken0Amount(0);
       setToken1Amount(0);
     },
+    blockConfirmations:1
   });
 
   const { writeAsync: swapTokenForNRK } = useScaffoldContractWrite({
@@ -271,6 +267,7 @@ export default function SwapMain() {
       setToken0Amount(0);
       setToken1Amount(0);
     },
+    blockConfirmations:1
   });
   const { writeAsync: swapTokenForToken } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -289,6 +286,7 @@ export default function SwapMain() {
       setToken0Amount(0);
       setToken1Amount(0);
     },
+    blockConfirmations:1
   });
 
   const handleSwap = async () => {
@@ -338,7 +336,7 @@ export default function SwapMain() {
       console.log("token 0 address " + token0.address);
 
       try {
-        let approveId = notification.loading("Waiting for User to Approve Tx");
+        let approveId = notification.loading("Awaiting user confirmation");
         const { hash: approveHash } = await writeContract({
           address: token0.address,
           abi: erc20ABI.abi,
@@ -346,14 +344,15 @@ export default function SwapMain() {
           args: [routerContract.address, parseEther(`${token0Amount}`)],
         });
         notification.remove(approveId);
-        let completionID = notification.loading("Waiting for Tx Completion");
+        let completionID = notification.loading("Waiting Tx Completion");
         // notification.info("Waiting For Tx Completion")
         await waitForTransaction({
           hash: approveHash,
+          confirmations:1
         });
         notification.remove(completionID);
         if (token1.address === nrkAddress) {
-          console.log(" swaping token for nrk ");
+          console.log("swaping token for nrk ");
           await swapTokenForNRK();
         } else await swapTokenForToken();
       } catch (error) {}
