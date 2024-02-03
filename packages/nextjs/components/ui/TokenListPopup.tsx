@@ -19,7 +19,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
   const [tokens, setTokens] = useState<tokenType[] | undefined>(undefined); // Initialize tokens as undefined
   const { data: deployedContractData } = useDeployedContractInfo("WNRK");
   const { data: factoryContract } = useDeployedContractInfo("NordekV2Factory");
-const [deployerAddress, setDeployer] = useState("0x0")
+// const [deployerAddress, setDeployer] = useState("0x0")
   const { address: account } = useAccount();
   const heading1 = "Select a Token";
   const heading2 = "Edit My Token List";
@@ -33,25 +33,34 @@ const [deployerAddress, setDeployer] = useState("0x0")
 
   const [fotter, setFooter] = useState("Edit My Token List >");
 
+  const { data: deployerAddress } = useScaffoldContractRead({
+    contractName: "NordekV2Factory",
+    functionName: "feeTo",
+   account:account
+  });
   
-useEffect(()=>{
-  try{
-  const getDeployer = async ()=>{
-    const deployer = await readContract({
-      address: factoryContract?.address,
-      abi: factoryContract?.abi,
-      functionName: "feeTo",
-      account: account,
-    });
-    console.log("deployer address")
-    console.log(deployer)
-    setDeployer(deployer)
-  }
-  getDeployer()
-  }catch(e){
-    console.log(e)
-  }
-},[account])
+
+
+// useEffect(()=>{
+ 
+//   try{
+//   const getDeployer = async ()=>{
+     
+//     const deployer = await readContract({
+//       address: factoryContract?.address,
+//       abi: factoryContract?.abi,
+//       functionName: "feeTo",
+//       account: account,
+//     });
+//     console.log("deployer address")
+//     console.log(deployer)
+//     setDeployer(deployer)
+//   }
+//   getDeployer()
+//   }catch(e){
+//     console.log(e)
+//   }
+// },[account])
 
 
   const fetchTokens = async () => {
