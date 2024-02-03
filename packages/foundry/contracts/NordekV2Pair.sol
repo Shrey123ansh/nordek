@@ -144,7 +144,7 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
         (uint112 _reserve0, uint112 _reserve1, ) = getReserves(); // gas savings
         uint balance0 = IERC20(token0).balanceOf(address(this));
         uint balance1 = IERC20(token1).balanceOf(address(this));
-        uint amount0 = balance0 - _reserve0;
+        uint amount0 =   - _reserve0;
         uint amount1 = balance1 - _reserve1;
 
         bool feeOn = _mintFee(_reserve0, _reserve1);

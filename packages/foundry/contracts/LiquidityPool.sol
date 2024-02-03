@@ -64,7 +64,7 @@ contract LiquidityPool is OwnableUpgradeable, ReentrancyGuard, ILiquidityPool {
     ) external isVerified nonReentrant {
         address _contract = msg.sender;
         require(address(this).balance >= _amount, "No NRK tokens in pool");
-
+        
         (bool success, ) = _contract.call{value: _amount}("");
         require(success, "failed to send NRK tokens");
         emit AccessedFunds(_contract, _action, uint32(block.timestamp));
