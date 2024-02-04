@@ -26,6 +26,9 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
     uint public price0CumulativeLast;
     uint public price1CumulativeLast;
     uint public kLast; // reserve0 * reserve1, as of immediately after the most recent liquidity event
+   uint256 public nDev = 1;
+    uint256 public dDev = 1;
+    uint32 public devFee = 6; // uses 0.04% default from swap fee
 
     uint private unlocked = 1;
     modifier lock() {
@@ -115,6 +118,7 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
         emit Sync(reserve0, reserve1);
     }
 
+
     // if fee is on, mint liquidity equivalent to 1/6th of the growth in sqrt(k)
     function _mintFee(
         uint112 _reserve0,
@@ -125,12 +129,14 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
         uint _kLast = kLast; // gas savings
         if (feeOn) {
             if (_kLast != 0) {
-                uint rootK = Math.sqrt(uint(_reserve0) * _reserve1);
-                uint rootKLast = Math.sqrt(_kLast);
+                uint256 rootK = Math.sqrt(uint256(_reserve0) * (_reserve1));
+                uint256 rootKLast = Math.sqrt(_kLast);
                 if (rootK > rootKLast) {
-                    uint numerator = totalSupply * (rootK - rootKLast);
-                    uint denominator = (rootK * 5) + rootKLast;
-                    uint liquidity = numerator / denominator;
+                    uint256 numerator = (totalSupply * (rootK - (rootKLast))) *
+                        (nDev);
+                    uint256 denominator = (rootK * (devFee)) +
+                        (rootKLast * (dDev));
+                    uint256 liquidity = numerator / denominator;
                     if (liquidity > 0) _mint(feeTo, liquidity);
                 }
             }
@@ -144,7 +150,7 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
         (uint112 _reserve0, uint112 _reserve1, ) = getReserves(); // gas savings
         uint balance0 = IERC20(token0).balanceOf(address(this));
         uint balance1 = IERC20(token1).balanceOf(address(this));
-        uint amount0 =   - _reserve0;
+        uint amount0 = balance0 - _reserve0;
         uint amount1 = balance1 - _reserve1;
 
         bool feeOn = _mintFee(_reserve0, _reserve1);
@@ -281,5 +287,22 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
             reserve0,
             reserve1
         );
+    }
+
+    function setPercent(uint256 _nDev, uint256 _dDev) external {
+        require(
+            _nDev >= 0 && _dDev > 0,
+            "NordekV2:Less than or equal to zero"
+        );
+        require(msg.sender == factory, "NordekV2:FORBIDDEN");
+        nDev = _nDev;
+        dDev = _dDev;
+    }
+
+    function setDevFee(uint32 _devFee) external {
+        require(_devFee >= 0, "lower then 0");
+        require(msg.sender == factory, "NordekV2: FORBIDDEN");
+        require(_devFee <= 10000, "NordekV2: FORBIDDEN_FEE");
+        devFee = _devFee;
     }
 }

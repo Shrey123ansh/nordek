@@ -22,4 +22,12 @@ interface INordekV2Factory {
     function setFeeTo(address) external;
 
     function setFeeToSetter(address) external;
+
+        function setDevFee(address pair, uint8 _devFee) external;
+
+    function setPercent(
+        address _pair,
+        uint256 _ndev,
+        uint256 _ddev
+    ) external;
 }

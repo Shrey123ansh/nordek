@@ -22,6 +22,12 @@ interface INordekV2Pair is INordekV2ERC20 {
 
     function kLast() external view returns (uint);
 
+    function nDev() external view returns (uint256);
+
+    function dDev() external view returns (uint256);
+
+    function devFee() external view returns (uint32);
+
     function mint(address to) external returns (uint liquidity);
 
     function burn(address to) external returns (uint amount0, uint amount1);
