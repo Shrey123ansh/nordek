@@ -13,7 +13,7 @@ export type Liquidity = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
   const db = client.db("Norswap");
-  const collectionName = "usersLiquidities";
+  const collectionName = "liquidities";
   console.log(req.method);
   switch (req.method) {
     case "POST":
