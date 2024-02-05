@@ -59,4 +59,20 @@ contract NordekV2Factory is INordekV2Factory {
         require(msg.sender == feeToSetter, "NordekV2: FORBIDDEN");
         feeToSetter = _feeToSetter;
     }
+
+    function setPercent(
+        address _pair,
+        uint256 _ndev,
+        uint256 _ddev
+    ) external override {
+        require(msg.sender == feeToSetter, "NordekV2: FORBIDDEN");
+        NordekV2Pair(_pair).setPercent(_ndev, _ddev);
+    }
+
+    function setDevFee(address _pair, uint8 _devFee) external override {
+        require(msg.sender == feeToSetter, "NordekV2: FORBIDDEN");
+        require(_devFee >= 0, "NordekV2: FORBIDDEN_FEE");
+        NordekV2Pair(_pair).setDevFee(_devFee);
+    }
+
 }

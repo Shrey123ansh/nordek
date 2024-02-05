@@ -63,8 +63,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     setPairContract(pc);
   }, [isFetched]);
 
-   
- const { writeAsync: addLiquidityETHToken0 } = useScaffoldContractWrite({
+  const { writeAsync: addLiquidityETHToken0 } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
     functionName: "addLiquidityNRK",
     args: [
@@ -83,7 +82,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     onSuccess: async data => {
       if (data.hash) {
         const lpTokens = await fetchLpTokenBalance();
-        
+
         await addToDataBase(lpTokens);
       }
     },
@@ -92,7 +91,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       console.log("variables " + variables);
       console.log("context " + context);
     },
-    blockConfirmations:1
+    blockConfirmations: 1,
   });
   const { writeAsync: addLiquidityETHToken1 } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -113,11 +112,11 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     onSuccess: async data => {
       if (data.hash) {
         const lpTokens = await fetchLpTokenBalance();
-        
+
         await addToDataBase(lpTokens);
       }
     },
-    blockConfirmations:1
+    blockConfirmations: 1,
   });
   const { writeAsync: addLiquidity } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -140,27 +139,27 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     onSuccess: async data => {
       if (data.hash) {
         const lpTokens = await fetchLpTokenBalance();
-        
+
         await addToDataBase(lpTokens);
       }
     },
-    blockConfirmations:1
+    blockConfirmations: 1,
   });
 
   const addToDataBase = async (lpTokens: Number) => {
-    let result = ""
-    try{
-        result = await readContract( {
-        abi :factoryContractData.abi,
+    let result = "";
+    try {
+      result = await readContract({
+        abi: factoryContractData.abi,
         address: factoryContractData.address,
-        functionName: 'getPair',
+        functionName: "getPair",
         args: [token0.address, token1.address],
-       account: account,
-      })
-      console.log("pair contract address from wagmi "+result)
-      setPairContract(result)
-    }catch(e){
-      console.log(e)
+        account: account,
+      });
+      console.log("pair contract address from wagmi " + result);
+      setPairContract(result);
+    } catch (e) {
+      console.log(e);
     }
     const liquidity: Liquidity = {
       token0: token0,
@@ -263,7 +262,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           txCompletionWaitNotification();
           await waitForTransaction({
             hash: approveHash,
-            confirmations:1
+            confirmations: 1,
           });
           removeTxCompNotification();
 
@@ -287,7 +286,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           txCompletionWaitNotification();
           await waitForTransaction({
             hash: approveHash,
-            confirmations:1
+            confirmations: 1,
           });
           removeTxCompNotification();
 
@@ -308,7 +307,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         txCompletionWaitNotification();
         await waitForTransaction({
           hash: approveHash,
-          confirmations:1
+          confirmations: 1,
         });
         removeTxCompNotification();
       } catch (error) {}
@@ -324,7 +323,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         txCompletionWaitNotification();
         await waitForTransaction({
           hash: approveHash,
-          confirmations:1
+          confirmations: 1,
         });
         removeTxCompNotification();
       } catch (error) {}
@@ -522,10 +521,9 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       liquidity = value1 > value2 ? value2 : value1;
 
       setLPTokens(Number(liquidity));
-    }
-    else{
-      if(token0Amount===0||token1Amount===0) return
-      setShare(Math.sqrt(Number(token0Amount)*Number(token1Amount)))
+    } else {
+      if (token0Amount === 0 || token1Amount === 0) return;
+      setShare(Math.sqrt(Number(token0Amount) * Number(token1Amount)));
     }
   }, [token0Amount, token1Amount]);
 
@@ -541,7 +539,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       setToken0Amount(value);
       setToken1Amount(_amount1);
     } else {
-      if(value===0) setShare(0)
+      if (value === 0) setShare(0);
       setToken0Amount(value);
     }
     setLPTokens(0);
@@ -559,7 +557,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       setToken0Amount(_amount0);
       setToken1Amount(value);
     } else {
-      if(value===0)setShare(0)
+      if (value === 0) setShare(0);
       setToken1Amount(value);
     }
     setLPTokens(0);
