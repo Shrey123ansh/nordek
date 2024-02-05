@@ -575,7 +575,7 @@ contract NordekV2Router02 is INordekV2Router02 {
         uint balanceBefore = IERC20(path[path.length - 1]).balanceOf(to);
         _swapSupportingFeeOnTransferTokens(path, to);
         require(
-            IERC20(path[path.length - 1]).balanceOf(to)-(balanceBefore) >=
+            IERC20(path[path.length - 1]).balanceOf(to) - (balanceBefore) >=
                 amountOutMin,
             "NordekV2Router: INSUFFICIENT_OUTPUT_AMOUNT"
         );
@@ -599,7 +599,7 @@ contract NordekV2Router02 is INordekV2Router02 {
         uint balanceBefore = IERC20(path[path.length - 1]).balanceOf(to);
         _swapSupportingFeeOnTransferTokens(path, to);
         require(
-            IERC20(path[path.length - 1]).balanceOf(to)-(balanceBefore) >=
+            IERC20(path[path.length - 1]).balanceOf(to) - (balanceBefore) >=
                 amountOutMin,
             "NordekV2Router: INSUFFICIENT_OUTPUT_AMOUNT"
         );

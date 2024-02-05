@@ -3,11 +3,11 @@ src = 'contracts'
 out = 'out'
 auto_detect_solc = true
 libs = ['lib']
-fs_permissions = [{ access = "read-write", path = "./"}]
+fs_permissions = [{ access = "read-write", path = "./" }]
 optimizer_runs = 100000
 evm_version = 'paris'
 [rpc_endpoints]
-default_network = "http://127.0.0.1:8545"
+default_network = "https://mainnet-rpc.nordekscan.com/"
 localhost = "http://127.0.0.1:8545"
 
 mainnet = "https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}"
@@ -25,8 +25,5 @@ base = "https://mainnet.base.org"
 baseGoerli = "https://goerli.base.org"
 nordek = "https://mainnet-rpc.nordekscan.com/"
 
-[etherscan]
-polygonMumbai = { key = "${ETHERSCAN_API_KEY}" }
-goerli = { key = "${ETHERSCAN_API_KEY}" }
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
