@@ -32,6 +32,6 @@ const liquiditySchema = new mongoose.Schema({
   },
 });
 
-const Liquidity = mongoose.models.userLiquidities || mongoose.model("userLiquidities", liquiditySchema);
+const Liquidity = mongoose.models.usersLiquidities || mongoose.model("usersLiquidities", liquiditySchema);
 
 export default Liquidity;

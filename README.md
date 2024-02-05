@@ -12,5 +12,3 @@
 wnrk contract deployed at: 0x22FD0CF94cDf0AB41F634c38DC581a50e54F60E1
 router contract deployed at: 0x306A0143997b2bBfd7dd29b60B497Ca7557e80e6
 PracticeERC20 contract deployed at: 0xac2720Ff6B2cB683727790d6E86cE45433AD290D -->
-
-0xcFde8397e2dc7e4801219C9Afec07aE293853Bd6
