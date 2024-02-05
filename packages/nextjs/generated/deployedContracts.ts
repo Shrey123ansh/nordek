@@ -5,7 +5,7 @@ const contracts = {
       chainId: "81041",
       contracts: {
         NordekV2Factory: {
-          address: "0x146F51BDf714E6405FEdcA26813DdE4BcEdCD9B9",
+          address: "0xCd4B6129c1431DD7BAf06218E6a49B440Da2d73d",
           abi: [
             {
               type: "constructor",
@@ -184,7 +184,7 @@ const contracts = {
           ],
         },
         WNRK: {
-          address: "0xE778959bC4dE7F84572499b83d2407d482A7F5a9",
+          address: "0x22FD0CF94cDf0AB41F634c38DC581a50e54F60E1",
           abi: [
             {
               type: "constructor",
@@ -492,7 +492,7 @@ const contracts = {
           ],
         },
         NordekV2Router02: {
-          address: "0xcFde8397e2dc7e4801219C9Afec07aE293853Bd6",
+          address: "0x306A0143997b2bBfd7dd29b60B497Ca7557e80e6",
           abi: [
             {
               type: "constructor",
@@ -1468,7 +1468,7 @@ const contracts = {
           ],
         },
         PracticeSupplyERC20: {
-          address: "0x24F6e95F286354ffc0294bfaE4F9Fa4bA863a480",
+          address: "0xac2720Ff6B2cB683727790d6E86cE45433AD290D",
           abi: [
             {
               type: "constructor",
