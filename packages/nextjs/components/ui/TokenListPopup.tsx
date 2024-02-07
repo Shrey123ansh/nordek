@@ -5,8 +5,8 @@ import erc20Abi from "../../../foundry/out/ERC20.sol/ERC20.json";
 import { readContract } from "@wagmi/core";
 import axios from "axios";
 import { BsSearch } from "react-icons/bs";
-import { useAccount, useBalance , useContractRead} from "wagmi";
-import {  tokenType } from "~~/data/data";
+import { useAccount, useBalance, useContractRead } from "wagmi";
+import { tokenType } from "~~/data/data";
 import { useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 
 interface TokenListPopupProps {
@@ -19,7 +19,7 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
   const [tokens, setTokens] = useState<tokenType[] | undefined>(undefined); // Initialize tokens as undefined
   const { data: deployedContractData } = useDeployedContractInfo("WNRK");
   const { data: factoryContract } = useDeployedContractInfo("NordekV2Factory");
-// const [deployerAddress, setDeployer] = useState("0x0")
+  // const [deployerAddress, setDeployer] = useState("0x0")
   const { address: account } = useAccount();
   const heading1 = "Select a Token";
   const heading2 = "Edit My Token List";
@@ -36,32 +36,29 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
   const { data: deployerAddress } = useScaffoldContractRead({
     contractName: "NordekV2Factory",
     functionName: "feeTo",
-   account:account
+    account: account,
   });
-  
 
+  // useEffect(()=>{
 
-// useEffect(()=>{
- 
-//   try{
-//   const getDeployer = async ()=>{
-     
-//     const deployer = await readContract({
-//       address: factoryContract?.address,
-//       abi: factoryContract?.abi,
-//       functionName: "feeTo",
-//       account: account,
-//     });
-//     console.log("deployer address")
-//     console.log(deployer)
-//     setDeployer(deployer)
-//   }
-//   getDeployer()
-//   }catch(e){
-//     console.log(e)
-//   }
-// },[account])
+  //   try{
+  //   const getDeployer = async ()=>{
 
+  //     const deployer = await readContract({
+  //       address: factoryContract?.address,
+  //       abi: factoryContract?.abi,
+  //       functionName: "feeTo",
+  //       account: account,
+  //     });
+  //     console.log("deployer address")
+  //     console.log(deployer)
+  //     setDeployer(deployer)
+  //   }
+  //   getDeployer()
+  //   }catch(e){
+  //     console.log(e)
+  //   }
+  // },[account])
 
   const fetchTokens = async () => {
     try {
@@ -276,11 +273,11 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
               <ListComponent />
             </div>
           )}
-          { String(deployerAddress) === account && <div>
-            <div className="   text-left mt-8 text-primary-content font-bold text-[15px] ">
-              <button onClick={onFotterClick}>{fotter}</button>
-            </div>
-          </div>}
+          {/* { String(deployerAddress) === account && <div> */}
+          <div className="   text-left mt-8 text-primary-content font-bold text-[15px] ">
+            <button onClick={onFotterClick}>{fotter}</button>
+          </div>
+          {/* </div>} */}
         </div>
       </div>
     </div>
