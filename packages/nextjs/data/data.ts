@@ -27,13 +27,13 @@ export const localTokens = {
     logo: "https://raw.githubusercontent.com/kashyap222884/assets/main/blockchains/nrk/0x89439663317D6092c03adC955df7df769B8Bb605/logo.png",
     name: "nordek",
     symbol: "NRK",
-    address: "0xE778959bC4dE7F84572499b83d2407d482A7F5a9",
+    address: "0x489733CB34B837f5236Fec7082e9a3BaD6De7c31",
   },
   PERC: {
     logo: "https://picsum.photos/200",
     name: "Practice ERC20",
     symbol: "PERC",
-    address: "0x24F6e95F286354ffc0294bfaE4F9Fa4bA863a480",
+    address: "0xac2720Ff6B2cB683727790d6E86cE45433AD290D",
   }
 
   // Add more token objects as needed
