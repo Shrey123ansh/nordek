@@ -21,6 +21,8 @@ contract DeployScript is ScaffoldETHDeploy {
 
     StakingContract stakingContract;
     LiquidityPool liquidityPool;
+    TransparentUpgradeableProxy nordekV2FactoryProxy;
+    TransparentUpgradeableProxy routerProxy;
     TransparentUpgradeableProxy liquidityPoolProxy;
     TransparentUpgradeableProxy stakingContractProxy;
     NordekV2Factory factory;
@@ -42,38 +44,39 @@ contract DeployScript is ScaffoldETHDeploy {
             revert InvalidOwnerAddress();
         }
         vm.startBroadcast(deployerPrivateKey);
-        address setter = vm.addr(deployerPrivateKey);
+        // address setter = vm.addr(deployerPrivateKey);
+        _swap(admin, owner);
         // _staking(admin, owner);
-        factory = new NordekV2Factory(setter);
-        factory.setFeeTo(setter);
-        wnrk = new WNRK();
-        router = new NordekV2Router02(address(factory), address(wnrk));
+        // factory = new NordekV2Factory(setter);
+        // factory.setFeeTo(setter);
+        // wnrk = new WNRK();
+        // router = new NordekV2Router02(address(factory), address(wnrk));
 
-        practiceERC20 = new PracticeSupplyERC20();
-        console.logString(
-            string.concat(
-                "factory contract deployed at: ",
-                vm.toString(address(factory))
-            )
-        );
-        console.logString(
-            string.concat(
-                "wnrk contract deployed at: ",
-                vm.toString(address(wnrk))
-            )
-        );
-        console.logString(
-            string.concat(
-                "router contract deployed at: ",
-                vm.toString(address(router))
-            )
-        );
-        console.logString(
-            string.concat(
-                "PracticeERC20 contract deployed at: ",
-                vm.toString(address(practiceERC20))
-            )
-        );
+        // practiceERC20 = new PracticeSupplyERC20();
+        // console.logString(
+        //     string.concat(
+        //         "factory contract deployed at: ",
+        //         vm.toString(address(factory))
+        //     )
+        // );
+        // console.logString(
+        //     string.concat(
+        //         "wnrk contract deployed at: ",
+        //         vm.toString(address(wnrk))
+        //     )
+        // );
+        // console.logString(
+        //     string.concat(
+        //         "router contract deployed at: ",
+        //         vm.toString(address(router))
+        //     )
+        // );
+        // console.logString(
+        //     string.concat(
+        //         "PracticeERC20 contract deployed at: ",
+        //         vm.toString(address(practiceERC20))
+        //     )
+        // );
         vm.stopBroadcast();
         exportDeployments();
     }
@@ -83,6 +86,74 @@ contract DeployScript is ScaffoldETHDeploy {
     // function _NordekV2(address setter) internal {
 
     // }
+
+    function _swap(address admin, uint256 owner) internal {
+        NordekV2Factory factory = new NordekV2Factory();
+
+        factory.initialize(address(uint160(owner)), address(uint160(owner)));
+
+        // Deploy TransparentUpgradeableProxy for NordekV2Factory contract
+        TransparentUpgradeableProxy nordekV2FactoryProxy = new TransparentUpgradeableProxy(
+                address(factory),
+                admin,
+                abi.encodeWithSignature(
+                    "initialize(address,address)",
+                    address(uint160(owner)),
+                    address(uint160(owner))
+                )
+            );
+
+        // factory = new NordekV2Factory(admin);
+        // factory.setFeeTo(address(uint160(owner)));
+        // Set fee recipient in the factory contract
+        factory.setFeeTo(address(uint160(owner))); // Assuming the owner should receive the fees
+
+        // Deploy WNRK contract if needed
+        WNRK wnrk = new WNRK();
+
+        NordekV2Router02 router = new NordekV2Router02();
+        router.initialize(
+            address(uint160(owner)),
+            address(factory),
+            address(wnrk)
+        );
+
+        // Deploy TransparentUpgradeableProxy for NordekV2Router02 contract
+        TransparentUpgradeableProxy routerProxy = new TransparentUpgradeableProxy(
+                address(router),
+                admin,
+                abi.encodeWithSignature(
+                    "initialize(address,address,address)",
+                    address(uint160(owner)),
+                    address(factory),
+                    address(wnrk)
+                )
+            );
+
+        practiceERC20 = new PracticeSupplyERC20();
+
+        console.logString(
+            string.concat(
+                "Factory contract: ",
+                vm.toString(address(nordekV2FactoryProxy))
+            )
+        );
+        console.logString(
+            string.concat("WNRK contract: ", vm.toString(address(wnrk)))
+        );
+        console.logString(
+            string.concat(
+                "Router contract: ",
+                vm.toString(address(routerProxy))
+            )
+        );
+        console.logString(
+            string.concat(
+                "Practice contract:",
+                vm.toString(address(practiceERC20))
+            )
+        );
+    }
 
     function _staking(address admin, uint256 owner) internal {
         liquidityPool = new LiquidityPool();

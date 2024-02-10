@@ -9,7 +9,7 @@ export const localTokens = {
     logo: "https://picsum.photos/200",
     name: "wrapped bitcoin",
     symbol: "WBTC",
-    address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+    address: "0x61a4F9E552bfbCCd55f4413c0dD52b5868148Adc",
   },
   LINK: {
     logo: "https://picsum.photos/200",
@@ -27,7 +27,7 @@ export const localTokens = {
     logo: "https://raw.githubusercontent.com/kashyap222884/assets/main/blockchains/nrk/0x89439663317D6092c03adC955df7df769B8Bb605/logo.png",
     name: "nordek",
     symbol: "NRK",
-    address: "0x489733CB34B837f5236Fec7082e9a3BaD6De7c31",
+    address: "0x99a6c7392cC9d735B019308Ea5648B177aDba869",
   },
   PERC: {
     logo: "https://picsum.photos/200",

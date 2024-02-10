@@ -43,5 +43,5 @@ interface INordekV2Pair is INordekV2ERC20 {
 
     function sync() external;
 
-    function initialize(address, address) external;
+    function initialize(address, address, uint256, uint256, uint32) external;
 }

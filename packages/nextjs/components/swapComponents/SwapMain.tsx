@@ -247,7 +247,7 @@ export default function SwapMain() {
       setToken0Amount(0);
       setToken1Amount(0);
     },
-    blockConfirmations:1
+    blockConfirmations: 1,
   });
 
   const { writeAsync: swapTokenForNRK } = useScaffoldContractWrite({
@@ -267,7 +267,7 @@ export default function SwapMain() {
       setToken0Amount(0);
       setToken1Amount(0);
     },
-    blockConfirmations:1
+    blockConfirmations: 1,
   });
   const { writeAsync: swapTokenForToken } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -286,7 +286,7 @@ export default function SwapMain() {
       setToken0Amount(0);
       setToken1Amount(0);
     },
-    blockConfirmations:1
+    blockConfirmations: 1,
   });
 
   const handleSwap = async () => {
@@ -344,11 +344,11 @@ export default function SwapMain() {
           args: [routerContract.address, parseEther(`${token0Amount}`)],
         });
         notification.remove(approveId);
-        let completionID = notification.loading("Waiting Tx Completion");
+        let completionID = notification.loading("Waiting for Tx completion");
         // notification.info("Waiting For Tx Completion")
         await waitForTransaction({
           hash: approveHash,
-          confirmations:1
+          confirmations: 1,
         });
         notification.remove(completionID);
         if (token1.address === nrkAddress) {

@@ -5,18 +5,71 @@ const contracts = {
       chainId: "81041",
       contracts: {
         NordekV2Factory: {
-          address: "0x7F6365d818a5612d8C1363CDDE03f70c74dE7b17",
+          address: "0xc724A16090E409b094DBFfDC8F5Fa4eaEFEb8903",
           abi: [
             {
+              anonymous: false,
               inputs: [
                 {
+                  indexed: false,
                   internalType: "address",
-                  name: "_feeToSetter",
+                  name: "previousAdmin",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "address",
+                  name: "newAdmin",
                   type: "address",
                 },
               ],
-              stateMutability: "nonpayable",
-              type: "constructor",
+              name: "AdminChanged",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "beacon",
+                  type: "address",
+                },
+              ],
+              name: "BeaconUpgraded",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint8",
+                  name: "version",
+                  type: "uint8",
+                },
+              ],
+              name: "Initialized",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "previousOwner",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "OwnershipTransferred",
+              type: "event",
             },
             {
               anonymous: false,
@@ -47,6 +100,19 @@ const contracts = {
                 },
               ],
               name: "PairCreated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "implementation",
+                  type: "address",
+                },
+              ],
+              name: "Upgraded",
               type: "event",
             },
             {
@@ -107,6 +173,32 @@ const contracts = {
             },
             {
               inputs: [],
+              name: "dDev",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "devFee",
+              outputs: [
+                {
+                  internalType: "uint32",
+                  name: "",
+                  type: "uint32",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
               name: "feeTo",
               outputs: [
                 {
@@ -159,16 +251,75 @@ const contracts = {
               inputs: [
                 {
                   internalType: "address",
-                  name: "_pair",
+                  name: "_owner",
                   type: "address",
                 },
                 {
-                  internalType: "uint8",
-                  name: "_devFee",
-                  type: "uint8",
+                  internalType: "address",
+                  name: "_feeToSetter",
+                  type: "address",
                 },
               ],
-              name: "setDevFee",
+              name: "initialize",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "nDev",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "owner",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "proxiableUUID",
+              outputs: [
+                {
+                  internalType: "bytes32",
+                  name: "",
+                  type: "bytes32",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "renounceOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint32",
+                  name: "_devFee",
+                  type: "uint32",
+                },
+              ],
+              name: "setDevFeeForAllPairs",
               outputs: [],
               stateMutability: "nonpayable",
               type: "function",
@@ -202,11 +353,6 @@ const contracts = {
             {
               inputs: [
                 {
-                  internalType: "address",
-                  name: "_pair",
-                  type: "address",
-                },
-                {
                   internalType: "uint256",
                   name: "_ndev",
                   type: "uint256",
@@ -217,7 +363,108 @@ const contracts = {
                   type: "uint256",
                 },
               ],
-              name: "setPercent",
+              name: "setPercentForAllPairs",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "transferOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "newImplementation",
+                  type: "address",
+                },
+              ],
+              name: "upgradeTo",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "newImplementation",
+                  type: "address",
+                },
+                {
+                  internalType: "bytes",
+                  name: "data",
+                  type: "bytes",
+                },
+              ],
+              name: "upgradeToAndCall",
+              outputs: [],
+              stateMutability: "payable",
+              type: "function",
+            },
+          ],
+        },
+        null: {
+          address: "0x01f4b9498243F6B6E656E9ec4032Cc062457C08B",
+          abi: [
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "previousOwner",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "OwnershipTransferred",
+              type: "event",
+            },
+            {
+              inputs: [],
+              name: "owner",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "renounceOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "transferOwnership",
               outputs: [],
               stateMutability: "nonpayable",
               type: "function",
@@ -225,7 +472,7 @@ const contracts = {
           ],
         },
         WNRK: {
-          address: "0x489733CB34B837f5236Fec7082e9a3BaD6De7c31",
+          address: "0x99a6c7392cC9d735B019308Ea5648B177aDba869",
           abi: [
             {
               inputs: [],
@@ -533,23 +780,84 @@ const contracts = {
           ],
         },
         NordekV2Router02: {
-          address: "0x15c0AEfA45ED7C1EcB264FbF9ced5E27164a1DEe",
+          address: "0xBc45bd168c2A6aA3dE46C68f0EFa7aa28999065E",
           abi: [
             {
+              anonymous: false,
               inputs: [
                 {
+                  indexed: false,
                   internalType: "address",
-                  name: "_factory",
+                  name: "previousAdmin",
                   type: "address",
                 },
                 {
+                  indexed: false,
                   internalType: "address",
-                  name: "_WNRK",
+                  name: "newAdmin",
                   type: "address",
                 },
               ],
-              stateMutability: "nonpayable",
-              type: "constructor",
+              name: "AdminChanged",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "beacon",
+                  type: "address",
+                },
+              ],
+              name: "BeaconUpgraded",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "uint8",
+                  name: "version",
+                  type: "uint8",
+                },
+              ],
+              name: "Initialized",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "previousOwner",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "OwnershipTransferred",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "implementation",
+                  type: "address",
+                },
+              ],
+              name: "Upgraded",
+              type: "event",
             },
             {
               inputs: [],
@@ -796,6 +1104,55 @@ const contracts = {
                   internalType: "uint256[]",
                   name: "amounts",
                   type: "uint256[]",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "_owner",
+                  type: "address",
+                },
+                {
+                  internalType: "address",
+                  name: "_factory",
+                  type: "address",
+                },
+                {
+                  internalType: "address",
+                  name: "wnrk",
+                  type: "address",
+                },
+              ],
+              name: "initialize",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "owner",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "proxiableUUID",
+              outputs: [
+                {
+                  internalType: "bytes32",
+                  name: "",
+                  type: "bytes32",
                 },
               ],
               stateMutability: "view",
@@ -1185,6 +1542,13 @@ const contracts = {
               type: "function",
             },
             {
+              inputs: [],
+              name: "renounceOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
               inputs: [
                 {
                   internalType: "uint256",
@@ -1503,13 +1867,57 @@ const contracts = {
               type: "function",
             },
             {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "newOwner",
+                  type: "address",
+                },
+              ],
+              name: "transferOwnership",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "newImplementation",
+                  type: "address",
+                },
+              ],
+              name: "upgradeTo",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "newImplementation",
+                  type: "address",
+                },
+                {
+                  internalType: "bytes",
+                  name: "data",
+                  type: "bytes",
+                },
+              ],
+              name: "upgradeToAndCall",
+              outputs: [],
+              stateMutability: "payable",
+              type: "function",
+            },
+            {
               stateMutability: "payable",
               type: "receive",
             },
           ],
         },
         PracticeSupplyERC20: {
-          address: "0x0FA398aDbd9266B2eCA7377b4F42605e79a34c75",
+          address: "0x80863939552a0C5b148004f8334fB8538D7D5EE4",
           abi: [
             {
               inputs: [],

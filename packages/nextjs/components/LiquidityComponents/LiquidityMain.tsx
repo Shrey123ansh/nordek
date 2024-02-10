@@ -199,7 +199,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
   };
   let txCompId = null;
   const txCompletionWaitNotification = () => {
-    txCompId = notification.loading("Waiting Tx completion");
+    txCompId = notification.loading("Waiting for Tx completion");
   };
   const removeTxCompNotification = () => {
     notification.remove(txCompId);

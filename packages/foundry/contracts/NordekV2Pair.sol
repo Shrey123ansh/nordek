@@ -26,9 +26,9 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
     uint public price0CumulativeLast;
     uint public price1CumulativeLast;
     uint public kLast; // reserve0 * reserve1, as of immediately after the most recent liquidity event
-   uint256 public nDev = 1;
+    uint256 public nDev = 1;
     uint256 public dDev = 1;
-    uint32 public devFee = 6; // uses 0.04% default from swap fee
+    uint32 public devFee = 5; // uses 0.04% default from swap fee
 
     uint private unlocked = 1;
     modifier lock() {
@@ -84,10 +84,19 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
     }
 
     // called once by the factory at time of deployment
-    function initialize(address _token0, address _token1) external {
+    function initialize(
+        address _token0,
+        address _token1,
+        uint256 _nDev,
+        uint256 _dDev,
+        uint32 _devFee
+    ) external {
         require(msg.sender == factory, "NordekV2: FORBIDDEN"); // sufficient check
         token0 = _token0;
         token1 = _token1;
+        nDev = _nDev;
+        dDev = _dDev;
+        devFee = _devFee;
     }
 
     // update reserves and, on the first call per block, price accumulators
@@ -118,8 +127,7 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
         emit Sync(reserve0, reserve1);
     }
 
-
-    // if fee is on, mint liquidity equivalent to 1/6th of the growth in sqrt(k)
+    // if fee is on, mint liquidity equivalent to 1/5th of the growth in sqrt(k)
     function _mintFee(
         uint112 _reserve0,
         uint112 _reserve1
@@ -290,10 +298,7 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
     }
 
     function setPercent(uint256 _nDev, uint256 _dDev) external {
-        require(
-            _nDev >= 0 && _dDev > 0,
-            "NordekV2:Less than or equal to zero"
-        );
+        require(_nDev >= 0 && _dDev > 0, "NordekV2:Less than or equal to zero");
         require(msg.sender == factory, "NordekV2:FORBIDDEN");
         nDev = _nDev;
         dDev = _dDev;

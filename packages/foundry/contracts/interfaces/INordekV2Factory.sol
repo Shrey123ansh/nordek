@@ -12,6 +12,12 @@ interface INordekV2Factory {
 
     function allPairs(uint) external view returns (address pair);
 
+    function nDev() external view returns (uint256);
+
+    function dDev() external view returns (uint256);
+
+    function devFee() external view returns (uint32);
+
     function allPairsLength() external view returns (uint);
 
     function createPair(
@@ -23,11 +29,7 @@ interface INordekV2Factory {
 
     function setFeeToSetter(address) external;
 
-        function setDevFee(address pair, uint8 _devFee) external;
+    function setPercentForAllPairs(uint256 _ndev, uint256 _ddev) external;
 
-    function setPercent(
-        address _pair,
-        uint256 _ndev,
-        uint256 _ddev
-    ) external;
+    function setDevFeeForAllPairs(uint32 _devFee) external;
 }
