@@ -273,11 +273,13 @@ const TokenListPopup: React.FC<TokenListPopupProps> = ({ isOpen, onClose, setTok
               <ListComponent />
             </div>
           )}
-          {/* { String(deployerAddress) === account && <div> */}
-          <div className="   text-left mt-8 text-primary-content font-bold text-[15px] ">
-            <button onClick={onFotterClick}>{fotter}</button>
-          </div>
-          {/* </div>} */}
+          {String(deployerAddress) === account && (
+            <div>
+              <div className="   text-left mt-8 text-primary-content font-bold text-[15px] ">
+                <button onClick={onFotterClick}>{fotter}</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

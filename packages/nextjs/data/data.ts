@@ -31,9 +31,9 @@ export const localTokens = {
   },
   PERC: {
     logo: "https://picsum.photos/200",
-    name: "Practice ERC20",
-    symbol: "PERC",
-    address: "0xac2720Ff6B2cB683727790d6E86cE45433AD290D",
+    name: "ERC20",
+    symbol: "AIT",
+    address: "0xAd4f29f3151D0F80636B0aEE8Bdb28c8E2aaFf63",
   }
 
   // Add more token objects as needed

@@ -22,7 +22,7 @@ export const Footer = () => {
             <div className="flex flex-col w-[25%] gap-2">
               <div className="flex flex-row gap-2">
                 <img src="/icon.svg" alt="" className="w-[20%]" />
-                <p className="text-[25px] font-[LexendTera]">NORSWAP</p>
+                <p className="text-[25px] font-[LexendTera]">NORDEK</p>
               </div>
               <div className="border-t-[1px] border-[#A259FF8F] py-2 ">
                 <Socials />

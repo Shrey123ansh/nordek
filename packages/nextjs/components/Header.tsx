@@ -22,8 +22,9 @@ const NavLink = ({
     <Link
       href={href}
       passHref
-      className={`${isActive ? "bg-accent shadow-md text-white font-bold" : ""
-        } hover:bg-accent hover:font-bold hover:shadow-md hover:text-white focus:bg-accent py-1.5 px-6 lg:text-sm lg:font-normal text-2xl font-bold space-x-2 rounded-none m-0 h-full text-center  flex items-center justify-center`}
+      className={`${
+        isActive ? "bg-accent shadow-md text-white font-bold" : ""
+      } hover:bg-accent hover:font-bold hover:shadow-md hover:text-white focus:bg-accent py-1.5 px-6 lg:text-sm lg:font-normal text-2xl font-bold space-x-2 rounded-none m-0 h-full text-center  flex items-center justify-center`}
       onClick={toggleDrawer}
     >
       {children}
@@ -78,7 +79,7 @@ export const Header = ({ isDarkTheme }) => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold">NORSWAP</span>
+              <span className="font-bold">NORDEK</span>
             </div>
           </Link>
         </div>
@@ -111,7 +112,7 @@ export const Header = ({ isDarkTheme }) => {
                     />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-bold">NORSWAP</span>
+                    <span className="font-bold">NORDEK</span>
                   </div>
                 </Link>
               </div>
@@ -120,9 +121,7 @@ export const Header = ({ isDarkTheme }) => {
               </button>
             </div>
             <div className="flex flex-col h-full items-center justify-between   ">
-              <div className="flex flex-col w-full" >
-                {navLinks}
-              </div>
+              <div className="flex flex-col w-full">{navLinks}</div>
               <div className="flex mx-auto mb-12 ">
                 <RainbowKitCustomConnectButton />
               </div>
