@@ -16,4 +16,8 @@ base = "https://mainnet.base.org"
 baseGoerli = "https://goerli.base.org"
 nordek = "https://mainnet-rpc.nordekscan.com/"
 
+[etherscan]
+polygonMumbai = { key = "${ETHERSCAN_API_KEY}" }
+goerli = { key = "${ETHERSCAN_API_KEY}" }
+
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
