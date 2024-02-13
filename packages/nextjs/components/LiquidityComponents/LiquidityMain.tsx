@@ -91,7 +91,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       console.log("variables " + variables);
       console.log("context " + context);
     },
-    blockConfirmations: 1,
+    blockConfirmations: 3,
   });
   const { writeAsync: addLiquidityETHToken1 } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -116,7 +116,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         await addToDataBase(lpTokens);
       }
     },
-    blockConfirmations: 1,
+    blockConfirmations: 3,
   });
   const { writeAsync: addLiquidity } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -143,7 +143,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         await addToDataBase(lpTokens);
       }
     },
-    blockConfirmations: 1,
+    blockConfirmations: 3,
   });
 
   const addToDataBase = async (lpTokens: Number) => {
@@ -262,7 +262,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           txCompletionWaitNotification();
           await waitForTransaction({
             hash: approveHash,
-            confirmations: 1,
+            confirmations: 3,
           });
           removeTxCompNotification();
 
@@ -286,7 +286,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           txCompletionWaitNotification();
           await waitForTransaction({
             hash: approveHash,
-            confirmations: 1,
+            confirmations: 3,
           });
           removeTxCompNotification();
 
@@ -307,7 +307,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         txCompletionWaitNotification();
         await waitForTransaction({
           hash: approveHash,
-          confirmations: 1,
+          confirmations: 3,
         });
         removeTxCompNotification();
       } catch (error) {}
@@ -323,7 +323,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         txCompletionWaitNotification();
         await waitForTransaction({
           hash: approveHash,
-          confirmations: 1,
+          confirmations: 3,
         });
         removeTxCompNotification();
       } catch (error) {}
