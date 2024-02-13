@@ -27,7 +27,7 @@ export const localTokens = {
     logo: "https://raw.githubusercontent.com/kashyap222884/assets/main/blockchains/nrk/0x89439663317D6092c03adC955df7df769B8Bb605/logo.png",
     name: "nordek",
     symbol: "NRK",
-    address: "0x99cF6eA54EE51020d810EC0946aBF8985318b2aD",
+    address: "0xBdA745dEC531e746d6307ba5e72d863e978f1F95",
   },
   PERC: {
     logo: "https://picsum.photos/200",

@@ -127,7 +127,7 @@ contract NordekV2Pair is INordekV2Pair, NordekV2ERC20 {
         emit Sync(reserve0, reserve1);
     }
 
-    // if fee is on, mint liquidity equivalent to 1/5th of the growth in sqrt(k)
+    // if fee is on, mint liquidity equivalent to 1/6th of the growth in sqrt(k)
     function _mintFee(
         uint112 _reserve0,
         uint112 _reserve1

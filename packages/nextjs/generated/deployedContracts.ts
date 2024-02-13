@@ -5,71 +5,18 @@ const contracts = {
       chainId: "81041",
       contracts: {
         NordekV2Factory: {
-          address: "0xa33f5F952BDe9eC022cfA22722D8fB6acCD754dF",
+          address: "0x839B001dbf82eBdaEfe9280cc5c64947a2Bb6225",
           abi: [
             {
-              anonymous: false,
               inputs: [
                 {
-                  indexed: false,
                   internalType: "address",
-                  name: "previousAdmin",
-                  type: "address",
-                },
-                {
-                  indexed: false,
-                  internalType: "address",
-                  name: "newAdmin",
+                  name: "_feeToSetter",
                   type: "address",
                 },
               ],
-              name: "AdminChanged",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "beacon",
-                  type: "address",
-                },
-              ],
-              name: "BeaconUpgraded",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: false,
-                  internalType: "uint8",
-                  name: "version",
-                  type: "uint8",
-                },
-              ],
-              name: "Initialized",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "previousOwner",
-                  type: "address",
-                },
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "newOwner",
-                  type: "address",
-                },
-              ],
-              name: "OwnershipTransferred",
-              type: "event",
+              stateMutability: "nonpayable",
+              type: "constructor",
             },
             {
               anonymous: false,
@@ -100,19 +47,6 @@ const contracts = {
                 },
               ],
               name: "PairCreated",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "implementation",
-                  type: "address",
-                },
-              ],
-              name: "Upgraded",
               type: "event",
             },
             {
@@ -248,24 +182,6 @@ const contracts = {
               type: "function",
             },
             {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "_owner",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "_feeToSetter",
-                  type: "address",
-                },
-              ],
-              name: "initialize",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
               inputs: [],
               name: "nDev",
               outputs: [
@@ -276,39 +192,6 @@ const contracts = {
                 },
               ],
               stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "owner",
-              outputs: [
-                {
-                  internalType: "address",
-                  name: "",
-                  type: "address",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "proxiableUUID",
-              outputs: [
-                {
-                  internalType: "bytes32",
-                  name: "",
-                  type: "bytes32",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "renounceOwnership",
-              outputs: [],
-              stateMutability: "nonpayable",
               type: "function",
             },
             {
@@ -368,111 +251,10 @@ const contracts = {
               stateMutability: "nonpayable",
               type: "function",
             },
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "newOwner",
-                  type: "address",
-                },
-              ],
-              name: "transferOwnership",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "newImplementation",
-                  type: "address",
-                },
-              ],
-              name: "upgradeTo",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "newImplementation",
-                  type: "address",
-                },
-                {
-                  internalType: "bytes",
-                  name: "data",
-                  type: "bytes",
-                },
-              ],
-              name: "upgradeToAndCall",
-              outputs: [],
-              stateMutability: "payable",
-              type: "function",
-            },
-          ],
-        },
-        null: {
-          address: "0x3d6F992C7B5dB84548d750d23A8D0c0bc7AF141D",
-          abi: [
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "previousOwner",
-                  type: "address",
-                },
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "newOwner",
-                  type: "address",
-                },
-              ],
-              name: "OwnershipTransferred",
-              type: "event",
-            },
-            {
-              inputs: [],
-              name: "owner",
-              outputs: [
-                {
-                  internalType: "address",
-                  name: "",
-                  type: "address",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "renounceOwnership",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "newOwner",
-                  type: "address",
-                },
-              ],
-              name: "transferOwnership",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
           ],
         },
         WNRK: {
-          address: "0x99cF6eA54EE51020d810EC0946aBF8985318b2aD",
+          address: "0xBdA745dEC531e746d6307ba5e72d863e978f1F95",
           abi: [
             {
               inputs: [],
@@ -780,84 +562,23 @@ const contracts = {
           ],
         },
         NordekV2Router02: {
-          address: "0xC1B0df640D46553469f49cC25876B030b1A1d0A3",
+          address: "0x99d1e0C5A4495cb12664B053f0A5B211A9d88B3f",
           abi: [
             {
-              anonymous: false,
               inputs: [
                 {
-                  indexed: false,
                   internalType: "address",
-                  name: "previousAdmin",
+                  name: "_factory",
                   type: "address",
                 },
                 {
-                  indexed: false,
                   internalType: "address",
-                  name: "newAdmin",
+                  name: "_WNRK",
                   type: "address",
                 },
               ],
-              name: "AdminChanged",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "beacon",
-                  type: "address",
-                },
-              ],
-              name: "BeaconUpgraded",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: false,
-                  internalType: "uint8",
-                  name: "version",
-                  type: "uint8",
-                },
-              ],
-              name: "Initialized",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "previousOwner",
-                  type: "address",
-                },
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "newOwner",
-                  type: "address",
-                },
-              ],
-              name: "OwnershipTransferred",
-              type: "event",
-            },
-            {
-              anonymous: false,
-              inputs: [
-                {
-                  indexed: true,
-                  internalType: "address",
-                  name: "implementation",
-                  type: "address",
-                },
-              ],
-              name: "Upgraded",
-              type: "event",
+              stateMutability: "nonpayable",
+              type: "constructor",
             },
             {
               inputs: [],
@@ -1104,55 +825,6 @@ const contracts = {
                   internalType: "uint256[]",
                   name: "amounts",
                   type: "uint256[]",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "_owner",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "_factory",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "wnrk",
-                  type: "address",
-                },
-              ],
-              name: "initialize",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "owner",
-              outputs: [
-                {
-                  internalType: "address",
-                  name: "",
-                  type: "address",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "proxiableUUID",
-              outputs: [
-                {
-                  internalType: "bytes32",
-                  name: "",
-                  type: "bytes32",
                 },
               ],
               stateMutability: "view",
@@ -1542,13 +1214,6 @@ const contracts = {
               type: "function",
             },
             {
-              inputs: [],
-              name: "renounceOwnership",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
               inputs: [
                 {
                   internalType: "uint256",
@@ -1867,57 +1532,13 @@ const contracts = {
               type: "function",
             },
             {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "newOwner",
-                  type: "address",
-                },
-              ],
-              name: "transferOwnership",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "newImplementation",
-                  type: "address",
-                },
-              ],
-              name: "upgradeTo",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "newImplementation",
-                  type: "address",
-                },
-                {
-                  internalType: "bytes",
-                  name: "data",
-                  type: "bytes",
-                },
-              ],
-              name: "upgradeToAndCall",
-              outputs: [],
-              stateMutability: "payable",
-              type: "function",
-            },
-            {
               stateMutability: "payable",
               type: "receive",
             },
           ],
         },
         PracticeSupplyERC20: {
-          address: "0x9475b8d54e2b83eBEDC3B9771eC86A04DcD4E7F0",
+          address: "0x30BaCE14f17A3B40Fa711159EdB7fb1737a97Ee3",
           abi: [
             {
               inputs: [],

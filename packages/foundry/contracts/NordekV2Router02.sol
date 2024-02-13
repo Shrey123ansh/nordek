@@ -6,37 +6,20 @@ import "./interfaces/INordekV2Router02.sol";
 import "./libraries/NordekV2Library.sol";
 import "./interfaces/IERC20.sol";
 import "./interfaces/IWNRK.sol";
-import "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
-import "openzeppelin-contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract NordekV2Router02 is
-    INordekV2Router02,
-    Initializable,
-    UUPSUpgradeable,
-    OwnableUpgradeable
-{
-    address public factory;
-    address public WNRK;
+contract NordekV2Router02 is INordekV2Router02 {
+    address public immutable factory;
+    address public immutable WNRK;
 
     modifier ensure(uint deadline) {
         require(deadline >= block.timestamp, "NordekV2Router: EXPIRED");
         _;
     }
 
-    function initialize(
-        address _owner,
-        address _factory,
-        address wnrk
-    ) external initializer {
-        __UUPSUpgradeable_init();
-        __Ownable_init();
-        transferOwnership(_owner);
+    constructor(address _factory, address _WNRK) {
         factory = _factory;
-        WNRK = wnrk;
+        WNRK = _WNRK;
     }
-
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     receive() external payable {
         assert(msg.sender == WNRK); // only accept NRK via fallback from the WNRK contract

@@ -2,16 +2,8 @@ pragma solidity ^0.8.20;
 
 import "./interfaces/INordekV2Factory.sol";
 import "./NordekV2Pair.sol";
-import "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
-import "openzeppelin-contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract NordekV2Factory is
-    Initializable,
-    UUPSUpgradeable,
-    OwnableUpgradeable,
-    INordekV2Factory
-{
+contract NordekV2Factory is INordekV2Factory {
     address public feeTo;
     address public feeToSetter;
     uint256 public nDev = 1;
@@ -28,18 +20,9 @@ contract NordekV2Factory is
         uint
     );
 
-    function initialize(
-        address _owner,
-        address _feeToSetter
-    ) external initializer {
-        __UUPSUpgradeable_init();
-        __Ownable_init();
-        transferOwnership(_owner);
+    constructor(address _feeToSetter) {
         feeToSetter = _feeToSetter;
-        devFee = 5; // Default dev fee
     }
-
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function allPairsLength() external view returns (uint) {
         return allPairs.length;
