@@ -80,7 +80,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       console.log("variables " + variables);
       console.log("context " + context);
     },
-    blockConfirmations: 3,
+    blockConfirmations: 1,
   });
   const { writeAsync: addLiquidityETHToken1 } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -292,13 +292,13 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         await waitForTransaction({
           hash: approveHash1,
           confirmations: 1,
-          timeout: 1000,
+          timeout: 5000,
         });
         removeTxCompNotification();
         await waitForTransaction({
           hash: approveHash2,
           confirmations: 1,
-          timeout: 1000,
+          timeout: 5000,
         });
       } catch (error) {}
       await addLiquidity();

@@ -336,7 +336,7 @@ export default function SwapMain() {
       console.log("token 0 address " + token0.address);
 
       try {
-        let approveId = notification.loading("Awaiting user for confirmation");
+        let approveId = notification.loading("Awaiting user confirmation");
         const { hash: approveHash } = await writeContract({
           address: token0.address,
           abi: erc20ABI.abi,
@@ -356,9 +356,10 @@ export default function SwapMain() {
           await swapTokenForNRK();
         } else await swapTokenForToken();
       } catch (error) {}
+
+      setToken0Amount(0);
+      setToken1Amount(0);
     }
-    setToken0Amount(0);
-    setToken1Amount(0);
 
     await getData();
     await getBalance();
