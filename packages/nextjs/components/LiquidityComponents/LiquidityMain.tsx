@@ -44,7 +44,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
   const [share, setShare] = useState(0);
   const [tokenAFromContract, setTokenAFromContract] = useState(address0);
-  const [lpTokens, setLPTokens] = useState(0);
+  const [lpTokens, setLPTokens] = useState<Number>(0);
   const [pairTotalSupply, setPairTotalSupply] = useState(0);
   const [kLast, setKLast] = useState(0);
   const token0AmountNumber: number = Number(token0Amount);
@@ -206,14 +206,14 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
   const handleAddLiquidity = async () => {
     console.log("add liuidity");
 
-    console.log("Nrk token", token0Amount);
-    console.log("Approval", token1Amount);
-    console.log("lp tokens", Number(lpTokens));
-    console.log("hello");
-    console.log("Nrk token", parseEther(`${token0Amount}`));
-    console.log("Approval", parseEther(`${token1Amount}`));
-    console.log("mintoken0", parseEther(`${token0Min}`));
-    console.log("mintoken1", parseEther(`${token1Min}`));
+    // console.log("Nrk token", token0Amount);
+    // console.log("Approval", token1Amount);
+    // console.log("lp tokens", Number(lpTokens));
+    // console.log("hello");
+    // console.log("Nrk token", parseEther(`${token0Amount}`));
+    // console.log("Approval", parseEther(`${token1Amount}`));
+    // console.log("mintoken0", parseEther(`${token0Min}`));
+    // console.log("mintoken1", parseEther(`${token1Min}`));
 
     const nrkAddress: string = localTokens.NRK.address;
     if (token0Amount === 0 || token1Amount === 0) {

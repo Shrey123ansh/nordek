@@ -239,14 +239,14 @@ export default function SwapMain() {
     functionName: "swapExactNRKForTokensSupportingFeeOnTransferTokens",
     args: [parseEther(`${token1Min}`), [token0.address, token1.address], account, BigInt(unixTimestampInSeconds + 300)],
     value: `${token0Amount}`,
-    onBlockConfirmation: async txnReceipt => {
-      console.log("Transaction blockHash", txnReceipt.blockHash);
-      await getBalance();
-    },
-    onSuccess: () => {
-      setToken0Amount(0);
-      setToken1Amount(0);
-    },
+    // onBlockConfirmation: async txnReceipt => {
+    //   console.log("Transaction blockHash", txnReceipt.blockHash);
+    //   await getBalance();
+    // },
+    // onSuccess: () => {
+    //   setToken0Amount(0);
+    //   setToken1Amount(0);
+    // },
     blockConfirmations: 1,
   });
 
@@ -260,13 +260,13 @@ export default function SwapMain() {
       account,
       BigInt(unixTimestampInSeconds + 300),
     ],
-    onBlockConfirmation: txnReceipt => {
-      console.log("Transaction blockHash", txnReceipt.blockHash);
-    },
-    onSuccess: () => {
-      setToken0Amount(0);
-      setToken1Amount(0);
-    },
+    // onBlockConfirmation: txnReceipt => {
+    //   console.log("Transaction blockHash", txnReceipt.blockHash);
+    // },
+    // onSuccess: () => {
+    //   setToken0Amount(0);
+    //   setToken1Amount(0);
+    // },
     blockConfirmations: 1,
   });
   const { writeAsync: swapTokenForToken } = useScaffoldContractWrite({
@@ -279,13 +279,13 @@ export default function SwapMain() {
       account,
       BigInt(unixTimestampInSeconds + 300),
     ],
-    onBlockConfirmation: txnReceipt => {
-      console.log("Transaction blockHash", txnReceipt.blockHash);
-    },
-    onSuccess: () => {
-      setToken0Amount(0);
-      setToken1Amount(0);
-    },
+    // onBlockConfirmation: txnReceipt => {
+    //   console.log("Transaction blockHash", txnReceipt.blockHash);
+    // },
+    // onSuccess: () => {
+    //   setToken0Amount(0);
+    //   setToken1Amount(0);
+    // },
     blockConfirmations: 1,
   });
 
@@ -357,6 +357,8 @@ export default function SwapMain() {
         } else await swapTokenForToken();
       } catch (error) {}
     }
+    setToken0Amount(0);
+    setToken1Amount(0);
 
     await getData();
     await getBalance();
