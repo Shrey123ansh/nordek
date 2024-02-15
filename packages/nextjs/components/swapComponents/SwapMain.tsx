@@ -336,7 +336,7 @@ export default function SwapMain() {
       console.log("token 0 address " + token0.address);
 
       try {
-        let approveId = notification.loading("Awaiting user confirmation");
+        let approveId = notification.loading("Awaiting for user confirmation");
         const { hash: approveHash } = await writeContract({
           address: token0.address,
           abi: erc20ABI.abi,
