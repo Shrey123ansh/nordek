@@ -29,7 +29,8 @@ const SelectToken = ({ token, setToken, tokenAmount, setTokenAmount, title, bala
           type="number"
           placeholder="0.0"
           value={tokenAmount === 0 ? "" : tokenAmount?.toString()}
-          className="  w-[120px] lg:w-fit pr-0 bg-transparent  font-semibold  input-ghost  text-right rounded-none focus:outline-none     leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="  w-[120px] lg:w-fit pr-0 disabled:bg-transparent bg-transparent  font-semibold  input-ghost  text-right rounded-none focus:outline-none     leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          disabled={balance === 0 ? true : false}
           onChange={e => {
             const value = Number(e.target.value);
             if (value < 0) {

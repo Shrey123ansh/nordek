@@ -54,7 +54,7 @@ export const useTransactor = (_walletClient?: WalletClient): TransactionFunc => 
       // Get full transaction from public client
       const publicClient = getPublicClient();
 
-      notificationId = notification.loading(<TxnNotification message="Awaiting user confirmation" />);
+      notificationId = notification.loading(<TxnNotification message="Awaiting user for confirmation" />);
       if (typeof tx === "function") {
         // Tx is already prepared by the caller
         transactionHash = (await tx()).hash;
@@ -91,8 +91,8 @@ export const useTransactor = (_walletClient?: WalletClient): TransactionFunc => 
       }
       console.error("⚡️ ~ file: useTransactor.ts ~ error", error);
       const message = getParsedError(error);
-console.log("error")
-console.log(message)
+      console.log("error");
+      console.log(message);
       notification.error("Error");
     }
 

@@ -99,7 +99,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       console.log("variables " + variables);
       console.log("context " + context);
     },
-    blockConfirmations: 3,
+    blockConfirmations: 1,
   });
   const { writeAsync: addLiquidity } = useScaffoldContractWrite({
     contractName: "NordekV2Router02",
@@ -119,7 +119,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       console.log("variables " + variables);
       console.log("context " + context);
     },
-    blockConfirmations: 3,
+    blockConfirmations: 1,
   });
 
   const addToDataBase = async (lpTokens: Number) => {
@@ -170,7 +170,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
   let approvalId = null;
   const approvalNotification = () => {
-    approvalId = notification.loading("Awaiting user confirmation");
+    approvalId = notification.loading("Awaiting user for confirmation");
   };
   const removeApprovalNotification = () => {
     notification.remove(approvalId);
@@ -292,12 +292,14 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         await waitForTransaction({
           hash: approveHash1,
           confirmations: 1,
+          timeout: 1000,
         });
+        removeTxCompNotification();
         await waitForTransaction({
           hash: approveHash2,
           confirmations: 1,
+          timeout: 1000,
         });
-        removeTxCompNotification();
       } catch (error) {}
       await addLiquidity();
     }
@@ -620,7 +622,8 @@ const TokenAmountEntry = ({
           type="number"
           placeholder="0.0"
           value={tokenAmount === 0 ? "" : tokenAmount?.toString()}
-          className="input input-sm pr-0 bg-transparent w-full text-lg  font-semibold  input-ghost max-w-md text-right rounded-none focus:outline-none leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="input input-sm pr-0 disabled:bg-transparent disabled:border-none bg-transparent w-full text-lg  font-semibold  input-ghost max-w-md text-right rounded-none focus:outline-none leading-tight [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          disabled={balance === 0 ? true : false}
           onChange={e => {
             const value = Number(e.target.value);
             if (value < 0) {
@@ -631,7 +634,8 @@ const TokenAmountEntry = ({
           }}
         />
         <button
-          className=" self-end font-semibold   bg-secondary rounded-full px-2 mt-2   "
+          className=" self-end font-semibold disabled:opacity-50  bg-secondary rounded-full px-2 mt-2   "
+          disabled={balance === 0 ? true : false}
           onClick={() => {
             // 0.01% buffer for gas fee
             var _balance = Number(balance) - Number(balance) / 10000;

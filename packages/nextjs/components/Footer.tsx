@@ -8,11 +8,11 @@ import { SwitchTheme } from "~~/components/SwitchTheme";
 export const Footer = () => {
   return (
     <div className="min-h-0 p-0 mb-11 lg:mb-0 text-white">
-      <div>
+     
         <div className="fixed flex justify-between items-center w-full z-10 p-4 bottom-0 left-0 pointer-events-none">
           <SwitchTheme className="pointer-events-auto" />
         </div>
-      </div>
+  
       <div className="w-full">
         <div
           className="w-full  flex justify-center py-[2rem]"
