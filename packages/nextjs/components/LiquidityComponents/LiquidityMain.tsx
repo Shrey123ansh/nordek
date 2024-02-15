@@ -75,17 +75,6 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       BigInt(unixTimestampInSeconds + 300),
     ],
     value: `${token0AmountNumber}`,
-    onBlockConfirmation: async txnReceipt => {
-      console.log("Transaction blockHash", txnReceipt.blockHash);
-      await getBalance();
-    },
-    onSuccess: async data => {
-      if (data.hash) {
-        const lpTokens = await fetchLpTokenBalance();
-
-        await addToDataBase(lpTokens);
-      }
-    },
     onError(error, variables, context) {
       console.log("error " + error);
       console.log("variables " + variables);
@@ -105,16 +94,10 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       BigInt(unixTimestampInSeconds + 300),
     ],
     value: `${token1AmountNumber}`,
-    onBlockConfirmation: async txnReceipt => {
-      console.log("Transaction blockHash", txnReceipt.blockHash);
-      await getBalance();
-    },
-    onSuccess: async data => {
-      if (data.hash) {
-        const lpTokens = await fetchLpTokenBalance();
-
-        await addToDataBase(lpTokens);
-      }
+    onError(error, variables, context) {
+      console.log("error " + error);
+      console.log("variables " + variables);
+      console.log("context " + context);
     },
     blockConfirmations: 3,
   });
@@ -131,17 +114,10 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       account,
       BigInt(unixTimestampInSeconds + 300),
     ],
-
-    onBlockConfirmation: async txnReceipt => {
-      console.log("Transaction blockHash", txnReceipt.blockHash);
-      await getBalance();
-    },
-    onSuccess: async data => {
-      if (data.hash) {
-        const lpTokens = await fetchLpTokenBalance();
-
-        await addToDataBase(lpTokens);
-      }
+    onError(error, variables, context) {
+      console.log("error " + error);
+      console.log("variables " + variables);
+      console.log("context " + context);
     },
     blockConfirmations: 3,
   });
@@ -174,12 +150,14 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       Authorization: "JWT fefege...",
     };
     try {
-      const response = await axios.post("/api/liquidity", liquidity, {
-        headers: headers,
-      });
+      if (lpTokens !== 0) {
+        const response = await axios.post("/api/liquidity", liquidity, {
+          headers: headers,
+        });
 
-      console.log(response);
-      console.log("added to database ");
+        console.log(response);
+        console.log("added to database ");
+      }
       handleUpdate();
     } catch (error) {
       console.log(error);
@@ -206,7 +184,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
   };
 
   const fetchLpTokenBalance = async () => {
-    await new Promise(r => setTimeout(r, 5000));
+    // await new Promise(r => setTimeout(r, 5000));
     const pairAddress = await readContract({
       address: factoryContract.address,
       abi: factoryContract.abi,
@@ -262,7 +240,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           txCompletionWaitNotification();
           await waitForTransaction({
             hash: approveHash,
-            confirmations: 3,
+            confirmations: 1,
           });
           removeTxCompNotification();
 
@@ -286,7 +264,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           txCompletionWaitNotification();
           await waitForTransaction({
             hash: approveHash,
-            confirmations: 3,
+            confirmations: 1,
           });
           removeTxCompNotification();
 
@@ -297,23 +275,13 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       // addLiquidity
       try {
         approvalNotification();
-        const { hash: approveHash } = await writeContract({
+        const { hash: approveHash1 } = await writeContract({
           address: token0.address,
           abi: erc20ABI.abi,
           functionName: "approve",
           args: [routerContract.address, parseEther(`${token0Amount}`)],
         });
-        removeApprovalNotification();
-        txCompletionWaitNotification();
-        await waitForTransaction({
-          hash: approveHash,
-          confirmations: 3,
-        });
-        removeTxCompNotification();
-      } catch (error) {}
-      try {
-        approvalNotification();
-        const { hash: approveHash } = await writeContract({
+        const { hash: approveHash2 } = await writeContract({
           address: token1.address,
           abi: erc20ABI.abi,
           functionName: "approve",
@@ -322,13 +290,21 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         removeApprovalNotification();
         txCompletionWaitNotification();
         await waitForTransaction({
-          hash: approveHash,
-          confirmations: 3,
+          hash: approveHash1,
+          confirmations: 1,
+        });
+        await waitForTransaction({
+          hash: approveHash2,
+          confirmations: 1,
         });
         removeTxCompNotification();
       } catch (error) {}
       await addLiquidity();
     }
+    await getBalance();
+    const lpTokens = await fetchLpTokenBalance();
+
+    await addToDataBase(lpTokens);
   };
 
   const { data: factoryContract } = useDeployedContractInfo("NordekV2Factory");
