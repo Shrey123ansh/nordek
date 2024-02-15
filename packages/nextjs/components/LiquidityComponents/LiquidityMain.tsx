@@ -170,7 +170,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
   let approvalId = null;
   const approvalNotification = () => {
-    approvalId = notification.loading("Awaiting user for confirmation");
+    approvalId = notification.loading("Awaiting for user confirmation");
   };
   const removeApprovalNotification = () => {
     notification.remove(approvalId);
