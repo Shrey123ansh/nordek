@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import RouterABI from "../../../foundry/out/INordekV2Router02.sol/INordekV2Router02.json";
+import RouterABI from "../../utils/INordekV2Router02.sol/INordekV2Router02.json";
 import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
 import { Select } from "../Select/Select";
 import LiquidityFooter from "./LiquidityPositionFooter";
@@ -213,7 +213,7 @@ const PositionSelectToken = ({
       ],
     });
     removeApprovalNotification();
-    let completionID1 = notification.loading("Waiting for Tx completion");
+    txCompletionWaitNotification();
     await waitForTransaction({
       hash: approveHash,
       confirmations: 1,
@@ -222,7 +222,7 @@ const PositionSelectToken = ({
       hash: swapHash,
       confirmations: 1,
     });
-    notification.remove(completionID1);
+    removeTxCompNotification();
     notification.success("Transaction completed successfully!");
   };
   const removeLiquidity = async () => {
@@ -250,7 +250,7 @@ const PositionSelectToken = ({
       ],
     });
     removeApprovalNotification();
-    let completionID1 = notification.loading("Waiting for Tx completion");
+    txCompletionWaitNotification();
     await waitForTransaction({
       hash: approveHash,
       confirmations: 1,
@@ -259,7 +259,7 @@ const PositionSelectToken = ({
       hash: swapHash,
       confirmations: 1,
     });
-    notification.remove(completionID1);
+    removeTxCompNotification();
     notification.success("Transaction completed successfully!");
   };
   const updateLiquidity = async () => {

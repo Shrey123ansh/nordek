@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
-import RouterABI from "../../../foundry/out/INordekV2Router02.sol/INordekV2Router02.json";
 import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
+import RouterABI from "../../utils/INordekV2Router02.sol/INordekV2Router02.json";
 import SelectToken from "./SelectToken";
 import SwapFooter from "./SwapFooter";
 import { readContract, writeContract } from "@wagmi/core";
