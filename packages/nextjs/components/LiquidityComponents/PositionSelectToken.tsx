@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import RouterABI from "../../utils/INordekV2Router02.sol/INordekV2Router02.json";
 import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
+import RouterABI from "../../utils/INordekV2Router02.sol/INordekV2Router02.json";
 import { Select } from "../Select/Select";
 import LiquidityFooter from "./LiquidityPositionFooter";
 import { readContract, waitForTransaction, writeContract } from "@wagmi/core";
@@ -353,7 +353,13 @@ const PositionSelectToken = ({
 
   return (
     <>
-      <div className="bg-swap-gradient rounded-lg px-4 py-4 mb-4  ">
+      <div
+        className={
+          isDarkMode
+            ? "bg-swap-gradient rounded-lg px-4 py-4 mb-4"
+            : "bg-swap-gradient rounded-lg border-2 border-[#E2D4FF]  px-4 py-4 mb-4"
+        }
+      >
         <div className="flex flex-row w-full  items-center justify-between  ">
           <div className="flex flex-row items-center font-medium ml-2  text-sm lg:text-base ">
             <img src={liqudity.token0.logo} className=" w-4 h-4 lg:w-6 lg:h-6 rounded-full  absolute -ml-3   " />
@@ -413,7 +419,13 @@ const PositionSelectToken = ({
       {remove && (
         <div className="mt-2">
           <div className=" text-[10px] font-semibold  ">REMOVE LIQUIDITY</div>
-          <div className="bg-swap-gradient rounded-lg p-4 mt-2">
+          <div
+            className={
+              isDarkMode
+                ? "bg-swap-gradient rounded-lg p-4 mt-2"
+                : "bg-swap-gradient rounded-lg border-2 border-[#E2D4FF]  px-4 py-4 mb-4"
+            }
+          >
             <div className=" text-6xl font-bold ">{`${percentage}%`}</div>
             <div className="mt-4">
               <input
@@ -472,7 +484,13 @@ const PositionSelectToken = ({
             </div>
           </div>
           <FaArrowDownLong className="w-full items-center my-4" />
-          <div className="bg-swap-gradient rounded-lg p-4">
+          <div
+            className={
+              isDarkMode
+                ? "bg-swap-gradient rounded-lg p-4 "
+                : "bg-swap-gradient rounded-lg border-2 border-[#E2D4FF]  px-4 py-4 mb-4"
+            }
+          >
             <div className="flex flex-row items-center justify-between mb-4 ">
               <div>Your Pool Share</div>
               <div>{`${((Number(liqudity.lpTokens) * 100) / totalLp).toFixed(2)}%`}</div>
@@ -492,7 +510,6 @@ const PositionSelectToken = ({
               </div>
             </div>
           </div>
-
           <button className="btn btn-sm btn-outline btn-accent my-4 w-full" onClick={handleWithdraw}>
             Remove Liquidity
           </button>

@@ -43,6 +43,22 @@ export default function SwapMain() {
     setIsPopupOpen(!isPopupOpen);
   };
 
+  let approvalId = null;
+  const approvalNotification = () => {
+    approvalId = notification.loading("Awaiting user confirmation");
+  };
+  const removeApprovalNotification = () => {
+    notification.remove(approvalId);
+  };
+
+  let txCompId = null;
+  const txCompletionWaitNotification = () => {
+    txCompId = notification.loading("Waiting for Tx completion");
+  };
+  const removeTxCompNotification = () => {
+    notification.remove(txCompId);
+  };
+
   const currentDate = new Date();
   const unixTimestampInSeconds = Math.floor(currentDate.getTime() / 1000);
 
@@ -240,56 +256,105 @@ export default function SwapMain() {
     functionName: "swapExactNRKForTokensSupportingFeeOnTransferTokens",
     args: [parseEther(`${token1Min}`), [token0.address, token1.address], account, BigInt(unixTimestampInSeconds + 300)],
     value: `${token0Amount}`,
-    // onBlockConfirmation: async txnReceipt => {
-    //   console.log("Transaction blockHash", txnReceipt.blockHash);
-    //   await getBalance();
-    // },
-    // onSuccess: () => {
-    //   setToken0Amount(0);
-    //   setToken1Amount(0);
-    // },
     blockConfirmations: 1,
   });
 
-  const { writeAsync: swapTokenForNRK } = useScaffoldContractWrite({
-    contractName: "NordekV2Router02",
-    functionName: "swapExactTokensForNRKSupportingFeeOnTransferTokens",
-    args: [
-      parseEther(`${token0Amount}`),
-      parseEther(`${token1Min}`),
-      [token0.address, token1.address],
-      account,
-      BigInt(unixTimestampInSeconds + 300),
-    ],
-    // onBlockConfirmation: txnReceipt => {
-    //   console.log("Transaction blockHash", txnReceipt.blockHash);
-    // },
-    // onSuccess: () => {
-    //   setToken0Amount(0);
-    //   setToken1Amount(0);
-    // },
-    blockConfirmations: 1,
-  });
-  const { writeAsync: swapTokenForToken } = useScaffoldContractWrite({
-    contractName: "NordekV2Router02",
-    functionName: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
-    args: [
-      parseEther(`${token0Amount}`),
-      parseEther(`${token1Min}`),
-      [token0.address, token1.address],
-      account,
-      BigInt(unixTimestampInSeconds + 300),
-    ],
-    // onBlockConfirmation: txnReceipt => {
-    //   console.log("Transaction blockHash", txnReceipt.blockHash);
-    // },
-    // onSuccess: () => {
-    //   setToken0Amount(0);
-    //   setToken1Amount(0);
-    // },
-    blockConfirmations: 1,
-  });
+  // const { writeAsync: swapTokenForNRK } = useScaffoldContractWrite({
+  //   contractName: "NordekV2Router02",
+  //   functionName: "swapExactTokensForNRKSupportingFeeOnTransferTokens",
+  //   args: [
+  //     parseEther(`${token0Amount}`),
+  //     parseEther(`${token1Min}`),
+  //     [token0.address, token1.address],
+  //     account,
+  //     BigInt(unixTimestampInSeconds + 300),
+  //   ],
+  //   blockConfirmations: 1,
+  // });
+  // const { writeAsync: swapTokenForToken } = useScaffoldContractWrite({
+  //   contractName: "NordekV2Router02",
+  //   functionName: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
+  //   args: [
+  //     parseEther(`${token0Amount}`),
+  //     parseEther(`${token1Min}`),
+  //     [token0.address, token1.address],
+  //     account,
+  //     BigInt(unixTimestampInSeconds + 300),
+  //   ],
+  //   blockConfirmations: 1,
+  // });
 
+  const swapTokenForNRK = async () => {
+    approvalNotification();
+    const { hash: approveHash } = await writeContract({
+      address: token0.address,
+      abi: erc20ABI.abi,
+      functionName: "approve",
+      args: [routerContract.address, parseEther(`${token0Amount}`)],
+    });
+    const { hash: swapHash } = await writeContract({
+      address: RouterABI.address,
+      abi: RouterABI.abi,
+      functionName: "swapExactTokensForNRKSupportingFeeOnTransferTokens",
+      args: [
+        parseEther(`${token0Amount}`),
+        parseEther(`${token1Min}`),
+        [token0.address, token1.address],
+        account,
+        BigInt(unixTimestampInSeconds + 300),
+      ],
+    });
+    removeApprovalNotification();
+    txCompletionWaitNotification();
+    // notification.info("Waiting For Tx Completion")
+    await waitForTransaction({
+      hash: approveHash,
+      confirmations: 1,
+    });
+    await waitForTransaction({
+      hash: swapHash,
+      confirmations: 1,
+    });
+    removeTxCompNotification();
+    setToken0Amount(0);
+    setToken1Amount(0);
+    notification.success("Transaction completed successfully!");
+  };
+  const swapTokenForToken = async () => {
+    approvalNotification();
+    const { hash: approveHash } = await writeContract({
+      address: token0.address,
+      abi: erc20ABI.abi,
+      functionName: "approve",
+      args: [routerContract.address, parseEther(`${token0Amount}`)],
+    });
+    const { hash: swapHash } = await writeContract({
+      address: RouterABI.address,
+      abi: RouterABI.abi,
+      functionName: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
+      args: [
+        parseEther(`${token0Amount}`),
+        parseEther(`${token1Min}`),
+        [token0.address, token1.address],
+        account,
+        BigInt(unixTimestampInSeconds + 300),
+      ],
+    });
+    removeApprovalNotification();
+    txCompletionWaitNotification();
+    await waitForTransaction({
+      hash: approveHash,
+      confirmations: 1,
+    });
+    await waitForTransaction({
+      hash: swapHash,
+      confirmations: 1,
+    });
+    removeTxCompNotification();
+    setToken0Amount(0);
+    setToken1Amount(0);
+    notification.success("Transaction completed successfully!");
+  };
   const handleSwap = async () => {
     if (token1Amount <= 0 || token0Amount <= 0) {
       console.log("can't be lt 0");
@@ -341,76 +406,10 @@ export default function SwapMain() {
 
       try {
         if (token1.address === nrkAddress) {
-          let approveId = notification.loading("Awaiting for user confirmation");
-          const { hash: approveHash } = await writeContract({
-            address: token0.address,
-            abi: erc20ABI.abi,
-            functionName: "approve",
-            args: [routerContract.address, parseEther(`${token0Amount}`)],
-          });
-          const { hash: swapHash } = await writeContract({
-            address: RouterABI.address,
-            abi: RouterABI.abi,
-            functionName: "swapExactTokensForNRKSupportingFeeOnTransferTokens",
-            args: [
-              parseEther(`${token0Amount}`),
-              parseEther(`${token1Min}`),
-              [token0.address, token1.address],
-              account,
-              BigInt(unixTimestampInSeconds + 300),
-            ],
-          });
-          notification.remove(approveId);
-          let completionID = notification.loading("Waiting for Tx completion");
-          // notification.info("Waiting For Tx Completion")
-          await waitForTransaction({
-            hash: approveHash,
-            confirmations: 1,
-          });
-          await waitForTransaction({
-            hash: swapHash,
-            confirmations: 1,
-          });
-          notification.remove(completionID);
-          notification.success("Transaction completed successfully!");
           // console.log("swaping token for nrk ");
-          // await swapTokenForNRK();
-          await setToken0Amount(0);
-          await setToken1Amount(0);
+          await swapTokenForNRK();
         } else {
-          let approveId = notification.loading("Awaiting for user confirmation");
-          const { hash: approveHash } = await writeContract({
-            address: token0.address,
-            abi: erc20ABI.abi,
-            functionName: "approve",
-            args: [routerContract.address, parseEther(`${token0Amount}`)],
-          });
-          const { hash: swapHash } = await writeContract({
-            address: RouterABI.address,
-            abi: RouterABI.abi,
-            functionName: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
-            args: [
-              parseEther(`${token0Amount}`),
-              parseEther(`${token1Min}`),
-              [token0.address, token1.address],
-              account,
-              BigInt(unixTimestampInSeconds + 300),
-            ],
-          });
-          notification.remove(approveId);
-          let completionID1 = notification.loading("Waiting for Tx completion");
-          await waitForTransaction({
-            hash: approveHash,
-            confirmations: 1,
-          });
-          await waitForTransaction({
-            hash: swapHash,
-            confirmations: 1,
-          });
-          notification.remove(completionID1);
-          notification.success("Transaction completed successfully!");
-          await setToken0Amount(0);
-          await setToken1Amount(0);
+          await swapTokenForToken();
         }
       } catch (error) {}
     }
