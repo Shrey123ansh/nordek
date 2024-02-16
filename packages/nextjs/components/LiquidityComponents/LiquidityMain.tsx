@@ -274,7 +274,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
     } else {
       // addLiquidity
       try {
-        approvalNotification();
+        // approvalNotification();
         const { hash: approveHash1 } = await writeContract({
           address: token0.address,
           abi: erc20ABI.abi,
@@ -294,12 +294,12 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           confirmations: 1,
           timeout: 5000,
         });
-        removeTxCompNotification();
         await waitForTransaction({
           hash: approveHash2,
           confirmations: 1,
           timeout: 5000,
         });
+        removeTxCompNotification();
       } catch (error) {}
       await addLiquidity();
     }
@@ -377,6 +377,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           setReserve1(reserve1);
           setReserve2(reserve2);
         } else if (tokenA === token1.address) {
+          1;
           setReserve2(reserve1);
           setReserve1(reserve2);
         }

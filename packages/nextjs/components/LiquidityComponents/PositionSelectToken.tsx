@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import RouterABI from "../../../foundry/out/INordekV2Router02.sol/INordekV2Router02.json";
 import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
 import { Select } from "../Select/Select";
 import LiquidityFooter from "./LiquidityPositionFooter";
@@ -147,33 +148,34 @@ const PositionSelectToken = ({
     setToken1WithdrawMin(token1WithdrawMin);
   }, [totalLp, reserve0, reserve1, percentage]);
 
-  const { writeAsync: removeLiqudityETH } = useScaffoldContractWrite({
-    contractName: "NordekV2Router02",
-    functionName: "removeLiquidityNRKSupportingFeeOnTransferTokens",
-    args: [
-      liqudity.token0.address === nrkAddress ? liqudity.token1.address : nrkAddress,
-      parseEther(`${(Number(value) * percentage) / 100}`),
-      liqudity.token0.address === nrkAddress ? parseEther(`${token1WithdrawMin}`) : parseEther(`${token0WithdrawMin}`),
-      liqudity.token0.address === nrkAddress ? parseEther(`${token0WithdrawMin}`) : parseEther(`${token1WithdrawMin}`),
-      account,
-      BigInt(unixTimestampInSeconds + 300),
-    ],
-    blockConfirmations: 1,
-  });
-  const { writeAsync: removeLiquidity } = useScaffoldContractWrite({
-    contractName: "NordekV2Router02",
-    functionName: "removeLiquidity",
-    args: [
-      liqudity.token0.address,
-      liqudity.token1.address,
-      parseEther(`${(Number(value) * percentage) / 100}`),
-      parseEther(`${token0WithdrawMin}`),
-      parseEther(`${token1WithdrawMin}`),
-      account,
-      BigInt(unixTimestampInSeconds + 300),
-    ],
-    blockConfirmations: 1,
-  });
+  // const { writeAsync: removeLiqudityETH } = useScaffoldContractWrite({
+  //   contractName: "NordekV2Router02",
+  // functionName: "removeLiquidityNRKSupportingFeeOnTransferTokens",
+  // args: [
+  //   liqudity.token0.address === nrkAddress ? liqudity.token1.address : nrkAddress,
+  //   parseEther(`${(Number(value) * percentage) / 100}`),
+  //   liqudity.token0.address === nrkAddress ? parseEther(`${token1WithdrawMin}`) : parseEther(`${token0WithdrawMin}`),
+  //   liqudity.token0.address === nrkAddress ? parseEther(`${token0WithdrawMin}`) : parseEther(`${token1WithdrawMin}`),
+  //   account,
+  //   BigInt(unixTimestampInSeconds + 300),
+  // ],
+  //   blockConfirmations: 1,
+  // });
+
+  // const { writeAsync: removeLiquidity } = useScaffoldContractWrite({
+  //   contractName: "NordekV2Router02",
+  // functionName: "removeLiquidity",
+  // args: [
+  //   liqudity.token0.address,
+  //   liqudity.token1.address,
+  //   parseEther(`${(Number(value) * percentage) / 100}`),
+  //   parseEther(`${token0WithdrawMin}`),
+  //   parseEther(`${token1WithdrawMin}`),
+  //   account,
+  //   BigInt(unixTimestampInSeconds + 300),
+  // ],
+  //   blockConfirmations: 1,
+  // });
 
   const deleteLiquidity = async () => {
     try {
@@ -184,6 +186,82 @@ const PositionSelectToken = ({
     }
   };
 
+  const removeLiqudityETH = async () => {
+    var _value = (Number(value) * percentage) / 100;
+    approvalNotification();
+    const { hash: approveHash } = await writeContract({
+      address: liqudity.pairContract,
+      abi: pairABI.abi,
+      functionName: "approve",
+      args: [routerContract.address, parseEther(`${_value}`)],
+    });
+    const { hash: swapHash } = await writeContract({
+      address: RouterABI.address,
+      abi: RouterABI.abi,
+      functionName: "removeLiquidityNRKSupportingFeeOnTransferTokens",
+      args: [
+        liqudity.token0.address === nrkAddress ? liqudity.token1.address : nrkAddress,
+        parseEther(`${(Number(value) * percentage) / 100}`),
+        liqudity.token0.address === nrkAddress
+          ? parseEther(`${token1WithdrawMin}`)
+          : parseEther(`${token0WithdrawMin}`),
+        liqudity.token0.address === nrkAddress
+          ? parseEther(`${token0WithdrawMin}`)
+          : parseEther(`${token1WithdrawMin}`),
+        account,
+        BigInt(unixTimestampInSeconds + 300),
+      ],
+    });
+    removeApprovalNotification();
+    let completionID1 = notification.loading("Waiting for Tx completion");
+    await waitForTransaction({
+      hash: approveHash,
+      confirmations: 1,
+    });
+    await waitForTransaction({
+      hash: swapHash,
+      confirmations: 1,
+    });
+    notification.remove(completionID1);
+    notification.success("Transaction completed successfully!");
+  };
+  const removeLiquidity = async () => {
+    var _value = (Number(value) * percentage) / 100;
+    approvalNotification();
+    const { hash: approveHash } = await writeContract({
+      address: liqudity.pairContract,
+      abi: pairABI.abi,
+      functionName: "approve",
+      args: [routerContract.address, parseEther(`${_value}`)],
+    });
+    removeApprovalNotification();
+    const { hash: swapHash } = await writeContract({
+      address: RouterABI.address,
+      abi: RouterABI.abi,
+      functionName: "removeLiquidity",
+      args: [
+        liqudity.token0.address,
+        liqudity.token1.address,
+        parseEther(`${(Number(value) * percentage) / 100}`),
+        parseEther(`${token0WithdrawMin}`),
+        parseEther(`${token1WithdrawMin}`),
+        account,
+        BigInt(unixTimestampInSeconds + 300),
+      ],
+    });
+    removeApprovalNotification();
+    let completionID1 = notification.loading("Waiting for Tx completion");
+    await waitForTransaction({
+      hash: approveHash,
+      confirmations: 1,
+    });
+    await waitForTransaction({
+      hash: swapHash,
+      confirmations: 1,
+    });
+    notification.remove(completionID1);
+    notification.success("Transaction completed successfully!");
+  };
   const updateLiquidity = async () => {
     let newLp = 0;
     try {
@@ -234,40 +312,40 @@ const PositionSelectToken = ({
         notification.error("Percentage cannot be 0", { duration: 1000 });
         return;
       }
-      var _value = (Number(value) * percentage) / 100;
-      console.log(parseEther(`${_value}`));
+      // var _value = (Number(value) * percentage) / 100;
+      // console.log(parseEther(`${_value}`));
       console.log("pair contract  value  " + liqudity.pairContract);
-      approvalNotification();
-      const { hash: approveHash } = await writeContract({
-        address: liqudity.pairContract,
-        abi: pairABI.abi,
-        functionName: "approve",
-        args: [routerContract.address, parseEther(`${_value}`)],
-      });
-      removeApprovalNotification();
-      txCompletionWaitNotification();
-      await waitForTransaction({
-        hash: approveHash,
-        confirmations: 1,
-      });
-      removeTxCompNotification();
-      console.log("token 1 withdraw amount " + token0WithdrawMin);
-      console.log("token 2 withdraw amount " + token1WithdrawMin);
-      if (liqudity.token0.address === nrkAddress || liqudity.token1.address === nrkAddress) {
-        await removeLiqudityETH();
-      } else {
-        await removeLiquidity();
-      }
-      if (percentage === 100) {
-        console.log("delete value from db");
-        await deleteLiquidity();
-      } else {
-        console.log("update value from db");
-        await updateLiquidity();
-      }
-
-      updateOnRemove?.(!onRemove);
+      // approvalNotification();
+      // const { hash: approveHash1 } = await writeContract({
+      //   address: liqudity.pairContract,
+      //   abi: pairABI.abi,
+      //   functionName: "approve",
+      //   args: [routerContract.address, parseEther(`${_value}`)],
+      // });
+      // removeApprovalNotification();
+      // txCompletionWaitNotification();
+      // await waitForTransaction({
+      //   hash: approveHash1,
+      //   confirmations: 1,
+      // });
+      // removeTxCompNotification();
+      // console.log("token 1 withdraw amount " + token0WithdrawMin);
+      // console.log("token 2 withdraw amount " + token1WithdrawMin);
     } catch (e) {}
+    if (liqudity.token0.address === nrkAddress || liqudity.token1.address === nrkAddress) {
+      await removeLiqudityETH();
+    } else {
+      await removeLiquidity();
+    }
+    if (percentage === 100) {
+      console.log("delete value from db");
+      await deleteLiquidity();
+    } else {
+      console.log("update value from db");
+      await updateLiquidity();
+    }
+
+    updateOnRemove?.(!onRemove);
   };
 
   // console.log(liqudity.token0);
