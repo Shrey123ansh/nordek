@@ -292,6 +292,14 @@ export default function SwapMain() {
       functionName: "approve",
       args: [routerContract.address, parseEther(`${token0Amount}`)],
     });
+    removeApprovalNotification();
+    txCompletionWaitNotification();
+    await waitForTransaction({
+      hash: approveHash,
+      confirmations: 1,
+    });
+    removeTxCompNotification();
+    approvalNotification();
     const { hash: swapHash } = await writeContract({
       address: RouterABI.address,
       abi: RouterABI.abi,
@@ -306,11 +314,6 @@ export default function SwapMain() {
     });
     removeApprovalNotification();
     txCompletionWaitNotification();
-    // notification.info("Waiting For Tx Completion")
-    await waitForTransaction({
-      hash: approveHash,
-      confirmations: 1,
-    });
     await waitForTransaction({
       hash: swapHash,
       confirmations: 1,
@@ -328,6 +331,14 @@ export default function SwapMain() {
       functionName: "approve",
       args: [routerContract.address, parseEther(`${token0Amount}`)],
     });
+    removeApprovalNotification();
+    txCompletionWaitNotification();
+    await waitForTransaction({
+      hash: approveHash,
+      confirmations: 1,
+    });
+    removeTxCompNotification();
+    approvalNotification();
     const { hash: swapHash } = await writeContract({
       address: RouterABI.address,
       abi: RouterABI.abi,
@@ -343,17 +354,13 @@ export default function SwapMain() {
     removeApprovalNotification();
     txCompletionWaitNotification();
     await waitForTransaction({
-      hash: approveHash,
-      confirmations: 1,
-    });
-    await waitForTransaction({
       hash: swapHash,
       confirmations: 1,
     });
     removeTxCompNotification();
+    notification.success("Transaction completed successfully!");
     setToken0Amount(0);
     setToken1Amount(0);
-    notification.success("Transaction completed successfully!");
   };
   const handleSwap = async () => {
     if (token1Amount <= 0 || token0Amount <= 0) {
