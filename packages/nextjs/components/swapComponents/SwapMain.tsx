@@ -36,6 +36,7 @@ export default function SwapMain() {
   const { address: account, isConnected } = useAccount();
   const [balance0, setBalance0] = useState(0);
   const [balance1, setBalance1] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -331,14 +332,7 @@ export default function SwapMain() {
       functionName: "approve",
       args: [routerContract.address, parseEther(`${token0Amount}`)],
     });
-    removeApprovalNotification();
-    txCompletionWaitNotification();
-    await waitForTransaction({
-      hash: approveHash,
-      confirmations: 1,
-    });
-    removeTxCompNotification();
-    approvalNotification();
+    await new Promise(r => setTimeout(r, 5000));
     const { hash: swapHash } = await writeContract({
       address: RouterABI.address,
       abi: RouterABI.abi,
@@ -354,9 +348,16 @@ export default function SwapMain() {
     removeApprovalNotification();
     txCompletionWaitNotification();
     await waitForTransaction({
+      hash: approveHash,
+      confirmations: 1,
+    });
+    removeTxCompNotification();
+    txCompletionWaitNotification();
+    await waitForTransaction({
       hash: swapHash,
       confirmations: 1,
     });
+    await new Promise(r => setTimeout(r, 5000));
     removeTxCompNotification();
     notification.success("Transaction completed successfully!");
     setToken0Amount(0);
@@ -481,6 +482,7 @@ export default function SwapMain() {
           setTokenAmount={setTokenAmount0Override}
           title="From"
           balance={balance0}
+          setLoading={setLoading}
         ></SelectToken>
         <button
           className="w-full h-6 flex flex-row items-center justify-center rounded-full "
