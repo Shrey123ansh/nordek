@@ -51,6 +51,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
   const token1AmountNumber: number = Number(token1Amount);
   const [balance0, setBalance0] = useState(0);
   const [balance1, setBalance1] = useState(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { data: pc, isFetched } = useScaffoldContractRead({
     contractName: "NordekV2Factory",
@@ -205,6 +206,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
   const handleAddLiquidity = async () => {
     console.log("add liuidity");
+    setLoading(true);
 
     // console.log("Nrk token", token0Amount);
     // console.log("Approval", token1Amount);
@@ -217,6 +219,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
 
     const nrkAddress: string = localTokens.NRK.address;
     if (token0Amount === 0 || token1Amount === 0) {
+      setLoading(false);
       notification.error("Amount Cannot be 0", {
         duration: 1000,
       });
@@ -303,6 +306,8 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
       } catch (error) {}
       await addLiquidity();
     }
+    setLoading(false);
+
     await getBalance();
     const lpTokens = await fetchLpTokenBalance();
 
@@ -587,6 +592,8 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
         setSlippageValue={setSlippage}
         share={share}
         lpTokens={lpTokens}
+        setLoading={setLoading}
+        loading={loading}
       ></LiquidityFooter>
     </div>
   );

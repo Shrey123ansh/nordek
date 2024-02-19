@@ -8,10 +8,9 @@ module.exports = {
     themes: [
       {
         scaffoldEth: {
-
           primary: "#642EFF",
           "primary-content": "#212638",
-          secondary: "#FFF",
+          secondary: "#A259FF",
           "secondary-content": "#212638",
           accent: "#642EFF",
           "accent-content": "#212638",
@@ -21,16 +20,13 @@ module.exports = {
           "base-200": "#f4f8ff",
           "base-300": "#ffffff",
           "base-content": "#212638",
-          "toright": "#fff",
-          "torightgradient": "#fff",
-
-
+          toright: "#fff",
+          torightgradient: "#fff",
 
           info: "#642EFF",
           success: "#34EEB6",
           warning: "#FFCF72",
           error: "#FF8863",
-
 
           "--rounded-btn": "9999rem",
 
@@ -53,7 +49,7 @@ module.exports = {
 
           "--setting-gradient": "linear-gradient(to right, #E2D4FF,#FFFFFF)",
           ".bg-setting-gradient": {
-            background: "var(--setting-gradient)"
+            background: "var(--setting-gradient)",
           },
 
           ".bg-shadow-color": {
@@ -66,7 +62,6 @@ module.exports = {
 
           ".bg-body-gradient": {
             backgroundImage: "var(--custom-body-gradient)", // Use the CSS variable
-
           },
 
           ".important-text": {
@@ -82,19 +77,15 @@ module.exports = {
           },
           ".heroShades": {
             background: "#5B24A2",
-
           },
           ".heroText": {
             color: "#5B24A2",
-
           },
 
           ".lightBorders": {
             stroke: "#E2D4FF",
-            strokeWidth: "2px"
-
-          }
-
+            strokeWidth: "2px",
+          },
         },
       },
       {
@@ -102,7 +93,6 @@ module.exports = {
           primary: "#642EFF",
           "primary-content": "#FFFFFF",
           secondary: "#A259FF",
-
 
           "secondary-content": "#A259FF",
           accent: "#642EFF",
@@ -113,8 +103,8 @@ module.exports = {
           "base-200": "#060203",
           "base-300": "#141414",
           "base-content": "#FFFFFF",
-          "toright": "#141414",
-          "torightgradient": "#593FB1",
+          toright: "#141414",
+          torightgradient: "#593FB1",
 
           info: "#385183",
           success: "#34EEB6",
@@ -128,9 +118,8 @@ module.exports = {
 
           "--setting-gradient": "linear-gradient(to right, #2D124F,#1B013B)",
           ".bg-setting-gradient": {
-            background: "var(--setting-gradient)"
+            background: "var(--setting-gradient)",
           },
-
 
           "--rounded-btn": "9999rem",
 
@@ -172,11 +161,9 @@ module.exports = {
           },
           ".heroShades": {
             background: "#A259FF",
-
           },
           ".heroText": {
             color: "#A259FF",
-
           },
         },
       },

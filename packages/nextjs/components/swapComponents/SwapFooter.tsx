@@ -16,6 +16,8 @@ type SwapFooterProps = {
   minimumPrice: Number;
   handlePopup: () => {};
   isPopupOpen: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
 };
 
 const SwapFooter = ({
@@ -28,6 +30,8 @@ const SwapFooter = ({
   minimumPrice,
   handlePopup,
   isPopupOpen,
+  setLoading,
+  loading,
 }: SwapFooterProps) => {
   const [slippageValue, setSlippageValue] = useState(0.05); // Initial slippage value (2% in this example)
 
@@ -52,6 +56,8 @@ const SwapFooter = ({
       ></SlippageDetails>
       <ActionButton
         text="Swap"
+        setLoading={setLoading}
+        loading={loading}
         onClick={() => {
           handleSwap();
         }}

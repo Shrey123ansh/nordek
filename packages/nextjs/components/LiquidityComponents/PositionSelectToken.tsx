@@ -50,6 +50,7 @@ const PositionSelectToken = ({
   const [token1Withdraw, setToken1Withdraw] = useState(0);
   const [token0WithdrawMin, setToken0WithdrawMin] = useState(0);
   const [token1WithdrawMin, setToken1WithdrawMin] = useState(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const setPercentageExtension = (value: number) => {
     if (value <= 100) {
@@ -304,11 +305,14 @@ const PositionSelectToken = ({
   };
 
   const handleWithdraw = async () => {
+    setLoading(true);
+
     console.log("withdraw liuidity");
 
     try {
       console.log(typeof value);
       if (percentage === 0) {
+        setLoading(false);
         notification.error("Percentage cannot be 0", { duration: 1000 });
         return;
       }
@@ -337,6 +341,8 @@ const PositionSelectToken = ({
     } else {
       await removeLiquidity();
     }
+    setLoading(false);
+
     if (percentage === 100) {
       console.log("delete value from db");
       await deleteLiquidity();
@@ -450,7 +456,11 @@ const PositionSelectToken = ({
                 100%
               </button> */}
               <button
-                className=" bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
+                className={
+                  isDarkMode
+                    ? " bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
+                    : " border-2 border-color-secondary  px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
+                }
                 onClick={() => {
                   setPercentage(25);
                 }}
@@ -458,7 +468,11 @@ const PositionSelectToken = ({
                 25%
               </button>
               <button
-                className=" bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2"
+                className={
+                  isDarkMode
+                    ? " bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
+                    : " border-2 border-color-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
+                }
                 onClick={() => {
                   setPercentage(50);
                 }}
@@ -466,7 +480,11 @@ const PositionSelectToken = ({
                 50%
               </button>
               <button
-                className=" bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2"
+                className={
+                  isDarkMode
+                    ? " bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
+                    : " border-2 border-color-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
+                }
                 onClick={() => {
                   setPercentage(75);
                 }}
@@ -474,7 +492,11 @@ const PositionSelectToken = ({
                 75%
               </button>
               <button
-                className=" bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2"
+                className={
+                  isDarkMode
+                    ? " bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
+                    : " border-2 border-color-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
+                }
                 onClick={() => {
                   setPercentage(100);
                 }}
@@ -510,7 +532,11 @@ const PositionSelectToken = ({
               </div>
             </div>
           </div>
-          <button className="btn btn-sm btn-outline btn-accent my-4 w-full" onClick={handleWithdraw}>
+          <button
+            className="btn btn-sm btn-outline btn-accent my-4 w-full"
+            onClick={handleWithdraw}
+            disabled={loading === true ? true : false}
+          >
             Remove Liquidity
           </button>
         </div>

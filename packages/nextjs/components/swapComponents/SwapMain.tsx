@@ -12,6 +12,7 @@ import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { localTokens, tokenType } from "~~/data/data";
 import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { truncateAddress } from "~~/utils";
 import { nordek } from "~~/utils/NordekChain";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -36,7 +37,7 @@ export default function SwapMain() {
   const { address: account, isConnected } = useAccount();
   const [balance0, setBalance0] = useState(0);
   const [balance1, setBalance1] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -364,7 +365,9 @@ export default function SwapMain() {
     setToken1Amount(0);
   };
   const handleSwap = async () => {
+    setLoading(true);
     if (token1Amount <= 0 || token0Amount <= 0) {
+      setLoading(false);
       console.log("can't be lt 0");
       notification.error("Amount Can't Be 0", {
         duration: 1000,
@@ -373,6 +376,7 @@ export default function SwapMain() {
     }
 
     if (!account) {
+      setLoading(false);
       console.log("notConnected");
       notification.info("Please Connect Your Wallet", {
         duration: 1000,
@@ -400,6 +404,8 @@ export default function SwapMain() {
     console.log(RouterABI.abi);
 
     // swap NRK to erc20
+    setLoading(true);
+    console.log("loading: ", loading);
     if (token0.address === nrkAddress) {
       console.log("out minimum " + parseEther(`${token1Min}`));
       console.log("token 0 address " + token0.address);
@@ -421,6 +427,7 @@ export default function SwapMain() {
         }
       } catch (error) {}
     }
+    setLoading(false);
 
     await getData();
     await getBalance();
@@ -482,7 +489,6 @@ export default function SwapMain() {
           setTokenAmount={setTokenAmount0Override}
           title="From"
           balance={balance0}
-          setLoading={setLoading}
         ></SelectToken>
         <button
           className="w-full h-6 flex flex-row items-center justify-center rounded-full "
@@ -519,6 +525,8 @@ export default function SwapMain() {
           handlePopup={handlePopup}
           isPopupOpen={isPopupOpen}
           minimumPrice={Number(token1Amount) - (Number(token1Amount) * slippage) / 100}
+          setLoading={setLoading}
+          loading={loading}
         ></SwapFooter>
       </div>
     </>
