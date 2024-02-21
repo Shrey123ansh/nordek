@@ -432,18 +432,11 @@ const PositionSelectToken = ({
                 : "bg-swap-gradient rounded-lg border-2 border-[#E2D4FF]  px-4 py-4 mb-4"
             }
           >
-            <div className=" text-6xl font-bold ">{`${percentage}%`}</div>
-            <div className="mt-4">
-              <input
-                type="range"
-                onChange={e => setPercentage(e.target.value)}
-                value={percentage}
-                className={isDarkMode ? " w-full h-1  outline-none slider " : "w-full h-1 	outline-color: #000slider"}
-                pointer-shadow="0 0 5px #DAE8FF"
-              />
-            </div>
-            <div className=" flex flex-row items-center justify-between w-full mt-4 ">
-              {/* <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(25) }} >
+            <div className="flex flex-row">
+              <div className=" text-5xl font-bold ">{`${percentage}%`}</div>
+              <div className="flex flex-row items-center justify-end gap-1.5 w-full mt-4  ">
+                {/* <div className="flex flex-row items-center justify-end gap-2 w-full mt-4 absolute bottom-0 right-0"> */}
+                {/* <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(25) }} >
                 25%
               </button>
               <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(50) }}>
@@ -455,54 +448,64 @@ const PositionSelectToken = ({
               <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(100) }} >
                 100%
               </button> */}
-              <button
-                className={
-                  isDarkMode
-                    ? " bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
-                    : " border-2 border-color-secondary  px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
-                }
-                onClick={() => {
-                  setPercentage(25);
-                }}
-              >
-                25%
-              </button>
-              <button
-                className={
-                  isDarkMode
-                    ? " bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
-                    : " border-2 border-color-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
-                }
-                onClick={() => {
-                  setPercentage(50);
-                }}
-              >
-                50%
-              </button>
-              <button
-                className={
-                  isDarkMode
-                    ? " bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
-                    : " border-2 border-color-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
-                }
-                onClick={() => {
-                  setPercentage(75);
-                }}
-              >
-                75%
-              </button>
-              <button
-                className={
-                  isDarkMode
-                    ? " bg-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
-                    : " border-2 border-color-secondary px-1 rounded-md py-1 font-medium lg:px-4 lg:py-2 "
-                }
-                onClick={() => {
-                  setPercentage(100);
-                }}
-              >
-                100%
-              </button>
+                <button
+                  className={
+                    isDarkMode
+                      ? " bg-secondary px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1"
+                      : " border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                  }
+                  onClick={() => {
+                    setPercentage(25);
+                  }}
+                >
+                  25%
+                </button>
+                <button
+                  className={
+                    isDarkMode
+                      ? " bg-secondary px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                      : "border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                  }
+                  onClick={() => {
+                    setPercentage(50);
+                  }}
+                >
+                  50%
+                </button>
+                <button
+                  className={
+                    isDarkMode
+                      ? " bg-secondary px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                      : "border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                  }
+                  onClick={() => {
+                    setPercentage(75);
+                  }}
+                >
+                  75%
+                </button>
+                <button
+                  className={
+                    isDarkMode
+                      ? " bg-secondary px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                      : "border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                  }
+                  onClick={() => {
+                    setPercentage(100);
+                  }}
+                >
+                  100%
+                </button>
+              </div>
+            </div>
+            <div className="mt-4">
+              <input
+                type="range"
+                onChange={e => setPercentage(e.target.value)}
+                value={percentage}
+                className={isDarkMode ? " w-full h-1  outline-none slider " : "w-full h-1 	outline-color: #000slider"}
+                pointer-shadow="0 0 5px #DAE8FF"
+              />
             </div>
           </div>
           <FaArrowDownLong className="w-full items-center my-4" />
