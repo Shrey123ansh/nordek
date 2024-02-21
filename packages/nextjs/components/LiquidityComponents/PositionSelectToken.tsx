@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import erc20ABI from "../../../foundry/out/ERC20.sol/ERC20.json";
 import pairABI from "../../../foundry/out/UniswapV2Pair.sol/UniswapV2Pair.json";
 import RouterABI from "../../utils/INordekV2Router02.sol/INordekV2Router02.json";
 import { Select } from "../Select/Select";
@@ -35,6 +36,7 @@ const PositionSelectToken = ({
   const { data: routerContract } = useDeployedContractInfo("NordekV2Router02");
   const nrkAddress: string = localTokens.NRK.address;
   const sliderRef = useRef(null);
+  const { data: factoryContract } = useDeployedContractInfo("NordekV2Factory");
 
   const [percentage, setPercentage] = useState(0);
   const [value, setValue] = useState<number>(liqudity.lpTokens);
@@ -51,6 +53,8 @@ const PositionSelectToken = ({
   const [token0WithdrawMin, setToken0WithdrawMin] = useState(0);
   const [token1WithdrawMin, setToken1WithdrawMin] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [token0, setToken0] = useState<tokenType>(localTokens.NRK);
+  const [token1, setToken1] = useState<tokenType>(localTokens.PERC);
 
   const setPercentageExtension = (value: number) => {
     if (value <= 100) {
@@ -177,6 +181,18 @@ const PositionSelectToken = ({
     ],
     blockConfirmations: 1,
   });
+
+  const fetchLpTokenBalance = async () => {
+    const lptokensBalance = await readContract({
+      address: liqudity.pairContract,
+      abi: erc20ABI.abi,
+      functionName: "balanceOf",
+      args: [account],
+      account: account,
+    });
+    console.log("check: ", Number(formatEther(lptokensBalance as bigint)));
+    return Number(formatEther(lptokensBalance as bigint));
+  };
 
   const deleteLiquidity = async () => {
     try {
@@ -335,7 +351,9 @@ const PositionSelectToken = ({
       removeTxCompNotification();
       // console.log("token 1 withdraw amount " + token0WithdrawMin);
       // console.log("token 2 withdraw amount " + token1WithdrawMin);
-    } catch (e) {}
+    } catch (e) {
+      removeApprovalNotification();
+    }
     if (liqudity.token0.address === nrkAddress || liqudity.token1.address === nrkAddress) {
       await removeLiqudityETH();
     } else {
@@ -343,7 +361,9 @@ const PositionSelectToken = ({
     }
     setLoading(false);
 
-    if (percentage === 100) {
+    const lpTokens = await fetchLpTokenBalance();
+
+    if (lpTokens === 0) {
       console.log("delete value from db");
       await deleteLiquidity();
     } else {

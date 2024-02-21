@@ -93,7 +93,7 @@ export const useTransactor = (_walletClient?: WalletClient): TransactionFunc => 
       const message = getParsedError(error);
       console.log("error");
       console.log(message);
-      notification.error("Error");
+      notification.error("Transaction Rejected!");
     }
 
     return transactionHash;

@@ -287,82 +287,92 @@ export default function SwapMain() {
   // });
 
   const swapTokenForNRK = async () => {
-    approvalNotification();
-    const { hash: approveHash } = await writeContract({
-      address: token0.address,
-      abi: erc20ABI.abi,
-      functionName: "approve",
-      args: [routerContract.address, parseEther(`${token0Amount}`)],
-    });
-    removeApprovalNotification();
-    txCompletionWaitNotification();
-    await waitForTransaction({
-      hash: approveHash,
-      confirmations: 1,
-    });
-    removeTxCompNotification();
-    approvalNotification();
-    const { hash: swapHash } = await writeContract({
-      address: RouterABI.address,
-      abi: RouterABI.abi,
-      functionName: "swapExactTokensForNRKSupportingFeeOnTransferTokens",
-      args: [
-        parseEther(`${token0Amount}`),
-        parseEther(`${token1Min}`),
-        [token0.address, token1.address],
-        account,
-        BigInt(unixTimestampInSeconds + 300),
-      ],
-    });
-    removeApprovalNotification();
-    txCompletionWaitNotification();
-    await waitForTransaction({
-      hash: swapHash,
-      confirmations: 1,
-    });
-    removeTxCompNotification();
-    setToken0Amount(0);
-    setToken1Amount(0);
-    notification.success("Transaction completed successfully!");
+    try {
+      approvalNotification();
+      const { hash: approveHash } = await writeContract({
+        address: token0.address,
+        abi: erc20ABI.abi,
+        functionName: "approve",
+        args: [routerContract.address, parseEther(`${token0Amount}`)],
+      });
+      removeApprovalNotification();
+      txCompletionWaitNotification();
+      await waitForTransaction({
+        hash: approveHash,
+        confirmations: 1,
+      });
+      removeTxCompNotification();
+      approvalNotification();
+      const { hash: swapHash } = await writeContract({
+        address: RouterABI.address,
+        abi: RouterABI.abi,
+        functionName: "swapExactTokensForNRKSupportingFeeOnTransferTokens",
+        args: [
+          parseEther(`${token0Amount}`),
+          parseEther(`${token1Min}`),
+          [token0.address, token1.address],
+          account,
+          BigInt(unixTimestampInSeconds + 300),
+        ],
+      });
+      removeApprovalNotification();
+      txCompletionWaitNotification();
+      await waitForTransaction({
+        hash: swapHash,
+        confirmations: 1,
+      });
+      removeTxCompNotification();
+      setToken0Amount(0);
+      setToken1Amount(0);
+      notification.success("Transaction completed successfully!");
+    } catch (error) {
+      removeApprovalNotification();
+      notification.error("Transaction Rejected!");
+    }
   };
   const swapTokenForToken = async () => {
-    approvalNotification();
-    const { hash: approveHash } = await writeContract({
-      address: token0.address,
-      abi: erc20ABI.abi,
-      functionName: "approve",
-      args: [routerContract.address, parseEther(`${token0Amount}`)],
-    });
-    await new Promise(r => setTimeout(r, 5000));
-    const { hash: swapHash } = await writeContract({
-      address: RouterABI.address,
-      abi: RouterABI.abi,
-      functionName: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
-      args: [
-        parseEther(`${token0Amount}`),
-        parseEther(`${token1Min}`),
-        [token0.address, token1.address],
-        account,
-        BigInt(unixTimestampInSeconds + 300),
-      ],
-    });
-    removeApprovalNotification();
-    txCompletionWaitNotification();
-    await waitForTransaction({
-      hash: approveHash,
-      confirmations: 1,
-    });
-    removeTxCompNotification();
-    txCompletionWaitNotification();
-    await waitForTransaction({
-      hash: swapHash,
-      confirmations: 1,
-    });
-    await new Promise(r => setTimeout(r, 5000));
-    removeTxCompNotification();
-    notification.success("Transaction completed successfully!");
-    setToken0Amount(0);
-    setToken1Amount(0);
+    try {
+      approvalNotification();
+      const { hash: approveHash } = await writeContract({
+        address: token0.address,
+        abi: erc20ABI.abi,
+        functionName: "approve",
+        args: [routerContract.address, parseEther(`${token0Amount}`)],
+      });
+      await new Promise(r => setTimeout(r, 5000));
+      const { hash: swapHash } = await writeContract({
+        address: RouterABI.address,
+        abi: RouterABI.abi,
+        functionName: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
+        args: [
+          parseEther(`${token0Amount}`),
+          parseEther(`${token1Min}`),
+          [token0.address, token1.address],
+          account,
+          BigInt(unixTimestampInSeconds + 300),
+        ],
+      });
+      removeApprovalNotification();
+      txCompletionWaitNotification();
+      await waitForTransaction({
+        hash: approveHash,
+        confirmations: 1,
+      });
+      removeTxCompNotification();
+      txCompletionWaitNotification();
+      await waitForTransaction({
+        hash: swapHash,
+        confirmations: 1,
+      });
+      await new Promise(r => setTimeout(r, 5000));
+      removeTxCompNotification();
+      notification.success("Transaction completed successfully!");
+      setToken0Amount(0);
+      setToken1Amount(0);
+    } catch (error) {
+      removeApprovalNotification();
+      notification.error("Transaction Rejected!");
+    }
   };
   const handleSwap = async () => {
     setLoading(true);

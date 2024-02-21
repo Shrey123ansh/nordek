@@ -238,19 +238,18 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
             functionName: "approve",
             args: [routerContract.address, parseEther(`${token1Amount}`)],
           });
-          removeApprovalNotification();
-
-          txCompletionWaitNotification();
           await waitForTransaction({
             hash: approveHash,
             confirmations: 1,
           });
-          removeTxCompNotification();
+          removeApprovalNotification();
 
           console.log("approve");
           await addLiquidityETHToken0();
           console.log("add liquidity");
         } catch (error) {
+          removeApprovalNotification();
+
           console.log(error);
         }
       } else if (token1.address === nrkAddress) {
@@ -263,16 +262,16 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
             functionName: "approve",
             args: [routerContract.address, parseEther(`${token0Amount}`)],
           });
-          removeApprovalNotification();
-          txCompletionWaitNotification();
           await waitForTransaction({
             hash: approveHash,
             confirmations: 1,
           });
-          removeTxCompNotification();
+          removeApprovalNotification();
 
           await addLiquidityETHToken1();
-        } catch (error) {}
+        } catch (error) {
+          removeApprovalNotification();
+        }
       }
     } else {
       // addLiquidity
@@ -297,13 +296,15 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           confirmations: 1,
           timeout: 5000,
         });
-        removeTxCompNotification();
+        removeApprovalNotification();
         await waitForTransaction({
           hash: approveHash2,
           confirmations: 1,
           timeout: 5000,
         });
-      } catch (error) {}
+      } catch (error) {
+        removeApprovalNotification();
+      }
       await addLiquidity();
     }
     setLoading(false);
