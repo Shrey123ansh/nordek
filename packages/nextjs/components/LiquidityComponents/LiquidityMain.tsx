@@ -296,7 +296,7 @@ export default function LiquidityMain({ handleUpdate }: { handleUpdate: () => vo
           confirmations: 1,
           timeout: 5000,
         });
-        removeApprovalNotification();
+        removeTxCompNotification();
         await waitForTransaction({
           hash: approveHash2,
           confirmations: 1,
