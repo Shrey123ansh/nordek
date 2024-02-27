@@ -452,9 +452,9 @@ const PositionSelectToken = ({
                 : "bg-swap-gradient rounded-lg border-2 border-[#E2D4FF]  px-4 py-4 mb-4"
             }
           >
-            <div className="flex flex-row">
+            <div className="flex flex-col xl:flex-row">
               <div className=" text-5xl font-bold ">{`${percentage}%`}</div>
-              <div className="flex flex-row items-center justify-end gap-1.5 w-full mt-4  ">
+              <div className="flex flex-row items-center xl:justify-end gap-1.5 w-full mt-4">
                 {/* <div className="flex flex-row items-center justify-end gap-2 w-full mt-4 absolute bottom-0 right-0"> */}
                 {/* <button className=" bg-secondary px-4 rounded-md py-2 " onClick={() => { setPercentage(25) }} >
                 25%
@@ -471,8 +471,12 @@ const PositionSelectToken = ({
                 <button
                   className={
                     isDarkMode
-                      ? " bg-secondary px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1"
-                      : " border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                      ? `px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 ${
+                          percentage === 25 ? `bg-primary` : `bg-secondary`
+                        }`
+                      : ` border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 ${
+                          percentage === 25 ? `bg-primary text-white` : ``
+                        }`
                   }
                   onClick={() => {
                     setPercentage(25);
@@ -483,8 +487,12 @@ const PositionSelectToken = ({
                 <button
                   className={
                     isDarkMode
-                      ? " bg-secondary px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
-                      : "border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                      ? `px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 ${
+                          percentage === 50 ? `bg-primary` : `bg-secondary`
+                        }`
+                      : ` border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 ${
+                          percentage === 50 ? `bg-primary text-white` : ``
+                        }`
                   }
                   onClick={() => {
                     setPercentage(50);
@@ -495,8 +503,12 @@ const PositionSelectToken = ({
                 <button
                   className={
                     isDarkMode
-                      ? " bg-secondary px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
-                      : "border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                      ? `px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 ${
+                          percentage === 75 ? `bg-primary` : `bg-secondary`
+                        }`
+                      : ` border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 ${
+                          percentage === 75 ? `bg-primary text-white` : ``
+                        }`
                   }
                   onClick={() => {
                     setPercentage(75);
@@ -507,8 +519,12 @@ const PositionSelectToken = ({
                 <button
                   className={
                     isDarkMode
-                      ? " bg-secondary px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
-                      : "border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 "
+                      ? `px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 ${
+                          percentage === 100 ? `bg-primary` : `bg-secondary`
+                        }`
+                      : ` border-2  px-0.5 rounded-3xl py-0.5 text-sm font-medium lg:px-2 lg:py-1 ${
+                          percentage === 100 ? `bg-primary text-white` : ``
+                        }`
                   }
                   onClick={() => {
                     setPercentage(100);
